@@ -1,6 +1,6 @@
 {
   "name": "geelato-ui-ant",
-  "version": "0.1.1",
+  "version": "0.1.4",
   "main": "lib/geelato-ui-ant.umd.min.js",
   "keyword": "geelato",
   "author": "www.geelato.org",
@@ -20,7 +20,8 @@
     "core-js": "^2.6.5",
     "lodash.get": "^4.4.2",
     "lodash.pick": "^4.4.0",
-    "vue": "^2.6.10"
+    "vue": "^2.6.10",
+    "vue-context": "^4.0.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.3.0",

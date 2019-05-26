@@ -1,3 +1,12 @@
 # gl-card-layout
-这是基于栅格的card布局
+
+### 展示
 <Card-Layout-Example></Card-Layout-Example>
+
+### 用法 Example.vue
+
+<<< @/docs/.vuepress/components/Card/Layout/Example.vue
+
+### 配置 data.js
+
+<<< @/docs/.vuepress/components/Card/Layout/data.js

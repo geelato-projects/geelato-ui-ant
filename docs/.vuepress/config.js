@@ -139,7 +139,7 @@ function genSidebarConfig(title) {
         'getting-started',
         'ui-gl-form',
         'ui-gl-table',
-        'ui-gl-tree-form',
+        'ui-gl-tree',
         'ui-gl-card',
         'ui-gl-card-layout',
       ]

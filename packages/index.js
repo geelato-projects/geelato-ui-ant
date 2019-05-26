@@ -1,6 +1,7 @@
 // 导入组件
 import GlPageLoader from './gl-page-loader'
 import GlModal from './gl-modal'
+import GlTree from './gl-tree'
 import GlForm from './gl-form'
 import GlTable from './gl-table'
 // import GlItem from './gl-card-layout/src/Item'
@@ -14,6 +15,7 @@ import Api from './Api'
 const components = [
   GlPageLoader,
   GlModal,
+  GlTree,
   GlForm,
   GlTable,
   GlCard,
