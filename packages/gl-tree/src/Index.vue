@@ -1,16 +1,16 @@
 <template>
   <div class="gl-tree">
-    <a-tree
-        :treeData="gData"
-        :checkable="checkable"
-        :showIcon="showIcon"
-        :draggable="draggable"
-        :showLine="showLine"
-        @dragenter="onDragEnter"
-        @drop="onDrop"
-        @select="onSelect"
-        @rightClick="onRightClick"
-        :defaultSelectedKeys="['0-0']"
+    <a-tree ref="glTree"
+            :treeData="gData"
+            :checkable="checkable"
+            :showIcon="showIcon"
+            :draggable="draggable"
+            :showLine="showLine"
+            @dragenter="onDragEnter"
+            @drop="onDrop"
+            @select="onSelect"
+            @rightClick="onRightClick"
+            :defaultSelectedKeys="['0-0']"
     >
       <a-icon slot="smile" type="folder"/>
       <a-icon slot="meh" type="file"/>
@@ -18,33 +18,43 @@
         <a-icon :type="selected ? 'frown':'frown-o'"/>
       </template>
     </a-tree>
-    <vue-context ref="contextMenu">
+
+    <gl-context-menu ref="contextMenu" class="gl-context-menu"
+                     :target="contextMenuTarget"
+                     :show="contextMenuVisible"
+                     @update:show="(show) => contextMenuVisible = show">
       <a-menu mode="vertical">
         <template v-for="(menuItem,index) in menuItems">
-          <a-menu-item v-if="!menuItem.children" @click="onContextMenuItemClick(menuItem,index)" :key="index">
+          <a-menu-item v-if="!menuItem.children" @click="onContextMenuItemClick(menuItem,index)" :key="index"
+                       class="gl-context-menu-item">
             <a-icon :type="menuItem.icon"/>
             {{menuItem.label}}
           </a-menu-item>
           <a-sub-menu v-else :key="index">
-            <span slot="title"><a-icon :type="menuItem.icon"/><span>{{menuItem.label}}</span></span>
+            <span slot="title" class="gl-context-menu-item"><a-icon
+                :type="menuItem.icon"/><span>{{menuItem.label}}</span></span>
             <a-menu-item v-for="(subMenuItem,subIndex) in menuItem.children"
-                         @click="onContextMenuItemClick(subMenuItem,subIndex)" :key="subIndex">
+                         @click="onContextMenuItemClick(subMenuItem,subIndex)" :key="subIndex"
+                         class="gl-context-menu-item">
               <a-icon :type="subMenuItem.icon"/>
               {{subMenuItem.label}}
             </a-menu-item>
           </a-sub-menu>
         </template>
       </a-menu>
-    </vue-context>
+    </gl-context-menu>
+
+    <!--<gl-context-menu ref="contextMenu">-->
+
+    <!--</gl-context-menu>-->
   </div>
 </template>
 
 <script>
-  import {VueContext} from 'vue-context';
 
   export default {
     name: 'gl-tree',
-    components: {VueContext},
+    components: {},
     props: {
       draggable: {
         type: Boolean,
@@ -168,6 +178,8 @@
     },
     data() {
       return {
+        contextMenuVisible: false,
+        contextMenuTarget: null,
         gData: this.treeData
       }
     },
@@ -258,7 +270,9 @@
       },
       onRightClick(info) {
         console.log('gl-tree > onRightClick: ', info)
-        this.$refs.contextMenu.open(info.event)
+        this.contextMenuTarget = this.$refs.glTree.$el
+        this.contextMenuVisible = true
+        // this.$refs.contextMenu.open(info.event)
       },
       onContextMenuItemClick(e) {
         console.log('gl-tree > onContextMenuItemClick > e: ', e)
@@ -269,11 +283,13 @@
 
 <style>
 
-  .gl-tree .ant-menu-title, .gl-tree .ant-menu-submenu-title, .gl-tree .ant-menu-item, .gl-tree .ant-menu-submenu-item {
+  gl-context-menu .ant-menu-submenu-title, .gl-context-menu .ant-menu-submenu-item, .gl-context-menu-item {
     font-size: 12px !important;;
     margin-top: 0 !important;
     margin-bottom: 0 !important;
-    line-height: 28px;
-    height: 28px;
+    margin-right: 2em !important;
+    padding-right: 2em !important;
+    line-height: 28px !important;
+    height: 28px !important;
   }
 </style>
