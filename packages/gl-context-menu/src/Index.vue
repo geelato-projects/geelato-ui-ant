@@ -1,5 +1,5 @@
 <template>
-  <div :style="style" style="display: block;" v-show="show" @mousedown.stop @contextmenu.prevent>
+  <div :style="style" style="display: block;" v-show="show" @mousedown.stop @contextmenu.prevent @click="close">
     <slot></slot>
   </div>
 </template>
@@ -16,12 +16,18 @@
         x: null,
         y: null,
         style: {},
-        binded: false
+        binded: false,
+        show: this.visible
       }
     },
     props: {
-      target: null,
-      show: Boolean
+      target: HTMLElement,
+      visible: {
+        type: Boolean,
+        default() {
+          return false
+        }
+      }
     },
     mounted() {
       this.bindEvents()
@@ -39,7 +45,6 @@
       }
     },
     methods: {
-      // 初始化事件
       bindEvents() {
         this.$nextTick(() => {
           if (!this.target || this.binded) return
@@ -48,27 +53,22 @@
           this.binded = true
         })
       },
-      // 取消绑定事件
       unbindEvents() {
         if (!this.target) return
         this.target.removeEventListener('contextmenu', this.onShow)
       },
-      // 绑定隐藏菜单事件
       bindHideEvents() {
         this.onHide = this.clickDocumentHandler.bind(this)
         document.addEventListener('mousedown', this.onHide)
         document.addEventListener('mousewheel', this.onHide)
       },
-      // 取消绑定隐藏菜单事件
       unbindHideEvents() {
         document.removeEventListener('mousedown', this.onHide)
         document.removeEventListener('mousewheel', this.onHide)
       },
-      // 鼠标按压事件处理器
       clickDocumentHandler(e) {
         this.$emit('update:show', false)
       },
-      // 右键事件事件处理
       contextMenuHandler(e) {
         this.x = e.clientX
         this.y = e.clientY
@@ -78,12 +78,15 @@
       },
       resize() {
         this.style = {
-          left: this.x + 'px',
-          top: this.y + 'px'
+          left: `${this.x }px`,
+          top: `${this.y }px`
         }
       },
-      open(e) {
-
+      open() {
+        this.show = true
+      },
+      close() {
+        this.show = false
       }
     }
   }

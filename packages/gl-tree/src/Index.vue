@@ -21,9 +21,8 @@
 
     <gl-context-menu ref="contextMenu" class="gl-context-menu"
                      :target="contextMenuTarget"
-                     :show="contextMenuVisible"
                      @update:show="(show) => contextMenuVisible = show">
-      <a-menu mode="vertical">
+      <a-menu mode="vertical" v-if="contextMenuVisible">
         <template v-for="(menuItem,index) in menuItems">
           <a-menu-item v-if="!menuItem.children" @click="onContextMenuItemClick(menuItem,index)" :key="index"
                        class="gl-context-menu-item">
@@ -271,8 +270,7 @@
       onRightClick(info) {
         console.log('gl-tree > onRightClick: ', info)
         this.contextMenuTarget = this.$refs.glTree.$el
-        this.contextMenuVisible = true
-        // this.$refs.contextMenu.open(info.event)
+        this.$refs.contextMenu.open()
       },
       onContextMenuItemClick(e) {
         console.log('gl-tree > onContextMenuItemClick > e: ', e)
@@ -281,9 +279,9 @@
   }
 </script>
 
-<style>
+<style scoped>
 
-  gl-context-menu .ant-menu-submenu-title, .gl-context-menu .ant-menu-submenu-item, .gl-context-menu-item {
+  .gl-context-menu .ant-menu-submenu-title, .gl-context-menu .ant-menu-submenu-item, .gl-context-menu-item {
     font-size: 12px !important;;
     margin-top: 0 !important;
     margin-bottom: 0 !important;
