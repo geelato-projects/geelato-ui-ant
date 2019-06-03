@@ -4,6 +4,7 @@ import GlContextMenu from './gl-context-menu'
 import GlModal from './gl-modal'
 import GlTree from './gl-tree'
 import GlForm from './gl-form'
+import GlMagicForm from './gl-magic-form'
 import GlTable from './gl-table'
 // import GlItem from './gl-card-layout/src/Item'
 import GlCard from './gl-card'
@@ -12,7 +13,7 @@ import STable from './gl-table/src/s-table'
 import PageManager from './PageManager'
 import Api from './Api'
 // import GlContextMenu from '@xunlei/vue-context-menu'
-
+import './style.css'
 
 // 存储组件列表
 const components = [
@@ -20,6 +21,7 @@ const components = [
   GlContextMenu,
   GlModal,
   GlTree,
+  GlMagicForm,
   GlForm,
   GlTable,
   GlCard,
@@ -42,6 +44,8 @@ const install = function (Vue, options) {
   components.map(component => {
     Vue.component(component.name, component)
   })
+
+  GlMagicForm.install(Vue)
 }
 
 // 判断是否是直接引入文件

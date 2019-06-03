@@ -1,0 +1,120 @@
+/********************
+* 将div渲染成表格样式
+* 提供几套皮肤样式 normal、primary、danger
+********************/
+
+/*
+* 表格基础样式
+*/
+.gl-table {
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid var(--gl-color-dashed);
+}
+
+.gl-table.primary {
+    border: 1px solid var(--gl-color-primary);
+}
+
+.gl-table.dashed {
+    border: 1px solid var(--gl-color-dashed);
+}
+
+.gl-table.danger {
+    border: 1px solid var(--gl-color-danger);
+}
+
+.gl-table-caption {
+    display: table-caption;
+    margin: 0;
+    padding: 0;
+    font-size: 16px;
+}
+
+.gl-table-column-group {
+    display: table-column-group;
+}
+
+.gl-table-column {
+    display: table-column;
+    width: 100px;
+}
+
+.gl-table-row-group {
+    display: table-row-group;
+}
+
+.gl-table-row {
+    display: table-row;
+}
+
+.gl-table-row-group .gl-table-row:hover, .gl-table-footer-group .gl-table-row:hover {
+    background: #f6f6f6;
+}
+
+.gl-table-cell {
+    display: table-cell;
+    height: 32px;
+    border: 1px solid #ccc;
+}
+
+.danger .gl-table-cell {
+    border: 1px solid var(--gl-color-danger);
+}
+
+.primary .gl-table-cell {
+    border: 1px solid var(--gl-color-primary);
+}
+
+.dashed .gl-table-cell {
+    border: 1px solid var(--gl-color-dashed);
+}
+
+.gl-table-header-group {
+    display: table-header-group;
+    background: #eee;
+    font-weight: bold;
+}
+
+.gl-table-footer-group {
+    display: table-footer-group;
+}
+
+/*
+* 表格增强样式
+*/
+.gl-table-cell.label {
+    background-color: #f3f3f3;
+    font-weight: bold;
+    text-align: right;
+    vertical-align: middle;
+    padding-right: 8px;
+}
+
+.gl-table-cell:not(.label) {
+    vertical-align: top;
+}
+
+.gl-table-cell:not(.label):not(.gl-table-container) {
+    padding: 2px;
+}
+
+/*修改表格嵌套边框叠加*/
+.gl-table .gl-table {
+    border-width: 0px;
+    border-style: hidden;
+}
+
+/*修改表格跟随边框叠加*/
+.gl-table + .gl-table {
+    border-top-width: 0px;
+    border-top-style: hidden;
+}
+
+/*回调因作为子级、同时作为兄弟级被两次隐藏的表格边框*/
+.gl-table .gl-table + .gl-table {
+    border-top-width: 1px;
+    border-top-style: solid;
+}

@@ -1,0 +1,126 @@
+:root {
+    --gl-color-primary: #6bd1ff;
+    --gl-color-danger: #cc0016;
+    --gl-color-dashed: #ccc
+
+    /*--gl-layout-header-height: 3.2em;*/
+    /*--gl-layout-header-title-height: 1.59em;*/
+    /*--gl-layout-footer-height: 1.5em;*/
+    /*--gl-layout-content-nav-width: 1.6em;*/
+    /*--gl-layout-content-subnav-width: 20em;*/
+    /*--gl-ele-hover-color: #cccccc;*/
+    /*--gl-ele-color: #ececec;*/
+    /*--gl-ele-line-color: #dddddd;*/
+    /*--gl-ele-title-bg-color: #EBEBEB;*/
+    /*--gl-ele-content-bg-color: #f8f8f8;*/
+}
+
+
+/*******************************
+*  栅格
+********************************/
+.gl-col-1 {
+    width: calc(4.16% * 1);
+}
+
+.gl-col-2 {
+    width: calc(4.16% * 2);
+}
+
+.gl-col-3 {
+    width: calc(4.16% * 3);
+}
+
+.gl-col-4 {
+    width: calc(4.16% * 4);
+}
+
+.gl-col-5 {
+    width: calc(4.16% * 5);
+}
+
+.gl-col-6 {
+    width: calc(4.16% * 6);
+}
+
+.gl-col-7 {
+    width: calc(4.16% * 7);
+}
+
+.gl-col-8 {
+    width: calc(4.16% * 8);
+}
+
+.gl-col-9 {
+    width: calc(4.16% * 9);
+}
+
+.gl-col-10 {
+    width: calc(4.16% * 10);
+}
+
+.gl-col-11 {
+    width: calc(4.16% * 11);
+}
+
+.gl-col-12 {
+    width: calc(4.16% * 12);
+}
+
+.gl-col-13 {
+    width: calc(4.16% * 13);
+}
+
+.gl-col-14 {
+    width: calc(4.16% * 14);
+}
+
+.gl-col-15 {
+    width: calc(4.16% * 15);
+}
+
+.gl-col-16 {
+    width: calc(4.16% * 16);
+}
+
+.gl-col-17 {
+    width: calc(4.16% * 17);
+}
+
+.gl-col-18 {
+    width: calc(4.16% * 18);
+}
+
+.gl-col-19 {
+    width: calc(4.16% * 19);
+}
+
+.gl-col-20 {
+    width: calc(4.16% * 20);
+}
+
+.gl-col-21 {
+    width: calc(4.16% * 21);
+}
+
+.gl-col-22 {
+    width: calc(4.16% * 22);
+}
+
+.gl-col-23 {
+    width: calc(4.16% * 23);
+}
+
+.gl-col-24 {
+    width: calc(4.16% * 24);
+}
+
+
+/*******************************
+*  辅助类
+********************************/
+
+.gl-required {
+    color: #cc0016;
+}
+
