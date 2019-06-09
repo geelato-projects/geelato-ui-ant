@@ -36,11 +36,7 @@
        * @returns {boolean}
        */
       isRequired(property) {
-        if (!property.rules || property.rules.length === 0) {
-          return false
-        } else {
-          return property.rules.filter(item => item.type === 'empty' || item.type === 'checked').length > 0
-        }
+        return property.rules && property.rules.required
       },
       copyTips(tips) {
         console.log('tips >', tips)

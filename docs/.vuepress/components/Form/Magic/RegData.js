@@ -14,48 +14,45 @@ export default {
     loginName: {
       control: 'input',
       title: '登录名',
-      rules: [
-        {
-          type: 'empty',
-          prompt: '请输入登录名'
-        }
-      ]
+      rules: {
+        required: true
+      }
     },
     password: {
       control: 'password',
       title: '密码',
       tips: '至少6位',
-      rules: [
-        {
-          type: 'empty',
-          prompt: '请输入密码'
-        },
-        {
-          type: 'minLength[6]',
-          prompt: '密码长度至少6位'
-        }
-      ]
+      rules: {
+        required: true,
+        min: 6
+      }
     },
     confirmPassword: {
       control: 'password',
       title: '确认密码',
-      rules: [
-        {
-          type: 'match[password]',
-          prompt: '两次输入的密码不一致'
-        }
-      ]
+      rules: {
+        required: true,
+        min: 6,
+        confirmed: 'password'
+      }
     },
     email: {
       control: 'email',
       title: '邮箱',
-      placeholder: 'xxx@xxx.xxx',
+      rules: {
+        required: true,
+        email: true
+      },
+      placeholder: 'xxx@xxx.xxx'
     },
     age: {
       control: 'input',
       title: '年龄',
       // 值
       value: '20',
+      rules: {
+        numeric: true
+      }
     },
     avatar: {
       control: 'image',
@@ -76,17 +73,17 @@ export default {
     tel: {
       control: 'input',
       title: '电话',
-      // 如果实体的字段名称与tel不一样，或因多实体都存在tel字段，可通过field指定，field未设置时，相关于field:'tel'
+      // 如果实体的字段名称与tel不一样，或因多实体都存在tel字段，可通过field指定，field未设置时，field:'tel'
       field: 'telephone',
       // 若字段需绑定其它实体，该通过该属性设置
       entity: 'platformUser',
       placeholder: '电话号码',
-      rules: [
-        {
-          type: 'empty',
-          prompt: '请输入电话号码'
-        }
-      ]
+      rules: {
+        required: true,
+        numeric: true,
+        //08613912345678
+        max: 14
+      }
     },
     province: {
       control: 'select',

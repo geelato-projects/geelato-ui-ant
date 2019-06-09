@@ -1,5 +1,6 @@
 # gl-form
 
+
 <!--## base form-->
 <!--### 展示-->
 <!--<Form-Base-Example></Form-Base-Example>-->
@@ -13,8 +14,15 @@
 <!--<<< @/docs/.vuepress/components/Form/Base/data.js-->
 
 
-## magic form reg
+## magic form one
+### 依赖表单验证组件
+
+```
+yarn add vee-validate
+```
+
 ### 展示
+
 <Form-Magic-RegExample></Form-Magic-RegExample>
 
 ### 用法 Example.vue

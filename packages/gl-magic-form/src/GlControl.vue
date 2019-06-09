@@ -138,7 +138,7 @@
         return this.model
       },
       getFieldNameByCell(property) {
-        return property.name
+        return property.field
       },
       isReadonly(property) {
         if (property.readonly === true) {

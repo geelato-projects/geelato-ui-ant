@@ -1,9 +1,19 @@
 <template>
   <div>
-    <a-button type="primary" @click="refresh">刷新表单</a-button>
+    <a-button type="primary" @click="refresh">重置表单</a-button>
     <a-button type="primary" @click="validate">校验表单</a-button>
-    <a-button type="primary" @click="getValues">获取表单值</a-button>
-    <a-button type="primary" @click="getGql">获取保存GQL</a-button>
+    <a-button type="primary" @click="getValues">{{showFormValue?'隐藏表单值':'获取表单值'}}</a-button>
+    <a-button type="primary" @click="getGql">{{showGQL?'隐藏保存GQL':'获取保存GQL'}}</a-button>
+    <a-alert v-if="showFormValue&&formData&&Object.keys(formData).length>0" style="margin-bottom: 4px">
+      <span slot="description">
+        {{formData}}
+      </span>
+    </a-alert>
+    <a-alert v-if="showGQL&&GQLData&&Object.keys(GQLData).length>0" style="margin-bottom: 4px">
+      <span slot="description">
+        {{GQLData}}
+      </span>
+    </a-alert>
     <gl-magic-form ref="magicForm" :opts="config"></gl-magic-form>
   </div>
 </template>
@@ -15,7 +25,11 @@
     name: "RegExample",
     data() {
       return {
-        config: RegData
+        config: RegData,
+        formData: {},
+        GQLData: {},
+        showFormValue: false,
+        showGQL: false
       }
     },
     methods: {
@@ -23,13 +37,19 @@
         this.$refs.magicForm.reset(RegData)
       },
       getGql() {
-        this.$refs.magicForm.reset(RegData)
+        this.showGQL = !this.showGQL
+        if (this.showGQL) {
+          this.GQLData = this.$refs.magicForm.getGql(RegData)
+        }
       },
       getValues() {
-        this.$refs.magicForm.reset(RegData)
+        this.showFormValue = !this.showFormValue
+        if (this.showFormValue) {
+          this.formData = this.$refs.magicForm.getValues(RegData)
+        }
       },
       validate() {
-        this.$refs.magicForm.reset(RegData)
+        this.$refs.magicForm.validate(RegData)
       }
     }
   }
