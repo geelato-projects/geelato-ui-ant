@@ -20,6 +20,9 @@
   export default {
     name: "gl-magic-form-item",
     props: {
+      /**
+       * 布局
+       */
       rows: {
         type: Array,
         default() {

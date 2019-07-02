@@ -3,12 +3,22 @@
     <a-row v-for="(row,rowIndex) in rows" :gutter="row.gutter" :key="rowIndex">
       <a-col v-for="(col,colIndex) in row.cols" :span="col.span" :offset="col.offset" :key="colIndex">
         <template v-if="col.card">
-          <a-card :title="getCardConfig(col.card).title" style="margin-top: 8px">
+          <a-card style="margin-top: 8px">
+            <span href="#" slot="title">
+              {{getCardConfig(col.card).title}}
+            </span>
+            <!--<component :ref="col.card" :is="getCardComponent(col.card)"-->
+            <!--:opts="getCardConfig(col.card).opts"-->
+            <!--:query="getCardConfig(col.card).query">-->
+            <!--正在加载...-->
+            <!--</component>-->
             <component :ref="col.card" :is="getCardComponent(col.card)"
-                       :opts="getCardConfig(col.card).opts"
-                       :query="getCardConfig(col.card).query">
+                       v-bind="getCardConfig(col.card).opts">
               正在加载...
             </component>
+            <span href="#" slot="extra">
+              <!--<a><a-icon type="eye-invisible" @click="getCardConfig(col.card).visible=false;$nextTick()"/></a>-->
+            </span>
           </a-card>
         </template>
         <template v-else-if="col.rows">

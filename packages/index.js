@@ -2,6 +2,7 @@
 import GlPageLoader from './gl-page-loader'
 import GlContextMenu from './gl-context-menu'
 import GlModal from './gl-modal'
+import GlList from './gl-list'
 import GlTree from './gl-tree'
 import GlForm from './gl-form'
 import GlMagicForm from './gl-magic-form'
@@ -20,6 +21,7 @@ const components = [
   GlPageLoader,
   GlContextMenu,
   GlModal,
+  GlList,
   GlTree,
   GlMagicForm,
   GlForm,
@@ -67,6 +69,8 @@ export default {
   GlPageLoader,
   GlContextMenu,
   GlModal,
+  GlList,
+  GlTree,
   GlForm,
   GlTable,
   GlCard,

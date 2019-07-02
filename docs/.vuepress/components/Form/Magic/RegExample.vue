@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-button type="primary" @click="refresh">重置表单</a-button>
+    <a-button type="primary" @click="reset">重置表单</a-button>
     <a-button type="primary" @click="validate">校验表单</a-button>
     <a-button type="primary" @click="getValues">{{showFormValue?'隐藏表单值':'获取表单值'}}</a-button>
     <a-button type="primary" @click="getGql">{{showGQL?'隐藏保存GQL':'获取保存GQL'}}</a-button>
@@ -33,7 +33,7 @@
       }
     },
     methods: {
-      refresh() {
+      reset() {
         this.$refs.magicForm.reset(RegData)
       },
       getGql() {
@@ -45,7 +45,7 @@
       getValues() {
         this.showFormValue = !this.showFormValue
         if (this.showFormValue) {
-          this.formData = this.$refs.magicForm.getValues(RegData)
+          this.formData = this.$refs.magicForm.getValues()
         }
       },
       validate() {

@@ -1,11 +1,11 @@
 <template>
   <div>
-    <a-alert :showIcon="true" message="验证出错" type="error" v-if="Object.keys(errors).length>0">
+    <a-alert :showIcon="true" message="验证出错" type="error" v-if="Object.keys(errorItems).length>0">
       <p slot="description">
-        <span v-for="err in errors">{{err}}</span>
+        <span v-for="errorItem in errorItems">{{errorItem}}</span>
       </p>
     </a-alert>
-    <gl-magic-form-item ref="magicFormItem" :rows="layout.rows" :properties="properties" :form="form"
+    <gl-magic-form-item v-if="refresh" ref="magicFormItem" :rows="layout.rows" :properties="properties" :form="form"
                         :loadedData="loadedData"
                         @propertyUpdate="onPropertyUpdate" @loadRefData="onLoadRefData"></gl-magic-form-item>
   </div>
@@ -15,7 +15,6 @@
   import GlMagicFormItem from './GlMagicFormItem'
   import mixin from '../../mixin'
   import utils from '../../utils'
-  // import {Validator} from 'vee-validate';
 
   let GEELATO_SCRIPT_PREFIX = 'gs:'
   let REGEXP_FORM = /gs[\s]*:[\s]*\$ctx\.form\.[a-zA-Z]+[a-zA-Z0-9]*/g;
@@ -45,8 +44,12 @@
           payload: undefined
         },
         // 表单验证出错的信息
-        errors: {}
+        errorItems: {},
+        refresh: true
       }
+    },
+    created() {
+
     },
     mounted() {
       this.reset(this.opts)
@@ -62,12 +65,18 @@
           this.ds = options.ds
           this.vars = options.vars
           this.dsBeDependentOn = {}
-          this.form = {}
+          // this.form = {}
           this.init = false
         }
         this.initConvertData()
         this.loadInitData()
         // this.initUI()
+
+        // 强行触发重置表单
+        this.refresh = false
+        this.$nextTick(() => {
+          this.refresh = true
+        })
       },
       /**
        * 1、将简化的配置信息转换成完整的配置信息，如只设置了email类型，则将默认增加email验证规则
@@ -88,14 +97,14 @@
           // !!!需采用vm.$set的方式来设置值，确保值变化可被检测 @see https://cn.vuejs.org/v2/guide/reactivity.html#检测变化的注意事项
           // 若query已存在属性值，则以query的值为准
           if (that.query && that.query[key]) {
-            this.$set(this.form, key, that.query[key])
+            that.$set(that.form, key, that.query[key])
           } else {
-            this.$set(this.form, key, property.value === undefined ? '' : property.value)
+            that.$set(that.form, key, property.value === undefined ? '' : property.value)
           }
           // this.form[key] = property.value === undefined ? '' : property.value
           // 依据字段类型，自动构建字段验证规则信息，基于semantic ui form validate
           if (property.control === 'email' && (!property.rules)) {
-            this.properties[key].rules['email'] = true
+            that.properties[key].rules['email'] = true
           }
         }
         // 3、构建数据源依赖 dsBeDependentOn e.g. {provinceCode: 'gs:$ctx.form.province'}
@@ -233,8 +242,8 @@
 
         let that = this
         // 清空错误信息
-        for (let key in that.errors) {
-          delete that.errors[key]
+        for (let key in that.errorItems) {
+          delete that.errorItems[key]
         }
         for (let key in that.form) {
           let value = that.form[key]
@@ -243,12 +252,12 @@
             if (property.rules) {
               that.$validator.verify(value, property.rules).then(function (result) {
                 if (result.valid === false) {
-                  // 转换errors的内容，replace '{field}'为字段名
+                  // 转换errorItems的内容，replace '{field}'为字段名
                   for (let i in result.errors) {
-                    let err = result.errors[i]
-                    result.errors[i] = err.replace('{field}', property.title)
+                    let errorItem = result.errors[i]
+                    result.errors[i] = errorItem.replace('{field}', property.title)
                   }
-                  that.$set(that.errors, key, result.errors)
+                  that.$set(that.errorItems, key, result.errors)
                 }
               })
             }
@@ -257,7 +266,7 @@
           }
         }
       },
-      getValues({withEmpty = false}) {
+      getValues(withEmpty = false) {
         let newForm = {}
         if (withEmpty) {
           Object.assign(newForm, this.form)
@@ -394,7 +403,7 @@
       },
       onPropertyUpdate({property, val, oval}) {
         this.$set(this.form, property.identifier, val)
-        console.log('gl-magic-form > onPropertyUpdate: ', property.identifier, val, oval)
+        // console.log('gl-magic-form > onPropertyUpdate: ', property.identifier, val, oval)
       }
     }
   }

@@ -1,3 +1,4 @@
+
 export default {
   treeEntityName: 'platform_dev_project',
   treeEntityPkField: 'id',
