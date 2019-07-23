@@ -143,6 +143,7 @@ function genSidebarConfig(title) {
         'ui-gl-tree',
         'ui-gl-card',
         'ui-gl-card-layout',
+        'mix',
       ]
     }
   ]

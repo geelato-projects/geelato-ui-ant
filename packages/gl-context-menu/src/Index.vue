@@ -21,7 +21,8 @@
       }
     },
     props: {
-      target: HTMLElement,
+      // target: HTMLElement
+      target: {},
       visible: {
         type: Boolean,
         default() {

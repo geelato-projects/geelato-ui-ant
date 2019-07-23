@@ -3,7 +3,7 @@
       :class=clazz
       :loading="loading"
       itemLayout="horizontal"
-      :dataSource="data"
+      :dataSource="allData"
   >
     <div v-if="showLoadingMore" slot="loadMore"
          :style="{ textAlign: 'center', marginTop: '12px', height: '32px', lineHeight: '32px' }">
@@ -14,12 +14,12 @@
       <!--<a slot="actions">edit</a>-->
       <!--<a slot="actions">more</a>-->
       <a-list-item-meta
-          :description="resultSet.resultMapping.description?item[resultSet.resultMapping.description]:''">
-        <a slot="title" href="#">{{item[resultSet.resultMapping.title]}}</a>
+          :description="resultSet.resultMapping.description?item.description:''">
+        <a slot="title" href="#">{{item.title}}</a>
         <a-avatar v-if="resultSet.resultMapping.avatarUrl" slot="avatar"
-                  :src="item[resultSet.resultMapping.avatarUrl]"/>
+                  :src="item.avatarUrl"/>
       </a-list-item-meta>
-      <div>{{item[resultSet.resultMapping.content]}}</div>
+      <div>{{item.content}}</div>
     </a-list-item>
   </a-list>
 </template>
@@ -49,57 +49,38 @@
         default() {
           return false
         }
-      },
-      entityDataSource: {
-        type: Object,
-        required: true,
-        default() {
-          return {
-            entityName: '',
-            fieldNames: '',
-            withMeta: false,
-            resultMapping: {
-              // 头像url
-              avatarUrl: '',
-              title: '',
-              code: '',
-              description: ''
-            },
-            vars: {}
-          }
-        }
       }
     },
     data() {
       return {
         loadingMore: false,
-        data: [],
+        allData: [],
       }
     },
     mounted() {
       this.loadData({}, (res) => {
         this.loading = false
-        console.log('res>', res)
-        this.data = res.data.data
+        this.allData = res.data.data
       })
     },
     methods: {
-      // loadData(params, dataHandler) {
-      //   let bindEntity = this.entityDataSource
-      //   let gql = {}
-      //   gql[bindEntity.entityName] = {
-      //     '@fs': bindEntity.fieldNames || '*'
-      //   }
-      //   Object.assign(gql[bindEntity.entityName], params || {})
-      //   this.api.queryByGql(gql, bindEntity.withMeta).then(res => {
-      //     dataHandler(res)
-      //   })
-      // },
+      loadData(params, dataHandler) {
+        let that = this
+        let entityDataReader = that.entityDataReader
+        entityDataReader.params = params || {}
+        Object.assign(this.resultSet.resultMapping = {}, this.entityDataReader.resultMapping)
 
+        that.api.queryByEntityDataReader(entityDataReader).then(res => {
+          that.api.resultHandler(res, that.resultSet.resultMapping)
+          if (typeof dataHandler === 'function') {
+            dataHandler(res)
+          }
+        })
+      },
       onLoadMore() {
         this.loadingMore = true
         this.loadData({}, (res) => {
-          this.data = this.data.concat(res.results)
+          this.allData = this.allData.concat(res.data.data)
           this.loadingMore = false
           this.$nextTick(() => {
             // window.dispatchEvent(new Event('resize'))

@@ -172,11 +172,12 @@
           return
         }
         // =============================
-        // ds 示例格式
+        // ds 示例格式 为entityDataSource
         // {
-        //     entity: 'basedata_city',
+        //     entity: 'base_data_city',
         //     lazy: true, // default false
-        //     fields: 'name text,id value'
+        //     fields: 'name,id',
+        //     resultMapping: {},
         //     params: {
         //         provinceId: 'gs:$ctx.form.province'
         //     }
@@ -194,6 +195,8 @@
           }
           that.api.query(dsConfig.entity, params, dsConfig.fields).then(function (res) {
             let property = that.properties[propertyName]
+            // 依据数据源的配置，处理返回的数据结果
+            that.api.resultHandler(res, dsConfig.resultMapping)
             that.$set(property, 'data', res.data.data)
             // 触发级联加载数据
             that.onLoadRefData({propertyName})

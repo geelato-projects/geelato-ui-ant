@@ -275,13 +275,21 @@ export default {
       // default false
       lazy: false,
       // 支持字段重命名
-      fields: 'name text,code value',
+      fields: 'name,code',
+      resultMapping: {
+        text: 'name',
+        value: 'code'
+      },
       description: '这是一个下拉列表数据源'
     },
     city: {
       entity: 'platform_city',
       lazy: true,
-      fields: 'name text,code value',
+      fields: 'name,code',
+      resultMapping: {
+        text: 'name',
+        value: 'code'
+      },
       // 带参数查询的数据源
       params: {
         // 该信息会自动加入计算属性中，当province的值变动时，该数据源会重新加载计算

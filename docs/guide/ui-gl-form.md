@@ -33,7 +33,6 @@ yarn add vee-validate
 
 <<< @/docs/.vuepress/components/Form/Magic/RegData.js
 
-
 <!--## magic form-->
 <!--### 展示-->
 <!--<Form-Magic-Example></Form-Magic-Example>-->
