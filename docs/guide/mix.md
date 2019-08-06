@@ -31,3 +31,8 @@ export default {
 
 ```
 
+## action
+事件操作，对应一个按钮或链接。
+
+<<< @/docs/.vuepress/components/Mix/Action/data.js
+

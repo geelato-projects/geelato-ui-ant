@@ -1,4 +1,3 @@
-
 export default {
   treeEntityName: 'platform_dev_project',
   treeEntityPkField: 'id',
@@ -25,22 +24,16 @@ export default {
   }],
   menuItems: [
     {
-      label: '新建',
-      icon: 'plus',
-      children: [
-        {
-          label: '目录',
-          icon: 'folder',
-        },
-        {
-          label: '页面',
-          icon: 'file',
-        },
-        {
-          label: '接口',
-          icon: 'api',
-        }
-      ]
+      label: '新建目录',
+      icon: 'folder',
+    },
+    {
+      label: '新建页面',
+      icon: 'file',
+    },
+    {
+      label: '新建接口',
+      icon: 'api',
     },
     {
       label: '重命名',

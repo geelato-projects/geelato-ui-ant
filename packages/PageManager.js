@@ -74,7 +74,7 @@ function openVue(opener, modalConfig, vueComponent) {
       modalId: id,
       opener: opener,
       body: vueComponent,
-      modalConfig: modalConfig
+      modalConfig: modalConfig,
     }
   })
   modalView.$mount(document.getElementById(id));

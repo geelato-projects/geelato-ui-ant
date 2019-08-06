@@ -1,17 +1,23 @@
 <template>
+  <!--:okText=modalConfig.okText-->
+  <!--:cancelText=modalConfig.cancelText-->
   <a-modal
       :title=modalConfig.title
       :width=modalConfig.width || 520
-      :okText=modalConfig.okText
-      :cancelText=modalConfig.cancelText
       :maskClosable="false"
       :closable="true"
-      v-model="modal2Visible"
-      @ok="onOK"
+      v-model="modalVisible"
+      @ok="ok"
   >
-    <template slot="footer">
-      <!--<a-button key="back" @click="handleCancel">Return</a-button>-->
-      <!--<a-button key="submit" type="primary" :loading="loading" @click="handleOk">-->
+    <template slot="footer" v-if="modalConfig.actions">
+      <a-button v-for="(action,index) in modalConfig.actions"
+                :type="action.type?action.type:defaultBtnType"
+                :size="action.size?action.size:defaultBtnSize"
+                :loading="loading"
+                :key="index"
+                @click="handleAction(action,index)">{{action.text}}
+      </a-button>
+      <!--<a-button key="submit" type="primary"  @click="ok">-->
       <!--Submit-->
       <!--</a-button>-->
     </template>
@@ -25,6 +31,8 @@
 </template>
 
 <script>
+  /* eslint-disable no-unused-vars */
+
   import mixin from '../../mixin'
 
   export default {
@@ -44,6 +52,12 @@
           return {title: '未设置modalConfig'}
         }
       },
+      actions: {
+        type: Array,
+        default() {
+          return []
+        }
+      },
       // 回调事件集合 格式如：{selected:function(data){ // do something }}
       callbackSet: {
         type: Object,
@@ -55,7 +69,10 @@
     data() {
       return {
         isMounted: false,
-        modal2Visible: true
+        modalVisible: true,
+        loading: false,
+        defaultBtnType: 'default',
+        defaultBtnSize: 'default'
       }
     },
     computed: {
@@ -68,8 +85,54 @@
       }
     },
     methods: {
-      onOK() {
-        this.modal2Visible = false
+      handleAction(action, index) {
+        let that = this
+        that.loading = true
+        // 解析 action
+        console.log('handleAction > index: ', index, ' action: ', action)
+        doAction(action)
+        that.loading = false
+
+        function doAction(action) {
+          if (typeof action !== 'object' || !action.fn) {
+            console.log('Invalid action: ', action)
+            return
+          }
+          let content = Object.values(that.$refs.content.$refs)[0]
+          let ctx = undefined
+          if (action.ctx === 'opener') {
+            ctx = that.opener
+          } else if (action.ctx === 'modal') {
+            ctx = that
+          } else {
+            ctx = content
+          }
+
+          let promise = ctx[action.fn](action.params, content)
+          if (promise && typeof promise.then === 'function') {
+            promise.then(function (data) {
+              doAction(action.then)
+            }).catch(function (data) {
+              doAction(action.fail)
+            })
+          } else {
+            doAction(action.then)
+            // console.log('ctx[action.fn](action.params) > promise: ', promise)
+            // console.log('ctx[action.fn](action.params) > action.then: ', action.then)
+            // console.log('ctx[action.fn](action.params) > action.fail: ', action.fail)
+          }
+        }
+      },
+      ok() {
+        this.loading = true
+        this.modalVisible = false
+        this.loading = false
+      },
+      cancel() {
+        this.modalVisible = false
+      },
+      close() {
+        this.cancel()
       }
     }
   }

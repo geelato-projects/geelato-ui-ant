@@ -1,3 +1,4 @@
+<!--TODO 表单字段需要保存空值-->
 <template>
   <div>
     <a-alert :showIcon="true" message="验证出错" type="error" v-if="Object.keys(errorItems).length>0">
@@ -268,6 +269,9 @@
             console.error('找不到配置property:', key, that.properties)
           }
         }
+      },
+      save() {
+        return this.$api.saveByGql('', this.getGql())
       },
       getValues(withEmpty = false) {
         let newForm = {}

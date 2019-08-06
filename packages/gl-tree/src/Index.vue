@@ -32,6 +32,7 @@
           <a-sub-menu v-else :key="index">
             <span slot="title" class="gl-context-menu-item"><a-icon
                 :type="menuItem.icon"/><span>{{menuItem.label}}</span></span>
+            <!-- TODO onContextMenuItemClick不生效？-->
             <a-menu-item v-for="(subMenuItem,subIndex) in menuItem.children"
                          @click="onContextMenuItemClick(subMenuItem,subIndex)" :key="subIndex"
                          class="gl-context-menu-item">
@@ -181,6 +182,9 @@
         contextMenuTarget: null,
         gData: this.treeData
       }
+    },
+    mounted(){
+
     },
     methods: {
       onSelect(selectedKeys, info) {

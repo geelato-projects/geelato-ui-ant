@@ -123,8 +123,10 @@ function save(entityName, keyValues, biz, successMsg, errorMsg) {
  * @returns {*}
  */
 function saveByGql(biz, gql) {
+  let path = Array.isArray(gql) ? url.apiMetaSave : url.apiMetaSave
+  let bizCode = biz || '0'
   return service({
-    url: Array.isArray(gql) ? url.apiMetaSave : url.apiMetaSave,
+    url: path + '/' + bizCode,
     method: 'POST',
     data: gql
   })
