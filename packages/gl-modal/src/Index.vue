@@ -93,7 +93,7 @@
         doAction(action)
         that.loading = false
 
-        function doAction(action) {
+        function doAction(action, data) {
           if (typeof action !== 'object' || !action.fn) {
             console.log('Invalid action: ', action)
             return
@@ -108,12 +108,12 @@
             ctx = content
           }
 
-          let promise = ctx[action.fn](action.params, content)
+          let promise = ctx[action.fn](action.params, data, content)
           if (promise && typeof promise.then === 'function') {
             promise.then(function (data) {
-              doAction(action.then)
+              doAction(action.then, data)
             }).catch(function (data) {
-              doAction(action.fail)
+              doAction(action.fail, data)
             })
           } else {
             doAction(action.then)

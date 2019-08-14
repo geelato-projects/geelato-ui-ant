@@ -21,11 +21,12 @@ export default {
       ctx: 'content',
       params: {},
       then: {
-        fn: 'close',
-        ctx: 'modal',
-        params: {},
-        then: {},
-        fail: {}
+        fn: 'onSave',
+        ctx: 'opener',
+        then: {
+          fn: 'close',
+          ctx: 'modal'
+        }
       }
     }, {
       fn: 'close',
@@ -35,7 +36,7 @@ export default {
       fn: 'openerFnExample',
       text: '回调',
       ctx: 'opener',
-      params: {info:'$ctx.$form.id'},
+      params: {info: '$ctx.$form.id'},
       then: {
         fn: 'close',
         ctx: 'modal',

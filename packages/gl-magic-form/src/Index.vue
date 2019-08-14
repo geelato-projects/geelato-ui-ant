@@ -273,6 +273,10 @@
       save() {
         return this.$api.saveByGql('', this.getGql())
       },
+      getValue(propertyName) {
+        let values = this.getValues()
+        return values ? values[propertyName] : ''
+      },
       getValues(withEmpty = false) {
         let newForm = {}
         if (withEmpty) {

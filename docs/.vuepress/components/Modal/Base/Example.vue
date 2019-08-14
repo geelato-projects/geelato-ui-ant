@@ -30,11 +30,14 @@
       openDynamicPage() {
         this.$pageManager.openModal(this, data.dynamicPageConfig)
       },
-      openerFnExample(params, data) {
+      onSave(params, data, content) {
+        this.callbackParams = params
+        this.callbackData = data
+      },
+      openerFnExample(params, data, content) {
         this.$message.info('这是回调opener的示例。')
         this.callbackParams = params
-        console.log('data>', data)
-        this.callbackData = typeof data.getValues === 'function' ? data.getValues() : ''
+        this.callbackData = typeof content.getValue === 'function' ? content.getValue('name') : ''
 
       }
     }
