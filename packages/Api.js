@@ -195,9 +195,9 @@ function entityDataReaderResultHandler(res, resultMapping = {}) {
       resultSet.resultMapping[key] = key
     }
   }
-  console.log('api > entityDataReaderResultHandler > resColumns: ', resColumns)
-  console.log('api > entityDataReaderResultHandler > resultMapping: ', resultMapping)
-  console.log('api > entityDataReaderResultHandler > toStatMappingItems: ', toStatMappingItems)
+  console.log('packages > Api.js > entityDataReaderResultHandler() > resColumns: ', resColumns)
+  console.log('packages > Api.js > entityDataReaderResultHandler() > resultMapping: ', resultMapping)
+  console.log('packages > Api.js > entityDataReaderResultHandler() > toStatMappingItems: ', toStatMappingItems)
 
   // 如增加静态的列，列值格式化、列值组合;重命名列(在原有列的基础上增加重命名的列)等
   for (let i in res.data.data) {
@@ -212,7 +212,7 @@ function entityDataReaderResultHandler(res, resultMapping = {}) {
     }
   }
   resultSet.data = res.data.data
-  console.log('api > entityDataReaderResultHandler > data: ', res.data.data)
+  console.log('packages > Api.js > entityDataReaderResultHandler() > data: ', res.data.data)
   return resultSet
 }
 
@@ -251,6 +251,7 @@ function queryList(path, data) {
   })
 }
 
+
 // config.headers['Access-Control-Allow-Origin'] = '*'
 // config.headers['Access-Control-Allow-Methods'] = 'PUT,POST,GET,DELETE,OPTIONS'
 // config.headers['Access-Control-Allow-Headers'] = 'X-Requested-With,Content-Type'
@@ -284,6 +285,9 @@ function ApiHelper(options) {
 
   if (options && options.url) {
     url = options.url
+  }
+  if (options && typeof options.interceptors === 'function') {
+    options.interceptors(service)
   }
 
   return {

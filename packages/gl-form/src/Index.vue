@@ -179,13 +179,13 @@
 
     },
     mounted: function () {
-      console.log('gl-form > Index > opts:', this.opts)
-      console.log('gl-form > Index > query:', this.query)
+      console.log('packages > gl-form > Index.vue > opts:', this.opts)
+      console.log('packages > gl-form > Index.vue > query:', this.query)
       this.reset(this.opts)
     },
     watch: {
       'query.treeNodeId': function (val, oval) {
-        console.log('gl-form > Index > query > treeNodeId > oval : ', oval, ', val: ', val)
+        console.log('packages > gl-form > Index.vue > query > treeNodeId > oval : ', oval, ', val: ', val)
         this.reset(this.opts)
       }
     },
@@ -245,7 +245,7 @@
                 let dependPropertyName = item.substring(item.lastIndexOf('.') + 1)
                 thisVue.dsBeDependentOn[dependPropertyName] = thisVue.dsBeDependentOn[dependPropertyName] || []
                 thisVue.dsBeDependentOn[dependPropertyName].push(propertyName)
-                console.log('dependPropertyName>', dependPropertyName, propertyName, thisVue.dsBeDependentOn)
+                console.log('packages > gl-form > Index.vue > dependPropertyName: ', dependPropertyName, propertyName, thisVue.dsBeDependentOn)
               })
             }
           }
@@ -256,8 +256,8 @@
       loadInitData() {
         // 加载主实体数据
         let theVue = this
-        console.log('gl-form > Index > loadInitData > query:', theVue.query)
-        console.log('gl-form > Index > loadInitData > queryFields:', theVue.queryFields)
+        console.log('packages > gl-form > Index.vue > loadInitData > query:', theVue.query)
+        console.log('packages > gl-form > Index.vue > loadInitData > queryFields:', theVue.queryFields)
         // 一般地，若未指定queryFields，则condition 为{id: theVue.form.id}
         let condition = {}
         let isValidCondition = false
@@ -267,7 +267,7 @@
           if (condition[field]) {
             isValidCondition = true
           } else {
-            console.debug('gl-form > Index > loadInitData > 缺少参数值，无效的查询条件信息（field: ', field, '，condition[field]: ', condition[field], '）。')
+            console.debug('packages > gl-form > Index.vue > loadInitData > 缺少参数值，无效的查询条件信息（field: ', field, '，condition[field]: ', condition[field], '）。')
           }
         }
         if (isValidCondition && this.api.query) {
@@ -308,10 +308,10 @@
         // $(this.$el).form({
         //   fields: this.properties,
         //   onFailure: function (formErrors, fields) {
-        //     console.log('gl-form > Index > onFailure > fields: ', fields, ' formErrors:', formErrors)
+        //     console.log('packages > gl-form > Index.vue > onFailure > fields: ', fields, ' formErrors:', formErrors)
         //   },
         //   onSuccess: function (event, fields) {
-        //     console.log('gl-form > Index > onSuccess > fields:', fields)
+        //     console.log('packages > gl-form > Index.vue > onSuccess > fields:', fields)
         //   }
         // })
       },
@@ -334,7 +334,7 @@
        * @returns {boolean}
        */
       autoRun(property) {
-        // console.log('gl-form > Index > autoRun > js: ', property.js)
+        // console.log('packages > gl-form > Index.vue > autoRun > js: ', property.js)
         if (property.js && typeof property.js === 'string') {
           this.rungs(property.js)
         }
@@ -352,7 +352,7 @@
        *  layout.hidden中指定的属性需hide
        */
       isHidden(propertyName) {
-        // console.log('gl-form > Index > isHidden > propertyName: ', propertyName)
+        // console.log('packages > gl-form > Index.vue > isHidden > propertyName: ', propertyName)
         if (this.layout.hidden && this.layout.hidden.common) {
           let js = this.layout.hidden.common[propertyName]
           return js ? this.rungs(js) : false
@@ -366,7 +366,7 @@
       setValues(form) {
         // this.reset(this.opts)
         for (let key in form) {
-          // console.log('gl-form > Index > setValues > key,value: ', key, form[key])
+          // console.log('packages > gl-form > Index.vue > setValues > key,value: ', key, form[key])
           this.$set(this.form, key, form[key])
         }
         // this.reset(this.opts)
@@ -382,7 +382,7 @@
         // 找出顶层的实体信息
         let thisVue = this
         let theForm = thisVue.getValues()
-        console.log('gl-form > Index > getGql > form: ', theForm)
+        console.log('packages > gl-form > Index.vue > getGql > form: ', theForm)
         let gql = {}
         genGql(gql, this.defaultEntity, this.properties)
 
@@ -496,7 +496,7 @@
       validate() {
         // this.initUI()
         // let result = $(this.$el).form('validate form')
-        // console.log('gl-form > Index > validate > result: ', result)
+        // console.log('packages > gl-form > Index.vue > validate > result: ', result)
         // let isSuccess = result.get(0).className.indexOf('error') === -1
         // return {code: isSuccess ? 0 : -1, isSuccess: isSuccess, result: result}
       },
@@ -600,7 +600,7 @@
 
       },
       copyTips(tips) {
-        console.log('gl-form > Index > copyTips > tips: ', tips)
+        console.log('packages > gl-form > Index.vue > copyTips > tips: ', tips)
         // this.$copyText(tips).then(function () {
         // })
       }

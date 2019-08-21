@@ -2,6 +2,7 @@
   <div>
     <button @click="openStaticPage">打开静态页面</button>
     <button @click="openDynamicPage">打开动态页面</button>
+    <button @click="openListPage">打开列表页面</button>
     <div v-if="callbackParams">
       回调回写参数：{{callbackParams}}
     </div>
@@ -25,10 +26,13 @@
     },
     methods: {
       openStaticPage() {
-        this.$pageManager.openModal(this, data.staticPageConfig)
+        this.$gl.ui.openModal(this, data.staticPageConfig)
       },
       openDynamicPage() {
-        this.$pageManager.openModal(this, data.dynamicPageConfig)
+        this.$gl.ui.openModal(this, data.dynamicPageConfig)
+      },
+      openListPage() {
+        this.$gl.ui.openModal(this, data.staticListPageConfig)
       },
       onSave(params, data, content) {
         this.callbackParams = params
@@ -38,7 +42,11 @@
         this.$message.info('这是回调opener的示例。')
         this.callbackParams = params
         this.callbackData = typeof content.getValue === 'function' ? content.getValue('name') : ''
-
+      },
+      openerFnExampleByContent(params, data, content) {
+        this.$message.info('这是由Modal的内容直接触发的事件。')
+        this.callbackParams = params
+        this.callbackData = data
       }
     }
   }

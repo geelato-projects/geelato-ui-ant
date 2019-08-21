@@ -1,6 +1,7 @@
 <template>
   <div>
-    <gl-list v-bind="config"></gl-list>
+    <div>{{selectedItem?selectedItem:'No data.'}}</div>
+    <gl-list v-bind="config" @selectItem="(item)=>{selectedItem = item}"></gl-list>
   </div>
 </template>
 <script>
@@ -10,7 +11,8 @@
     components: {},
     data() {
       return {
-        config: data
+        config: data,
+        selectedItem: ''
       }
 
     },

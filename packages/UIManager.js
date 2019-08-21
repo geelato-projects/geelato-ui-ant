@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import utils from './utils'
 
-let TheVue
+let globalVue
 
 function loadComponent(component) {
   if (typeof component === 'string' && component.startsWith('/')) {
@@ -26,24 +26,12 @@ function loadComponent(component) {
   }
 }
 
-// modalConfig.body.component的值是程序包组件地址，或组件对象
+/**
+ * @param opener
+ * @param modalConfig  modalConfig.body.component的值是程序包组件地址，或组件对象
+ * @returns {*}
+ */
 function openStaticPage(opener, modalConfig) {
-  // // console.log('modalConfig.body.component>', typeof modalConfig.body.component)
-  // if (typeof modalConfig.body.component === 'string' && modalConfig.body.component.startsWith('/')) {
-  //   // base on url
-  //   let vuePath = modalConfig.body.component
-  //   let path = modalConfig.body.component.indexOf('.vue') > 0 ? vuePath : vuePath + '.vue'
-  //   path = path.replace('/@/', '').substring(1)
-  //   // path = './views/aa/bb/cc.vue'
-  //   console.log('PageManager > openPage > path: ', path)
-  //   // fixed :webpack 打包报 Cyclic dependency，
-  //   // 出错的写法： let vueComponent = resolve => require(['.' + path], resolve)
-  //   let vueComponent = (resolve) => (require['./' + path], resolve)
-  //   return openVue(opener, modalConfig, vueComponent)
-  // } else if (typeof modalConfig.body.component === 'object') {
-  //   // base on component
-  //   return openVue(opener, modalConfig, modalConfig.body.component)
-  // }
   return openVue(opener, modalConfig, loadComponent(modalConfig.body.component))
 }
 
@@ -59,16 +47,15 @@ function openDynamicPage(opener, modalConfig) {
  * @param vueData
  */
 function openVue(opener, modalConfig, vueComponent) {
-  console.log('geelato > openVue > opener >', opener)
-  console.log('geelato > openVue > modalBody >', vueComponent)
-  console.log('geelato > openVue > modalConfig >', modalConfig)
-
+  // console.log('geelato > openVue > opener >', opener)
+  // console.log('geelato > openVue > modalBody >', vueComponent)
+  // console.log('geelato > openVue > modalConfig >', modalConfig)
   let id = utils.uuid(16)
   let el = document.createElement('div')
   el.setAttribute('id', id)
   document.getElementById('app').appendChild(el)
-  const GlModal = TheVue.component('gl-modal')
-  console.log('PageManger > GlModal>', GlModal)
+  const GlModal = globalVue.component('gl-modal')
+  // console.log('PageManger > GlModal>', GlModal)
   let modalView = new GlModal({
     propsData: {
       modalId: id,
@@ -83,14 +70,14 @@ function openVue(opener, modalConfig, vueComponent) {
   return modalView
 }
 
-export default class PageManager {
+export default class UIManager {
 
   constructor(Vue) {
-    TheVue = Vue
+    globalVue = Vue
   }
 
-  setModal(Vue) {
-    TheVue = Vue
+  setGlobalVue(Vue) {
+    globalVue = Vue
   }
 
   /**

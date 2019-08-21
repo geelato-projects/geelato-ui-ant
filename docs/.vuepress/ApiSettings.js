@@ -1,14 +1,19 @@
 import Vue from 'vue'
 import notification from 'ant-design-vue/es/notification'
 
-class ApiHelper {
+export default class ApiSettings {
+
+  constructor(options) {
+    this.options = {}
+    Object.assign(this.options, options)
+  }
 
   interceptors(axios) {
     const service = axios
 
     const err = (error) => {
       if (error.response) {
-        console.log('requestPlus > error.response :', error.response)
+        console.log('.vuepress > apiHelper.js > interceptors() > error.response: ', error.response)
         error.response.data = builder('', error.response.data, error.response.status)
         const data = error.response.data
         const token = Vue.ls.get(ACCESS_TOKEN)
@@ -18,7 +23,7 @@ class ApiHelper {
             description: data.message
           })
         }
-        if (error.response.status === 401 && !(data.result && isLogin(error.response))) {
+        if (error.response.status === 401 && !(data.result && isLoginRes(error.response))) {
           notification.error({
             message: 'Unauthorized',
             description: 'Authorization verification failed'
@@ -35,7 +40,7 @@ class ApiHelper {
       return Promise.reject(error)
     }
 
-    console.log('service.interceptors>', service.defaults)
+    console.log('.vuepress > apiHelper.js > interceptors() > service.defaults: ', service.defaults)
 
 // request interceptor
     service.interceptors.request.use(config => {
@@ -56,23 +61,17 @@ class ApiHelper {
       // service.defaults.headers.post['Content-Type'] = 'application/json';
       // service.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
-      console.log('config>', config)
+      console.log('.vuepress > apiHelper.js > interceptors() > config: ', config)
       return config
     }, err)
 
-// response interceptor
+    // response interceptor
     service.interceptors.response.use((response) => {
-      console.log('requestPlus > response :', response)
+      console.log('.vuepress > apiHelper.js > interceptors() > response: ', response)
       // 处理response.data，若该格式为ApiResult，则转换格式
       if (response.data) {
-        // response.data 的格式：{
-        //   msg:'',
-        //   code: '',
-        //   data:{},
-        //   meta:{} // 可选
-        // }
-        if ('msg' in response.data && 'code' in response.data && 'data' in response.data) {
-          if (isLogin(response)) {
+        if (isApiResult(response)) {
+          if (isLoginRes(response)) {
             const user = response.data.data
             return builder({
               'id': user.id,
@@ -98,26 +97,36 @@ class ApiHelper {
             res.pageNo = parseInt(response.data.page)
             res.totalPage = parseInt(response.data.total)
             res.totalCount = parseInt(response.data.dataSize)
-            console.log('res >', res)
+            console.log('.vuepress > apiHelper.js > interceptors() > res: ', res)
             return res
           } else {
             return builder(response.data.data, response.data.msg, parseInt(response.data.code))
           }
         }
-        if (isLogout(response)) {
+        if (isLogoutRes(response)) {
           return builder({}, '注销成功')
         }
       }
       return response.data
     }, err)
 
-    const isLogin = function (response) {
+    const isLoginRes = function (response) {
       return response.request.responseURL.indexOf('sys/auth/loginSecurity') !== -1
     }
-    const isLogout = function (response) {
+    const isLogoutRes = function (response) {
       return response.request.responseURL.indexOf('sys/auth/logout') !== -1
     }
-// 是否为分页列表数据
+    // 是否为ApiResult格式
+    const isApiResult = function (response) {
+      // response.data 的格式：{
+      //   msg:'',
+      //   code: '',
+      //   data:{},
+      //   meta:{} // 可选
+      // }
+      return 'msg' in response.data && 'code' in response.data && 'data' in response.data
+    }
+    // 是否为分页列表数据
     const isPageResult = function (response) {
       return 'page' in response.data && 'size' in response.data && 'total' in response.data
     }
@@ -143,9 +152,6 @@ class ApiHelper {
       responseBody.timestamp = new Date().getTime()
       return responseBody
     }
-
     return service
   }
 }
-
-export default new ApiHelper()

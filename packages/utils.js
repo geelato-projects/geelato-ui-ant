@@ -206,18 +206,20 @@ utils.compileString = function (expression, $ctx) {
 utils.eval = function (expression, $ctx, ctxName = '$ctx') {
   // console.log('utils > expression: ', expression)
   // console.log('utils > $ctx: ', $ctx)
+  let $utils = utils
+  let utilsName = '$utils'
   let Fn = Function
   let str = utils.trim(expression)
   let index = str.indexOf(';')
   if (index === -1 || index === str.length - 1) {
     // 单语句
-    return new Fn(ctxName, 'return ' + expression)($ctx)
+    return new Fn(ctxName, utilsName, 'return ' + expression)($ctx, $utils)
   } else {
     // 多语句
     let strAry = str.split(';')
     let lastStr = strAry.pop();
     let preStr = strAry.join(';')
-    return new Fn(ctxName, preStr + '; return ' + lastStr)($ctx)
+    return new Fn(ctxName, utilsName, preStr + '; return ' + lastStr)($ctx, $utils)
   }
 }
 
@@ -384,6 +386,45 @@ utils.listToTree = function (data, pid) {
 utils.sleep = function (time) {
   return new Promise((resolve) => setTimeout(resolve, time));
 }
+
+/**
+ *
+ * @param d 需格式化的日期，可为数值或字符串或日期对象
+ * @param formatString 日期格式
+ * @returns {*}
+ */
+utils.dateFormat = function (d, formatString) {
+  let date = undefined
+  let fmt = formatString
+  if (typeof d === 'string') {
+    date = new Date(parseInt(d))
+  } else if (typeof d === 'number') {
+    date = new Date()
+  } else if (typeof d === 'object') {
+    date = d
+  } else {
+    console.error('输入格式不对，应为日期数值或字符串，或日期对象')
+  }
+  let o = {
+    "M+": date.getMonth() + 1,  // 月份
+    "d+": date.getDate(),  // 日
+    "h+": date.getHours(), // 小时
+    "m+": date.getMinutes(), // 分
+    "s+": date.getSeconds(), // 秒
+    "q+": Math.floor((date.getMonth() + 3) / 3), // 季度
+    "S": date.getMilliseconds() // 毫秒
+  }
+  if (/(y+)/.test(fmt)) {
+    fmt = fmt.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
+  }
+  for (let k in o) {
+    if (new RegExp("(" + k + ")").test(fmt)) {
+      fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+    }
+  }
+  return fmt
+}
+
 // utils.CryptoJS = CryptoJS
 // window.utils = utils
 // let content = utils.CryptoJS.enc.Utf8.parse(str)

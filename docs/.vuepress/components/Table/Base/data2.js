@@ -44,27 +44,6 @@ export default {
     }
   },
   toolbar: {
-    // actions2: [{
-    //   text: '创建',
-    //   icon: 'plus',
-    //   type: 'primary',
-    //   fn: 'openModal',
-    //   // opener、content、modal、handler，默认为handler
-    //   ctx: '',
-    //   params: {
-    //     title: '编辑用户信息',
-    //     width: '1200px',
-    //     height: '480px',
-    //     okText: '保存',
-    //     cancelText: '取消',
-    //     body: {
-    //       type: 'dynamicPage',
-    //       component: 'pageCodeXX',
-    //       // component: resolve => require(['/components/Form/Base/Example.vue'], resolve),
-    //       opts: FormData
-    //     }
-    //   }
-    // }],
     actions: [
       {
         title: '创建-静态组件',

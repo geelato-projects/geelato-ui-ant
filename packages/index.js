@@ -11,10 +11,13 @@ import GlTable from './gl-table'
 import GlCard from './gl-card'
 import GlCardLayout from './gl-card-layout'
 import STable from './gl-table/src/s-table'
-import PageManager from './PageManager'
+import UIManager from './UIManager'
 import Api from './Api'
+import utils from './utils'
 // import GlContextMenu from '@xunlei/vue-context-menu'
 import './style.css'
+import packageJson from '../package.json'
+
 
 // 存储组件列表
 const components = [
@@ -32,16 +35,23 @@ const components = [
   STable
 ]
 
-let uiApi = new Api()
+
+console.log('packages > index.js > version:', packageJson.name + '-' + packageJson.version)
 // 定义 install 方法，接收 Vue 作为参数。如果使用 use 注册插件，则所有的组件都将被注册
 const install = function (Vue, options) {
   // 判断是否安装
   if (install.installed) return
-  //
-  console.log(' aui options > ', options)
-  Vue.prototype.$pageManager = new PageManager(Vue)
-  Vue.prototype.$api = Vue.prototype.$api || (options && options.api ? new Api(options.api) : uiApi)
 
+  console.log('packages > index.js > install() > options:', options)
+  if (!Vue.prototype.$gl) {
+    Vue.prototype.$gl = {}
+  }
+
+  Vue.prototype.$gl.api = Vue.prototype.$gl.api || options&&options.api?new Api(options.api):new Api()
+  Vue.prototype.$gl.ui = Vue.prototype.$gl.ui || new UIManager(Vue)
+  Vue.prototype.$gl.bus = Vue.prototype.$gl.bus || new Vue()
+  Vue.prototype.$gl.utils = Vue.prototype.$gl.utils || utils
+  Vue.prototype.$gl.globalVue = Vue
   // 遍历注册全局组件
   components.map(component => {
     Vue.component(component.name, component)
@@ -55,16 +65,9 @@ if (typeof window !== 'undefined' && window.Vue) {
   install(window.Vue)
 }
 
-function setApi(api) {
-  uiApi = api || new Api()
-}
-
 export default {
   // 导出的对象必须具有 install，才能被 Vue.use() 方法安装
   install,
-  // 服务端访问api
-  setApi,
-  api: uiApi,
   // 以下是具体的组件列表
   GlPageLoader,
   GlContextMenu,

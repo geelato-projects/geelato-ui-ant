@@ -21,10 +21,12 @@
       <!--Submit-->
       <!--</a-button>-->
     </template>
-    <component ref="content" :componentUpdated="isMounted=true" :is="body"
+    <component ref="$content" :componentUpdated="isMounted=true" :is="body"
                :opts="modalConfig.body.opts"
                :query="modalConfig.body.query"
-               :opener="opener" :modal="thisModal">
+               :opener="opener" :modal="thisModal"
+               @doAction="doActionFromContent"
+    >
       正在加载...
     </component>
   </a-modal>
@@ -77,11 +79,11 @@
     },
     computed: {
       thisModal() {
-        console.log('gl-modal > Index > computed modal: ', this)
+        console.log('packages > gl-modal > Index.vue > thisModal() > this: ', this)
         return this
       },
       content() {
-        return this.$refs.content
+        return this.$refs.$content
       }
     },
     methods: {
@@ -89,38 +91,43 @@
         let that = this
         that.loading = true
         // 解析 action
-        console.log('handleAction > index: ', index, ' action: ', action)
-        doAction(action)
+        console.log('packages > gl-modal > Index.vue > handleAction() > index: ', index, ' action: ', action)
+        that.doAction(action)
         that.loading = false
 
-        function doAction(action, data) {
-          if (typeof action !== 'object' || !action.fn) {
-            console.log('Invalid action: ', action)
-            return
-          }
-          let content = Object.values(that.$refs.content.$refs)[0]
-          let ctx = undefined
-          if (action.ctx === 'opener') {
-            ctx = that.opener
-          } else if (action.ctx === 'modal') {
-            ctx = that
-          } else {
-            ctx = content
-          }
 
-          let promise = ctx[action.fn](action.params, data, content)
-          if (promise && typeof promise.then === 'function') {
-            promise.then(function (data) {
-              doAction(action.then, data)
-            }).catch(function (data) {
-              doAction(action.fail, data)
-            })
-          } else {
-            doAction(action.then)
-            // console.log('ctx[action.fn](action.params) > promise: ', promise)
-            // console.log('ctx[action.fn](action.params) > action.then: ', action.then)
-            // console.log('ctx[action.fn](action.params) > action.fail: ', action.fail)
-          }
+      },
+      doAction(action, data) {
+        let that = this
+        if (!action) {
+          return
+        }
+        if (typeof action !== 'object' || !action.fn) {
+          console.warn('无效的action: ', action)
+          return
+        }
+        let content = Object.values(that.$refs.$content.$refs)[0]
+        let ctx = undefined
+        if (action.ctx === 'opener') {
+          ctx = that.opener
+        } else if (action.ctx === 'modal') {
+          ctx = that
+        } else {
+          ctx = content
+        }
+
+        let promise = ctx[action.fn](action.params, data, content)
+        if (promise && typeof promise.then === 'function') {
+          promise.then(function (data) {
+            that.doAction(action.then, data)
+          }).catch(function (data) {
+            that.doAction(action.fail, data)
+          })
+        } else {
+          that.doAction(action.then)
+          // console.log('ctx[action.fn](action.params) > promise: ', promise)
+          // console.log('ctx[action.fn](action.params) > action.then: ', action.then)
+          // console.log('ctx[action.fn](action.params) > action.fail: ', action.fail)
         }
       },
       ok() {
@@ -133,6 +140,16 @@
       },
       close() {
         this.cancel()
+      },
+      doActionFromContent(data) {
+        // console.log('doActionFromContent: ', data, this.modalConfig.on)
+        for (let index in this.modalConfig.on) {
+          let action = this.modalConfig.on[index]
+          if (action.ctx === 'content' && action.fn === data.fn) {
+            this.doAction(action.then, data)
+            break
+          }
+        }
       }
     }
   }

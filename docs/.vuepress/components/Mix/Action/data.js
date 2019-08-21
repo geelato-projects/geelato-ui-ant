@@ -2,6 +2,8 @@
 export default {
   actions: [{
     text: '保存',
+    icon: 'plus',
+    show: false,
     type: 'primary',
     fn: 'save',
     // opener、content、modal，默认为content

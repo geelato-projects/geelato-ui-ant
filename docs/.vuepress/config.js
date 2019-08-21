@@ -137,14 +137,36 @@ function genSidebarConfig(title) {
       children: [
         '',
         'getting-started',
+        'changelog'
+      ]
+    }, {
+      title: '基础组件',
+      collapsable: true,
+      children: [
         'ui-gl-form',
         'ui-gl-table',
         'ui-gl-list',
         'ui-gl-tree',
         'ui-gl-card',
         'ui-gl-card-layout',
-        'ui-gl-modal',
-        'mix',
+        'ui-gl-modal'
+      ]
+    },
+    {
+      title: '业务组件',
+      collapsable: true,
+      children: [
+        'ui-gl-user-select',
+        'ui-gl-org-select'
+      ]
+    },
+    {
+      title: '综合',
+      collapsable: true,
+      children: [
+        'event',
+        'data',
+        'api'
       ]
     }
   ]

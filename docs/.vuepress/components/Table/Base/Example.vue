@@ -1,5 +1,5 @@
 <template>
-  <gl-table :opts="config.opts" :query="{em:'platform_user'}"></gl-table>
+  <gl-table :opts="config" :query="{em:'platform_user'}"></gl-table>
 </template>
 <script>
   import data from './data.js'
@@ -10,7 +10,6 @@
       return {
         config: data
       }
-
     },
     computed: {},
     created() {

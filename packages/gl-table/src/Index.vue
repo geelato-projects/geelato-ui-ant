@@ -6,6 +6,11 @@
     </div>
 
     <div class="table-operator">
+      <template v-for="(action,index) in opts.toolbar.actions2">
+        <a-button :type="action.type||'primary'" :icon="action.icon" @click="doAction(action,index)"
+                  :key="index" v-if="action.show===undefined||rungs(action.show)">{{action.text||action.title}}
+        </a-button>&nbsp;
+      </template>
       <template v-for="(action,index) in opts.toolbar.actions">
         <a-button :type="action.color||'primary'" :icon="action.icon" @click="onToolbarAction(action,index)"
                   :key="index" v-if="action.show===undefined||rungs(action.show)">{{action.title}}
@@ -85,6 +90,7 @@
   import moment from 'moment'
   import TopQuery from './TopQuery'
   import utils from '../../utils'
+  import ActionHandler from '../../ActionHandler'
 
   // import * as utilPlus from '@/utils/utilPlus'
   // import { getRoleList } from '@/api/manage'
@@ -94,7 +100,6 @@
   // let REGEXP_CTX = /\$ctx/g
   // let REGEXP_DEPEND_PROPERTY = /\$ctx\.[a-zA-Z]+/g
   // let CONST_GQL_PARENT = '$parent'
-
   export default {
     name: 'gl-table',
     components: {
@@ -138,13 +143,12 @@
     computed: {},
     created() {
       this.tableOption()
-      // getRoleList({ t: new Date() })
     },
     methods: {
       // query组件的查询回调，获取查询条件信息，并调用loadData查询数据，并以数据驱动刷新页面
       onQuery(data) {
-        console.log('gl-table > onQuery > data : ', data)
-        this.lastMixQueryData = data.value
+        console.log('packages > gl-table > Index.vue > onQuery > data: ', data)
+        this.lastMixQueryData = data
         // 有e，则是来源于查询操作按钮，需重置后再查询
         if (data.e) {
           this.needResetPagination = true
@@ -159,18 +163,13 @@
       },
       // 加载数据方法 必须为 Promise 对象
       loadData(parameter) {
-        console.log('gl-table > loadData > parameter : ', parameter)
+        console.log('packages > gl-table > Index.vue > loadData > parameter: ', parameter)
         const thisVue = this
         thisVue.parameter = parameter
 
         // 构建列表查询gql
         function genGql(queryData) {
           const root = {}
-          // if (queryData) {
-          //   for (const i in queryData) {
-          //     root[i] = queryData[i]
-          //   }
-          // }
           Object.assign(root, queryData)
           const fsAry = []
           for (const i in thisVue.opts.table.columns) {
@@ -185,7 +184,7 @@
           root['@p'] = parameter.pageNo + ',' + parameter.pageSize
           const gql = {}
           gql[thisVue.opts.entity] = root
-          console.log('gl-table > loadData  > genGql: ', gql)
+          console.log('packages > gl-table > Index.vue > loadData > genGql(): ', gql)
           return gql
         }
 
@@ -194,6 +193,10 @@
         }
 
         return this.api.queryByGql(genGql(this.lastMixQueryData)).then(res => {
+          console.log('packages > gl-table > Index.vue > loadData > res:', res)
+          // let result = res.header?res.data:res
+          // result.pageNo = result.page
+          // result.totalCount = result.taltal
           return res
         })
       },
@@ -228,12 +231,12 @@
 
       },
       onRowAction(action, record) {
-        console.log('gl-table > onRowAction > action:  ', action)
-        console.log('gl-table > onRowAction > record:  ', record)
+        console.log('packages > gl-table > Index.vue > onRowAction() > action:', action)
+        console.log('packages > gl-table > Index.vue > onRowAction() > record:', record)
       },
       onToolbarAction(action) {
-        console.log('gl-table > onToolbarAction > ', action)
-        this.$pageManager.openModal(this, action.modal)
+        console.log('packages > gl-table > Index.vue > onToolbarAction() > action:', action)
+        this.$gl.ui.openModal(this, action.modal)
       },
       onSelectChange(selectedRowKeys, selectedRows) {
         this.selectedRowKeys = selectedRowKeys
@@ -256,7 +259,12 @@
         } else {
           return str
         }
-      },
+      }
+      // ,
+      // doAction(action, data) {
+      //   let actionHandler = new ActionHandler({ui: this.$gl.ui, opener: this})
+      //   return actionHandler.doAction(action, data)
+      // }
     }
   }
 </script>

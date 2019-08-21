@@ -1,6 +1,6 @@
 # geelato-ui-ant
 
-文档与示例见[https://ui.geelato.org/](https://ui.geelato.org/)
+see [https://ui.geelato.org/](https://ui.geelato.org/)
 
 ## Project setup
 ```

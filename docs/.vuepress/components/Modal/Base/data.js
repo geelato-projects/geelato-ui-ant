@@ -1,4 +1,5 @@
 import ProjectCreate from './ProjectCreate'
+import ProjectList from './ProjectList'
 
 export default {
   staticPageConfig: {
@@ -43,6 +44,42 @@ export default {
         params: {},
         then: {},
         fail: {}
+      }
+    }],
+    on: [{
+      fn: 'selectItem',
+      ctx: 'content',
+      then: {
+        fn: 'openerFnExampleByContent',
+        ctx: 'opener'
+      }
+    }]
+  }, staticListPageConfig: {
+    title: '选择项目',
+    width: '1000px',
+    height: '480px',
+    body: {
+      type: 'staticPage',
+      component: ProjectList,
+      opts: {},
+      query: {}
+    },
+    actions: [{
+      fn: 'close',
+      text: '取消',
+      ctx: 'modal'
+    }],
+    // 侦听来之content的事件selectItem
+    on: [{
+      fn: 'selectItem',
+      ctx: 'content',
+      then: {
+        fn: 'openerFnExampleByContent',
+        ctx: 'opener',
+        then: {
+          fn: 'close',
+          ctx: 'modal'
+        }
       }
     }]
   },

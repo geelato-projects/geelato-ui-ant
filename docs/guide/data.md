@@ -1,8 +1,7 @@
-# mix
+# 数据
 
 ## entity-data-reader
 组件的实体数据源，可声明查询实体字段（列），返回结果字段（列）处理，可用于绑定查询列表、绑定表单实体查询。
-
 
 ### 定义
 <<< @/packages/EntityDataReader.js
@@ -30,9 +29,3 @@ export default {
 }
 
 ```
-
-## action
-事件操作，对应一个按钮或链接。
-
-<<< @/docs/.vuepress/components/Mix/Action/data.js
-

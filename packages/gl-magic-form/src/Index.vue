@@ -129,8 +129,8 @@
       loadInitData() {
         // 加载主实体数据
         let that = this
-        // console.log('gl-magic-form > Index > loadInitData > query:', that.query)
-        // console.log('gl-magic-form > Index > loadInitData > queryFields:', that.queryFields)
+        // console.log('packages > gl-magic-form > Index.vue >loadInitData() > query:', that.query)
+        // console.log('packages > gl-magic-form > Index.vue >loadInitData() > queryFields:', that.queryFields)
         // 一般地，若未指定queryFields，则condition 为{id: that.form.id}
         let condition = {}
         let isValidCondition = false
@@ -140,7 +140,7 @@
           if (condition[field]) {
             isValidCondition = true
           } else {
-            console.error('gl-magic-form > Index > loadInitData > 无效的查询参数信息，字段field:\'' + field + '\'，查询条件condition[field]:', condition[field] || '空', '。')
+            console.log('packages > gl-magic-form > Index.vue > loadInitData() > 无效的查询参数信息，字段field:\'' + field + '\'，查询条件condition[field]:', condition[field] || '空', '。')
           }
         }
         if (isValidCondition) {
@@ -210,7 +210,7 @@
        * 级联加载数据
        * */
       onLoadRefData({property, propertyName}) {
-        console.log('gl-magic-form > loadRefData', {property, propertyName})
+        console.log('packages > gl-magic-form > Index.vue > loadRefData:', {property, propertyName})
         let that = this
         let propertyNames = that.dsBeDependentOn[propertyName || property.field] || []
         propertyNames.forEach(function (item) {
@@ -271,7 +271,7 @@
         }
       },
       save() {
-        return this.$api.saveByGql('', this.getGql())
+        return this.$gl.api.saveByGql('', this.getGql())
       },
       getValue(propertyName) {
         let values = this.getValues()
@@ -296,7 +296,7 @@
         // 找出顶层的实体信息
         let that = this
         let theForm = that.getValues()
-        console.log('gl-magic-form > Index > getGql > form: ', theForm)
+        console.log('packages > gl-magic-form > Index.vue >getGql > form: ', theForm)
         let gql = {}
         genGql(gql, this.defaultEntity, this.properties)
 

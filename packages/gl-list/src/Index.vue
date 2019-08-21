@@ -15,7 +15,7 @@
       <!--<a slot="actions">more</a>-->
       <a-list-item-meta
           :description="resultSet.resultMapping.description?item.description:''">
-        <a slot="title" href="#">{{item.title}}</a>
+        <a slot="title" @click="selectItem(item,index)">{{item.title}}</a>
         <a-avatar v-if="resultSet.resultMapping.avatarUrl" slot="avatar"
                   :src="item.avatarUrl"/>
       </a-list-item-meta>
@@ -103,6 +103,10 @@
             type: String
           }
         }
+      },
+      selectItem(item, index) {
+        console.log('gl-list > Index > selectItem() > item:', item, '  index:', index)
+        this.$emit('doAction', {fn: 'selectItem', item: item, index: index})
       }
     }
   }
