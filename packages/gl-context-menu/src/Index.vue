@@ -6,7 +6,7 @@
 
 <script>
   export default {
-    name: 'gl-context-menu',
+    name: 'GlContextMenu',
     data() {
       return {
         onShow: () => {

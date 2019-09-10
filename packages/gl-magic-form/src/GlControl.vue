@@ -46,7 +46,7 @@
     <template v-else-if="property.control==='select'">
       <!--{{property.value}}-->
       <a-select v-model="model" width="100%"
-                @change='$set(form,getFieldNameByCell(property),$event);loadRefData(property, "")'
+                @change='loadRefData(property, $event)'
                 :ref="getFieldNameByCell(property)"
                 :readOnly="isReadonly(property)" :disabled="property.disabled===true">
         <a-select-option v-for="(selectOption,selectOptionKey) in property.data" :key="selectOptionKey"
@@ -97,7 +97,7 @@
 
 
   export default {
-    name: "gl-control",
+    name: "GlControl",
     props: {
       property: {
         type: Object,
@@ -133,6 +133,8 @@
         deep: true
       }
     },
+    updated() {
+    },
     methods: {
       getValue() {
         return this.model
@@ -151,8 +153,10 @@
       /**
        * 级联加载数据
        * */
-      loadRefData() {
-        console.log('control > loadRefData', this.property)
+      loadRefData(property, value) {
+        // this.$set(this.form, property.field, value);
+        this.$set(this.form, property.identifier, value);
+        // console.log('GLControl.vue > loadRefData() > property,value:', this.property, value)
         this.$emit('loadRefData', {property: this.property})
       },
       /**

@@ -52,20 +52,30 @@ export default {
         return
       }
       if (typeof action !== 'object' || !action.fn) {
-        console.warn('无效的action: ', action)
+        console.warn('packages > mixin.js > doAction > 无效的action: ', action)
         return
       }
-      let content = Object.values(that.$refs.$content.$refs)[0]
+      // let content = Object.values(that.$refs.$content.$refs)[0]
       let ctx = undefined
       if (action.ctx === 'opener') {
         ctx = that.opener
       } else if (action.ctx === 'modal') {
+        ctx = that.modal
+      } else if (action.ctx === 'content') {
+        console.log('that.$refs>', that.$refs)
+        ctx = that.$refs.$content
+      } else if (action.ctx === 'self' || action.ctx === 'this') {
         ctx = that
       } else {
-        ctx = content
+        ctx = $gl.utils.eval(action.ctx)
       }
 
-      let promise = ctx[action.fn](action.params, data, content)
+      if (typeof ctx[action.fn] !== 'function') {
+        console.error('packages > mixin.js > doAction > fail, no fn "' + action.fn + '" in ctx:', ctx)
+        return
+      }
+      let promise = ctx[action.fn](action.params, data)
+      // let promise = ctx[action.fn](action.params, data, content)
       if (promise && typeof promise.then === 'function') {
         promise.then(function (data) {
           that.doAction(action.then, data)
@@ -78,6 +88,13 @@ export default {
         // console.log('ctx[action.fn](action.params) > action.then: ', action.then)
         // console.log('ctx[action.fn](action.params) > action.fail: ', action.fail)
       }
+    },
+    openModal(params, data) {
+      if (!params.body.props) {
+        params.body.props = {}
+      }
+      Object.assign(params.body.props, data)
+      this.$gl.ui.openModal(this, params)
     }
     // loadData(params, dataHandler) {
     //   let entityDataReader = this.entityDataReader

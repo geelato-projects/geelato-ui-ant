@@ -49,7 +49,9 @@
         }
       },
       validate() {
-        this.$refs.magicForm.validate(RegData)
+        this.$refs.magicForm.validate(RegData).then(function (res) {
+        }).catch(function (e) {
+        })
       }
     }
   }

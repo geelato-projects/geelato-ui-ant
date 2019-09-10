@@ -10,7 +10,7 @@
 <script>
 
   export default {
-    name: "gl-label",
+    name: "GlLabel",
     props: {
       /*
       * 若为true，则取property.title的值为作为展示的内容

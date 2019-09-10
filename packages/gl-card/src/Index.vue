@@ -15,7 +15,7 @@
 
 <script>
   export default {
-    name: "gl-card",
+    name: "GlCard",
     props: {
       id: {
         type: String,

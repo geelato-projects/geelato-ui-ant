@@ -18,7 +18,7 @@
 
 <script>
   export default {
-    name: "gl-magic-form-item",
+    name: "GlMagicFormItem",
     props: {
       /**
        * 布局
@@ -51,11 +51,15 @@
       //   deep: true
       // }
     },
+    mounted() {
+    },
+    updated() {
+    },
     methods: {
       getValue() {
 
       },
-      resetProterty(property, key, value) {
+      resetProperty(property, key, value) {
 
       },
       setAsTableContainer(isTableContainer) {

@@ -8,7 +8,7 @@
   import GlCardLayoutItem from './Item'
 
   export default {
-    name: "gl-card-layout",
+    name: "GlCardLayout",
     components: {GlCardLayoutItem},
     props: {
       cardMap: {

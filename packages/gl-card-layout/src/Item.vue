@@ -31,9 +31,8 @@
 
 <script>
   import Vue from 'vue'
-
   export default {
-    name: "gl-card-layout-item",
+    name: "GlCardLayoutItem",
     props: {
       cardMap: {
         type: Object,

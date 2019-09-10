@@ -67,7 +67,7 @@ export default class ApiSettings {
 
     // response interceptor
     service.interceptors.response.use((response) => {
-      console.log('.vuepress > apiHelper.js > interceptors() > response: ', response)
+      console.log('.vuepress > apiHelper.js > interceptors() > before res: ', response)
       // 处理response.data，若该格式为ApiResult，则转换格式
       if (response.data) {
         if (isApiResult(response)) {
@@ -97,7 +97,7 @@ export default class ApiSettings {
             res.pageNo = parseInt(response.data.page)
             res.totalPage = parseInt(response.data.total)
             res.totalCount = parseInt(response.data.dataSize)
-            console.log('.vuepress > apiHelper.js > interceptors() > res: ', res)
+            console.log('.vuepress > apiHelper.js > interceptors() > after res: ', res)
             return res
           } else {
             return builder(response.data.data, response.data.msg, parseInt(response.data.code))

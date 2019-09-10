@@ -6,7 +6,7 @@
 
 <script>
   export default {
-    name: "gl-cell",
+    name: "GlCell",
     props: {
       span: {
         type: Number,

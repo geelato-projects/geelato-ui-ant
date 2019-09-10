@@ -1,4 +1,4 @@
-import formData from '../../Form/Base/data.js'
+import formData from '../../Form/Base/UserFormData.js'
 
 export default {
   id: 'form1',

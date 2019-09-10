@@ -1,5 +1,4 @@
-import FormExample from '../../Form/Base/Example'
-import FormData from '../../Form/Base/data'
+import FormData from '../../Form/Base/UserFormData'
 
 export default {
   title: '用户信息',
@@ -18,9 +17,6 @@ export default {
         {field: 'loginName', title: '账号', cop: 'contains', type: 'string', lop: 'or', placeholder: '登录名'},
         {field: 'description', title: '描述', cop: 'contains', type: 'string', lop: 'and'},
         {field: 'active', title: '激活', cop: 'eq', type: 'boolean', default: true},
-        {field: 'active1', title: '单位', cop: 'eq', type: 'string', default: ''},
-        {field: 'active2', title: '学历', cop: 'eq', type: 'string', default: ''},
-        {field: 'active3', title: '岗位', cop: 'eq', type: 'string', default: ''},
         {
           field: 'birthday',
           title: '生日',
@@ -44,103 +40,91 @@ export default {
     }
   },
   toolbar: {
-    // actions2: [{
-    //   text: '创建',
-    //   icon: 'plus',
-    //   type: 'primary',
-    //   fn: 'openModal',
-    //   // opener、content、modal、handler，默认为handler
-    //   ctx: '',
-    //   params: {
-    //     title: '编辑用户信息',
-    //     width: '1200px',
-    //     height: '480px',
-    //     okText: '保存',
-    //     cancelText: '取消',
-    //     body: {
-    //       type: 'dynamicPage',
-    //       component: 'pageCodeXX',
-    //       // component: resolve => require(['/components/Form/Base/Example.vue'], resolve),
-    //       opts: FormData
-    //     }
-    //   }
-    // }],
-    actions: [
-      {
-        title: '创建-静态组件',
-        icon: 'plus',
-        color: 'primary',
-        // show: true,
-        click: 'modal',
-        modal: {
-          title: '编辑用户信息',
-          width: '1200px',
-          height: '480px',
-          okText: '保存',
-          cancelText: '取消',
-          body: {
-            type: 'staticPage',
-            component: FormExample,
-            // component: resolve => require(['/components/Form/Base/Example.vue'], resolve),
-            opts: {
-              ui: {
-                entityName: 'platform_user',
-                fields: 'id,name,loginName,description',
-                layout: [
-                  [{loginName: [4, 8]}, {name: [4, 8]}],
-                  [{description: [4, 20]}]
-                ],
-                model: {id: '@.id'}
-              }
+    actions: [{
+      text: '创建',
+      icon: 'plus',
+      type: 'primary',
+      fn: 'openModal',
+      // opener、content、modal、handler，默认为handler
+      ctx: 'this',
+      params: {
+        title: '编辑用户信息',
+        width: '1200px',
+        height: '480px',
+        body: {
+          type: 'staticPage',
+          component: 'GlMagicForm',
+          // component: resolve => require(['/components/Form/Base/Example.vue'], resolve),
+          props: {opts: JSON.parse(JSON.stringify(FormData))}
+        },
+        actions: [{
+          text: '保存',
+          type: 'primary',
+          fn: 'save',
+          // opener、content、modal，默认为content
+          ctx: 'content',
+          params: {},
+          then: {
+            fn: 'close',
+            ctx: 'modal',
+            then: {
+              fn: 'refresh',
+              ctx: 'opener'
             }
           }
-        }
-      },
-      {
-        title: '创建-动态组件',
-        icon: 'plus',
-        color: 'primary',
-        // show: true,
-        click: 'modal',
-        modal: {
-          title: '编辑用户信息',
-          width: '1200px',
-          height: '480px',
-          okText: '保存',
-          cancelText: '取消',
-          body: {
-            type: 'dynamicPage',
-            component: 'pageCodeXX',
-            // component: resolve => require(['/components/Form/Base/Example.vue'], resolve),
-            opts: FormData
-          }
-        }
-      },
-      {
-        title: '删除',
-        icon: 'delete',
-        color: 'danger',
-        // show 默认值为 true
-        show: 'gs:$ctx.selectedRowKeys.length > 0',
-        click: 'delete',
-        confirm: '确定删除？',
-        // meta 存扩展信息，可为任何值，具体在ui组件中求解、处理。如，在table组件中batch表示批量操作
-        meta: 'batch'
+        }, {
+          fn: 'close',
+          text: '取消',
+          ctx: 'modal'
+        }]
       }
-      // // 弹出页面提示导出多少条记录
-      // {title: '导出EXCEL', click: 'xls'},
-      // // 弹出页面提示导出多少条记录
-      // {title: '导出PDF', click: 'pdf'},
-      // // 默认打印当前列表，若print需要特殊的内容，可以用自定义javascrpt:;来实现
-      // {title: '打印', click: 'print'}
-    ],
+    }],
     css: {align: 'right'}
   },
   info: '',
   table: {
     // select: {field: 'id', title: '', type: 'checkbox'},
     rowAction: {
-      actions: [
+      actions: [{
+        text: '修改',
+        icon: 'plus',
+        type: 'primary',
+        fn: 'openModal',
+        // opener、content、modal、handler，默认为handler
+        ctx: 'this',
+        params: {
+          title: '编辑用户信息',
+          width: '1200px',
+          height: '480px',
+          body: {
+            type: 'staticPage',
+            component: 'GlMagicForm',
+            // component: resolve => require(['/components/Form/Base/Example.vue'], resolve),
+            props: {opts: JSON.parse(JSON.stringify(FormData))}
+          },
+          actions: [{
+            text: '保存',
+            type: 'primary',
+            fn: 'save',
+            // opener、content、modal，默认为content
+            ctx: 'content',
+            params: {},
+            then: {
+              fn: 'close',
+              ctx: 'modal',
+              then: {
+                fn: 'refresh',
+                ctx: 'opener'
+              }
+            }
+          }, {
+            fn: 'close',
+            text: '取消',
+            ctx: 'modal'
+          }]
+        }
+      }],
+      actions2: [
         {
           title: '修改',
           click: 'modal',
@@ -191,8 +175,8 @@ export default {
       {title: '#', dataIndex: 'id', scopedSlots: {customRender: 'serial'}},
       {title: '名称', dataIndex: 'name', sorter: true},
       {title: '登录名', dataIndex: 'loginName', sorter: true},
-      {title: '手机', dataIndex: 'mobilePhone'},
-      {title: '性别', dataIndex: 'sex', sorter: true, customRender: (text) => text === 0 ? '男' : '女'},
+      {title: '电话', dataIndex: 'telephone'},
+      {title: '性别', dataIndex: 'sex', sorter: true, customRender: (text) => text === 2 ? '保密' : (text === 1 ? '男':'女')},
       {title: '邮箱', dataIndex: 'email'},
       {title: '次序', dataIndex: 'seq', needTotal: true},
       {title: '描述', dataIndex: 'description'},

@@ -4,10 +4,8 @@ import GlContextMenu from './gl-context-menu'
 import GlModal from './gl-modal'
 import GlList from './gl-list'
 import GlTree from './gl-tree'
-import GlForm from './gl-form'
 import GlMagicForm from './gl-magic-form'
 import GlTable from './gl-table'
-// import GlItem from './gl-card-layout/src/Item'
 import GlCard from './gl-card'
 import GlCardLayout from './gl-card-layout'
 import STable from './gl-table/src/s-table'
@@ -27,7 +25,6 @@ const components = [
   GlList,
   GlTree,
   GlMagicForm,
-  GlForm,
   GlTable,
   GlCard,
   // GlItem,
@@ -47,11 +44,18 @@ const install = function (Vue, options) {
     Vue.prototype.$gl = {}
   }
 
-  Vue.prototype.$gl.api = Vue.prototype.$gl.api || options&&options.api?new Api(options.api):new Api()
+  Vue.prototype.$gl.api = Vue.prototype.$gl.api || options && options.api ? new Api(options.api) : new Api()
   Vue.prototype.$gl.ui = Vue.prototype.$gl.ui || new UIManager(Vue)
   Vue.prototype.$gl.bus = Vue.prototype.$gl.bus || new Vue()
   Vue.prototype.$gl.utils = Vue.prototype.$gl.utils || utils
   Vue.prototype.$gl.globalVue = Vue
+
+  if (!window.$gl) {
+    window.$gl = Vue.prototype.$gl
+  } else {
+    console.error('packages > index.js > install() > window.$gl已存在：', window.$gl)
+  }
+
   // 遍历注册全局组件
   components.map(component => {
     Vue.component(component.name, component)
@@ -74,7 +78,6 @@ export default {
   GlModal,
   GlList,
   GlTree,
-  GlForm,
   GlTable,
   GlCard,
   GlCardLayout

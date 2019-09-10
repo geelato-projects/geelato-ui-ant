@@ -53,7 +53,7 @@
 <script>
 
   export default {
-    name: 'gl-tree',
+    name: 'GlTree',
     components: {},
     props: {
       draggable: {

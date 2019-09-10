@@ -1,7 +1,7 @@
 export default {
   type: 'object',
   // 表单可绑定多实体，这是默认第一实体
-  defaultEntity: 'platformUser',
+  defaultEntity: 'platform_user',
   // update|create|read
   state: 'save',
   properties: {
@@ -15,7 +15,7 @@ export default {
       control: 'input',
       title: '登录名',
       rules: {
-        required: true,
+        required: true
       }
     },
     password: {
@@ -34,7 +34,9 @@ export default {
         required: true,
         min: 6,
         confirmed: 'password'
-      }
+      },
+      // 持久化到服务端时，忽略该字段
+      serverIgnore: true
     },
     email: {
       control: 'email',
@@ -44,15 +46,6 @@ export default {
         email: true
       },
       placeholder: 'xxx@xxx.xxx'
-    },
-    age: {
-      control: 'input',
-      title: '年龄',
-      // 值
-      value: '20',
-      rules: {
-        numeric: true
-      }
     },
     avatar: {
       control: 'image',
@@ -64,11 +57,11 @@ export default {
       title: '性别',
       // 若数据是动态生产成，可配置ds，基于ds加载的数据最终会设置到data中
       data: [
-        {text: '保密', value: 'none'},
-        {text: '男', value: 'male'},
-        {text: '女', value: 'female'}
+        {text: '保密', value: 2},
+        {text: '男', value: 1},
+        {text: '女', value: 0}
       ],
-      value: 'none'
+      value: 2
     },
     tel: {
       control: 'input',
@@ -76,7 +69,7 @@ export default {
       // 如果实体的字段名称与tel不一样，或因多实体都存在tel字段，可通过field指定，field未设置时，field:'tel'
       field: 'telephone',
       // 若字段需绑定其它实体，该通过该属性设置
-      entity: 'platformUser',
+      entity: 'platform_user',
       placeholder: '电话号码',
       rules: {
         required: true,
@@ -87,6 +80,7 @@ export default {
     },
     province: {
       control: 'select',
+      field: 'provinceCode',
       title: '省份',
       ds: 'province',
       // 广东省
@@ -95,16 +89,19 @@ export default {
     city: {
       control: 'select',
       title: '城市',
+      field: 'cityCode',
       // 基于数据源，数源名称可自取，如cityDS，不一定需等于本属性名
       ds: 'city',
-      js: "gs:$ctx.form.city=$ctx.form.province",
+      // js: "gs:$ctx.form.city=$ctx.form.province",
       // 当为data设置了数组项之后，默认激活项的索引
       defaultActiveIndex: 0
     },
     enable: {
       control: 'checkbox',
+      field: 'checkState',
       title: '启用',
-      value: true
+      // 采用1、0来代替true、false
+      value: 1
     },
     description: {
       control: 'textarea',

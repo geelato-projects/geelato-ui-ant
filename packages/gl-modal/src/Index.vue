@@ -21,10 +21,9 @@
       <!--Submit-->
       <!--</a-button>-->
     </template>
-    <component ref="$content" :componentUpdated="isMounted=true" :is="body"
-               :opts="modalConfig.body.opts"
-               :query="modalConfig.body.query"
-               :opener="opener" :modal="thisModal"
+    <component ref="$content" :componentUpdated="isMounted=true" :is="bodyComponent"
+               v-bind='modalConfig.body.opts || modalConfig.body.props'
+               :opener="opener" :modal="modal"
                @doAction="doActionFromContent"
     >
       正在加载...
@@ -38,7 +37,7 @@
   import mixin from '../../mixin'
 
   export default {
-    name: "gl-modal",
+    name: "GlModal",
     mixins: [mixin],
     props: {
       modalId: String,
@@ -47,7 +46,7 @@
       },
       // modalHeader:  {title: ''},
       // modalFooter: null,
-      body: [Function, Object],
+      // body: [Function, Object],
       modalConfig: {
         type: Object,
         default() {
@@ -70,6 +69,7 @@
     },
     data() {
       return {
+        bodyComponent: undefined,
         isMounted: false,
         modalVisible: true,
         loading: false,
@@ -78,13 +78,16 @@
       }
     },
     computed: {
-      thisModal() {
-        console.log('packages > gl-modal > Index.vue > thisModal() > this: ', this)
+      modal() {
+        console.log('packages > gl-modal > Index.vue > modal() > this: ', this)
         return this
       },
       content() {
         return this.$refs.$content
       }
+    },
+    mounted() {
+      this.loadComponent(this.modalConfig.body.component)
     },
     methods: {
       handleAction(action, index) {
@@ -94,41 +97,6 @@
         console.log('packages > gl-modal > Index.vue > handleAction() > index: ', index, ' action: ', action)
         that.doAction(action)
         that.loading = false
-
-
-      },
-      doAction(action, data) {
-        let that = this
-        if (!action) {
-          return
-        }
-        if (typeof action !== 'object' || !action.fn) {
-          console.warn('无效的action: ', action)
-          return
-        }
-        let content = Object.values(that.$refs.$content.$refs)[0]
-        let ctx = undefined
-        if (action.ctx === 'opener') {
-          ctx = that.opener
-        } else if (action.ctx === 'modal') {
-          ctx = that
-        } else {
-          ctx = content
-        }
-
-        let promise = ctx[action.fn](action.params, data, content)
-        if (promise && typeof promise.then === 'function') {
-          promise.then(function (data) {
-            that.doAction(action.then, data)
-          }).catch(function (data) {
-            that.doAction(action.fail, data)
-          })
-        } else {
-          that.doAction(action.then)
-          // console.log('ctx[action.fn](action.params) > promise: ', promise)
-          // console.log('ctx[action.fn](action.params) > action.then: ', action.then)
-          // console.log('ctx[action.fn](action.params) > action.fail: ', action.fail)
-        }
       },
       ok() {
         this.loading = true
@@ -149,6 +117,30 @@
             this.doAction(action.then, data)
             break
           }
+        }
+      },
+      /**
+       * 加载内容组件
+       * @param component 全局组件名称、组件对象、组件编码（用于远程加载）
+       */
+      loadComponent(component) {
+        if (typeof component === 'string') {
+          const theComponent = this.$gl.globalVue.component(component)
+          console.log('packages > gl-modal > src  > Index.vue > loadComponent() > theComponent: ', theComponent, 'by componentName:', component)
+          if (theComponent) {
+            this.bodyComponent = theComponent
+          } else {
+            // 基于动态组件名，需从服务端获取组件配置信息
+            let pageCode = component
+            this.$gl.api.queryPageByCode(pageCode).then(function (res) {
+              console.log('packages > gl-modal > src  > Index.vue > loadComponent()  > res', res)
+            })
+          }
+        } else if (typeof component === 'object') {
+          // base on local static component
+          this.bodyComponent = component
+        } else {
+          console.error("packages > gl-modal > src  > Index.vue > loadComponent() > 不支持的组件格式，component: ", component)
         }
       }
     }

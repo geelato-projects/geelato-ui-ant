@@ -166,6 +166,7 @@ function queryPageByCode(pageCode) {
  */
 function entityDataReaderResultHandler(res, resultMapping = {}) {
 
+  console.log('packages > Api.js > entityDataReaderResultHandler() > res: ', res)
   let resultSet = {
     //  依据传入参数resultMapping的定义处理后的数据
     data: [],
@@ -176,8 +177,8 @@ function entityDataReaderResultHandler(res, resultMapping = {}) {
   // 返回结果预处理
   // 获取返回结果的列名
   let resColumns = {}
-  if (res.data.data && res.data.data.length > 0) {
-    let item = res.data.data[0]
+  if (res.data && res.data.length > 0) {
+    let item = res.data[0]
     let resultFieldNameAry = Object.keys(item)
     for (let i in resultFieldNameAry) {
       resColumns[resultFieldNameAry[i]] = resultFieldNameAry[i]
@@ -200,8 +201,8 @@ function entityDataReaderResultHandler(res, resultMapping = {}) {
   console.log('packages > Api.js > entityDataReaderResultHandler() > toStatMappingItems: ', toStatMappingItems)
 
   // 如增加静态的列，列值格式化、列值组合;重命名列(在原有列的基础上增加重命名的列)等
-  for (let i in res.data.data) {
-    let dataItem = res.data.data[i]
+  for (let i in res.data) {
+    let dataItem = res.data[i]
     for (let j in toStatMappingItems) {
       let mappingItem = toStatMappingItems[j]
       if (mappingItem.isRename) {
@@ -211,8 +212,8 @@ function entityDataReaderResultHandler(res, resultMapping = {}) {
       }
     }
   }
-  resultSet.data = res.data.data
-  console.log('packages > Api.js > entityDataReaderResultHandler() > data: ', res.data.data)
+  resultSet.data = res.data
+  console.log('packages > Api.js > entityDataReaderResultHandler() > resultSet: ', resultSet)
   return resultSet
 }
 

@@ -6,16 +6,16 @@
     </div>
 
     <div class="table-operator">
-      <template v-for="(action,index) in opts.toolbar.actions2">
-        <a-button :type="action.type||'primary'" :icon="action.icon" @click="doAction(action,index)"
+      <template v-for="(action,index) in opts.toolbar.actions">
+        <a-button :type="action.type||'primary'" :icon="action.icon" @click="doAction(action,{index:index})"
                   :key="index" v-if="action.show===undefined||rungs(action.show)">{{action.text||action.title}}
         </a-button>&nbsp;
       </template>
-      <template v-for="(action,index) in opts.toolbar.actions">
-        <a-button :type="action.color||'primary'" :icon="action.icon" @click="onToolbarAction(action,index)"
-                  :key="index" v-if="action.show===undefined||rungs(action.show)">{{action.title}}
-        </a-button>&nbsp;
-      </template>
+      <!--<template v-for="(action,index) in opts.toolbar.actions">-->
+      <!--<a-button :type="action.color||'primary'" :icon="action.icon" @click="onToolbarAction(action,index)"-->
+      <!--:key="index" v-if="action.show===undefined||rungs(action.show)">{{action.title}}-->
+      <!--</a-button>&nbsp;-->
+      <!--</template>-->
       <!--<a-button type="primary" icon="plus" @click="handleEdit()">新建</a-button>-->
       <!--<a-dropdown v-action:edit v-if="selectedRowKeys.length > 0">-->
       <!--<a-menu slot="overlay">-->
@@ -53,13 +53,13 @@
       <span slot="action" slot-scope="text, record">
         <template v-if="opts.table.rowAction.actions.length <=2">
           <template v-for="(action,actionIndex) in opts.table.rowAction.actions">
-            <a @click="onRowAction(action,record)" :key="actionIndex">{{action.title}}</a>
-            <a-divider type="vertical" :key="actionIndex"/>
+            <a @click="onRowAction(action,record)" :key="actionIndex">{{action.text}}</a>
+            <a-divider type="vertical" :key="actionIndex" v-if="opts.table.rowAction.actions.length>1"/>
           </template>
         </template>
         <template v-else>
           <template>
-            <a @click="onRowAction(opts.table.rowAction.actions[0],record)">{{opts.table.rowAction.actions[0].title}}</a>
+            <a @click="onRowAction(opts.table.rowAction.actions[0],record)">{{opts.table.rowAction.actions[0].text}}</a>
             <a-divider type="vertical"/>
           </template>
          <a-dropdown>
@@ -101,7 +101,7 @@
   // let REGEXP_DEPEND_PROPERTY = /\$ctx\.[a-zA-Z]+/g
   // let CONST_GQL_PARENT = '$parent'
   export default {
-    name: 'gl-table',
+    name: 'GlTable',
     components: {
       TopQuery
     },
@@ -160,6 +160,9 @@
         // this.loadData(this.parameter)
         this.selectedRowKeys = []
         this.selectedRows = []
+      },
+      refresh() {
+        this.$refs.table.refresh(true)
       },
       // 加载数据方法 必须为 Promise 对象
       loadData(parameter) {
@@ -233,11 +236,12 @@
       onRowAction(action, record) {
         console.log('packages > gl-table > Index.vue > onRowAction() > action:', action)
         console.log('packages > gl-table > Index.vue > onRowAction() > record:', record)
+        this.doAction(action, {query: record})
       },
-      onToolbarAction(action) {
-        console.log('packages > gl-table > Index.vue > onToolbarAction() > action:', action)
-        this.$gl.ui.openModal(this, action.modal)
-      },
+      // onToolbarAction(action) {
+      //   console.log('packages > gl-table > Index.vue > onToolbarAction() > action:', action)
+      //   this.$gl.ui.openModal(this, action.modal)
+      // },
       onSelectChange(selectedRowKeys, selectedRows) {
         this.selectedRowKeys = selectedRowKeys
         this.selectedRows = selectedRows

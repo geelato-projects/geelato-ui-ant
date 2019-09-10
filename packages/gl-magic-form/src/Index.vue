@@ -1,4 +1,3 @@
-<!--TODO 表单字段需要保存空值-->
 <template>
   <div>
     <a-alert :showIcon="true" message="验证出错" type="error" v-if="Object.keys(errorItems).length>0">
@@ -30,12 +29,15 @@
     data() {
       return {
         init: false,
+        // 最终获取的表单数据取，单向，从控件中获取，key为propertyName的名或从query中传入的key（默认为propertyName）
         form: {},
         defaultEntity: this.opts.defaultEntity,
         // 指定查询的字段，默认为按id查询，即为['id']
         queryFields: this.opts.queryFields ? this.opts.queryFields : ['id'],
         layout: this.opts.layout,
         properties: this.opts.properties,
+        // key为field，value为propertyName，包括了field与propertyName一致、不一致的情况
+        fieldPropertyNameMap: {},
         ds: this.opts.ds,
         vars: this.opts.vars,
         // 数据源被依赖，格式为：被依赖的属性:[依赖的属性,依赖的属性...]
@@ -46,13 +48,16 @@
         },
         // 表单验证出错的信息
         errorItems: {},
-        refresh: true
+        refresh: true,
+        validatingCount: 0
       }
     },
     created() {
 
     },
     mounted() {
+      console.log('packages > gl-magic-form > src > Index.vue > mounted() > opts:', this.opts)
+      console.log('packages > gl-magic-form > src > Index.vue > mounted() > query:', this.query)
       this.reset(this.opts)
     },
     methods: {
@@ -61,23 +66,15 @@
           let options = opts
           this.properties = options.properties
           this.layout = options.layout
-          // this.rows = options.rows
           this.defaultEntity = options.defaultEntity
           this.ds = options.ds
           this.vars = options.vars
           this.dsBeDependentOn = {}
-          // this.form = {}
           this.init = false
         }
         this.initConvertData()
         this.loadInitData()
-        // this.initUI()
-
-        // 强行触发重置表单
-        this.refresh = false
-        this.$nextTick(() => {
-          this.refresh = true
-        })
+        // this.forceRefresh()
       },
       /**
        * 1、将简化的配置信息转换成完整的配置信息，如只设置了email类型，则将默认增加email验证规则
@@ -86,26 +83,31 @@
        *  */
       initConvertData() {
         let that = this
-        for (let key in this.properties) {
+        for (let propertyName in this.properties) {
           // 设置一些默认值，添加默认配置等
-          let property = this.properties[key]
+          let property = this.properties[propertyName]
           // identifier 在form对象中的唯一标识
-          property.identifier = key
+          property.identifier = propertyName
           // 未设置实体时，默认为defaultEntity
           property.entity = property.entity || this.defaultEntity
-          property.field = property.field || key
+          property.field = property.field || propertyName
+          that.fieldPropertyNameMap[property.field] = propertyName
           // property.name = property.field
           // !!!需采用vm.$set的方式来设置值，确保值变化可被检测 @see https://cn.vuejs.org/v2/guide/reactivity.html#检测变化的注意事项
           // 若query已存在属性值，则以query的值为准
-          if (that.query && that.query[key]) {
-            that.$set(that.form, key, that.query[key])
+          if (that.query && that.query[propertyName]) {
+            that.$set(that.form, propertyName, that.query[propertyName])
           } else {
-            that.$set(that.form, key, property.value === undefined ? '' : property.value)
+            that.$set(that.form, propertyName, property.value === undefined ? '' : property.value)
           }
           // this.form[key] = property.value === undefined ? '' : property.value
-          // 依据字段类型，自动构建字段验证规则信息，基于semantic ui form validate
-          if (property.control === 'email' && (!property.rules)) {
-            that.properties[key].rules['email'] = true
+          // 依据字段类型，自动构建字段验证规则信息，兼容semantic ui form validate
+          if (property.control === 'email') {
+            if (property.rules) {
+              property.rules['email'] = true
+            } else {
+              property.rules = {email: true}
+            }
           }
         }
         // 3、构建数据源依赖 dsBeDependentOn e.g. {provinceCode: 'gs:$ctx.form.province'}
@@ -144,15 +146,31 @@
           }
         }
         if (isValidCondition) {
-          let fieldNames = utils.joinProperties(that.form)
+          let fieldNameAry = []
+          for (let propertyName in that.properties) {
+            let property = that.properties[propertyName]
+            // 过滤不需要保存到服务端的属性
+            if (property.serverIgnore === true) {
+              continue
+            }
+            fieldNameAry.push(property.field || propertyName)
+          }
+          let fieldNames = fieldNameAry.join(',')
           // console.log('res>', that.defaultEntity, condition, fieldNames)
-          that.api.query(that.defaultEntity, condition, fieldNames, true).then(function (res) {
-            let resForm = res.data.data && res.data.data.length > 0 ? res.data.data[0] : {}
-            for (let key in resForm) {
-              // form需设置成响应式
-              that.$set(that.form, key, resForm[key])
+          that.$gl.api.query(that.defaultEntity, condition, fieldNames, true).then(function (res) {
+            let resForm = res.data && res.data.length > 0 ? res.data[0] : {}
+            for (let field in resForm) {
+              let propertyName = that.fieldPropertyNameMap[field]
+              // 更新表单结果值
+              that.$set(that.form, propertyName, resForm[field])
+              // 更新属性中的值
+              let property = that.properties[that.fieldPropertyNameMap[field]]
+              if (property) {
+                that.$set(property, 'value', resForm[field])
+              }
             }
             that.meta = res.meta
+            that.forceRefresh()
           })
         }
         // 加载属性数据，如下拉列表、字典信息等
@@ -194,30 +212,43 @@
               params[key] = this.rungs(value)
             }
           }
-          that.api.query(dsConfig.entity, params, dsConfig.fields).then(function (res) {
+          that.$gl.api.query(dsConfig.entity, params, dsConfig.fields).then(function (res) {
             let property = that.properties[propertyName]
             // 依据数据源的配置，处理返回的数据结果
-            that.api.resultHandler(res, dsConfig.resultMapping)
-            that.$set(property, 'data', res.data.data)
+            that.$gl.api.resultHandler(res, dsConfig.resultMapping)
+            that.$set(property, 'data', res.data)
             // 触发级联加载数据
-            that.onLoadRefData({propertyName})
+            if (propertyName) {
+              that.onLoadRefData({propertyName})
+            }
           })
         } else {
-          console.error('未配置数据源', dataSourceName)
+          console.error('packages > gl-magic-form > src > Index.vue > loadData() > 未配置数据源', dataSourceName)
         }
       },
       /**
        * 级联加载数据
        * */
       onLoadRefData({property, propertyName}) {
-        console.log('packages > gl-magic-form > Index.vue > loadRefData:', {property, propertyName})
         let that = this
-        let propertyNames = that.dsBeDependentOn[propertyName || property.field] || []
+        // console.log('packages > gl-magic-form > Index.vue > loadRefData() >', {property, propertyName})
+        let propertyNames = that.dsBeDependentOn[propertyName || (property && property.identifier)] || []
         propertyNames.forEach(function (item) {
           let triggerProperty = that.getProperty(item)
           if (triggerProperty) {
             that.loadData(item, triggerProperty, triggerProperty.ds)
           }
+        })
+      },
+      /**
+       * 更新状态，强行触发重置表单
+       * */
+      forceRefresh() {
+        // let that = this
+        this.refresh = false
+        this.$nextTick(() => {
+          this.refresh = true
+          // that.$nextTick()
         })
       },
       /**
@@ -243,35 +274,81 @@
         return this.properties[name]
       },
       validate() {
-
         let that = this
         // 清空错误信息
-        for (let key in that.errorItems) {
-          delete that.errorItems[key]
-        }
+        // for (let key in that.errorItems) {
+        //   delete that.errorItems[key]
+        // }
+        that.errorItems = {}
+        let resultPromiseAry = []
+        let verifyPropertyAry = []
         for (let key in that.form) {
           let value = that.form[key]
           let property = that.properties[key]
           if (property) {
             if (property.rules) {
-              that.$validator.verify(value, property.rules).then(function (result) {
-                if (result.valid === false) {
-                  // 转换errorItems的内容，replace '{field}'为字段名
-                  for (let i in result.errors) {
-                    let errorItem = result.errors[i]
-                    result.errors[i] = errorItem.replace('{field}', property.title)
-                  }
-                  that.$set(that.errorItems, key, result.errors)
-                }
-              })
+              let rules = {}
+              Object.assign(rules, property.rules)
+
+              let verifyOptions = {
+                bails: true,
+                name: property.title,
+                values: {}
+              }
+
+              if (property.rules.confirmed) {
+                let confirmedName = property.rules.confirmed
+                let confirmedProperty = that.properties[confirmedName]
+                rules.confirmed = confirmedProperty.title
+                verifyOptions.values = confirmedName ? {
+                  [confirmedProperty.title]: that.form[confirmedName]
+                } : {}
+              }
+              resultPromiseAry.push(that.$validator.verify(value, rules, verifyOptions))
+              verifyPropertyAry.push(property)
             }
           } else {
-            console.error('找不到配置property:', key, that.properties)
+            console.error('packages > gl-magic-form > src > Index.vue > validate() > 找不到配置property:', key, that.properties)
           }
         }
+
+        let validateInfoPromise = new Promise((resolve, reject) => {
+          Promise.all(resultPromiseAry).then(function (results) {
+            let isFail = false
+            for (let i = 0; i < results.length; i++) {
+              let result = results[i]
+              let property = verifyPropertyAry[i]
+              if (result.valid === false) {
+                that.$set(that.errorItems, property.identifier, result.errors)
+                isFail = true
+              }
+            }
+            if (!isFail) {
+              resolve({isFail})
+            } else {
+              reject({isFail})
+            }
+          })
+        })
+        return validateInfoPromise
       },
       save() {
-        return this.$gl.api.saveByGql('', this.getGql())
+        let that = this
+        return new Promise((resolve, reject) => {
+          this.validate().then(function (validateResult) {
+            let gql = that.getGql()
+            console.log('packages > gl-magic-form > src > Index.vue > save() > gql:', gql)
+            that.$gl.api.saveByGql('', that.getGql()).then(function (res) {
+              console.log('packages > gl-magic-form > src > Index.vue > save() > res:', res)
+              resolve(res)
+            })
+          }).catch(function (e) {
+            // 验证不通过
+            console.log('packages > gl-magic-form > src > Index.vue > save() > validate fail.')
+            console.error('packages > gl-magic-form > src > Index.vue > save() > e: ', e)
+            reject(e)
+          })
+        })
       },
       getValue(propertyName) {
         let values = this.getValues()
@@ -282,16 +359,17 @@
         if (withEmpty) {
           Object.assign(newForm, this.form)
         } else {
-          // 去掉空值
+          // 去掉空值(undefined)
           for (let key in this.form) {
             let value = this.form[key]
-            if (value) {
+            if (value !== undefined) {
               newForm[key] = value
             }
           }
         }
         return newForm
-      },
+      }
+      ,
       getGql() {
         // 找出顶层的实体信息
         let that = this
@@ -309,22 +387,26 @@
           let subEntityNames = []
           for (let propertyName in properties) {
             let property = properties[propertyName]
+            // 过滤不需要保存到服务端的属性
+            if (property.serverIgnore === true) {
+              continue
+            }
             // 转到实体保存时,需取实体的字段名fieldName,而不是配置properties中propertyName
             let fieldName = property.field
-            let field = theForm[propertyName]
-            console.log(property.entity, entityName, property, field)
+            let fieldValue = theForm[propertyName]
+            console.log('packages > gl-magic-form > src > Index.vue > getGql() > ', property.entity, entityName, property, fieldValue)
             if (property.entity === entityName) {
               // 该实体的直属属性，直接添加
               // 获取表单中填写的值
               // boolean类型的值可以转换成数值的方式表示
-              if (typeof field === 'boolean') {
+              if (typeof fieldValue === 'boolean') {
                 if (property.convert === 'number') {
-                  parent[entityName][fieldName] = field ? 1 : 0
+                  parent[entityName][fieldName] = fieldValue ? 1 : 0
                 } else {
-                  parent[entityName][fieldName] = field
+                  parent[entityName][fieldName] = fieldValue
                 }
               } else {
-                parent[entityName][fieldName] = typeof field !== 'string' ? field : field.replace(REGEXP_CTX, CONST_GQL_PARENT)
+                parent[entityName][fieldName] = typeof fieldValue !== 'string' ? fieldValue : fieldValue.replace(REGEXP_CTX, CONST_GQL_PARENT)
               }
               // parent[entityName][propertyName] = typeof property.value !== 'string' ? property.value : property.value.replace(REGEXP_CTX, CONST_GQL_PARENT)
               confirmedProperties[propertyName] = true
@@ -348,7 +430,7 @@
           }
           let dynamicAnalyseProperties = toAnalyseProperties
           subEntityNames.forEach((subEntityName) => {
-            console.log('subEntityNames', subEntityName, subEntityNames, dynamicAnalyseProperties)
+            console.log('packages > gl-magic-form > src > Index.vue > validate() > getGql() > subEntityNames', subEntityName, subEntityNames, dynamicAnalyseProperties)
             dynamicAnalyseProperties = genGql(parent[entityName], subEntityName, dynamicAnalyseProperties, confirmedProperties)
           })
           return toAnalyseProperties
@@ -371,7 +453,7 @@
             dependingPropertyNames.forEach((item) => {
               let dependProperty = that.properties[item.substring(5)]
               if (!dependProperty) {
-                console.error('properties内未配置属性：' + item.substring(5), '，解析依赖：', item, '出错，当前property为：', subEntityProperty)
+                console.error('packages > gl-magic-form > src > Index.vue > getGql() > properties内未配置属性：' + item.substring(5), '，解析依赖：', item, '出错，当前property为：', subEntityProperty)
               } else {
                 // 检查依赖的这个实体dependProperty.entity是否是entityName直属子级实体，是的话才加入
                 let canBeAdd = true
@@ -408,13 +490,15 @@
         }
 
         return gql
-      },
+      }
+      ,
+
       initFormValue() {
 
-      },
+      }
+      ,
       onPropertyUpdate({property, val, oval}) {
         this.$set(this.form, property.identifier, val)
-        // console.log('gl-magic-form > onPropertyUpdate: ', property.identifier, val, oval)
       }
     }
   }

@@ -8,7 +8,7 @@
 
 <script>
   export default {
-    name: "gl-row",
+    name: "GlRow",
     props: {
       type: {
         type: String,

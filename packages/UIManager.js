@@ -4,31 +4,31 @@ import utils from './utils'
 let globalVue
 
 function loadComponent(component) {
-  if (typeof component === 'string' && component.startsWith('/')) {
-    // base on url
-    let vuePath = component
-    let path = component.indexOf('.vue') > 0 ? vuePath : vuePath + '.vue'
-    path = path.replace('/@/', '').replace('/', '')
-    // path = 'aa/bb/cc.vue'
-    console.log('PageManager > loadComponent > path: ', path)
-    // fixed :webpack 打包报 Cyclic dependency，
-    // 出错的写法： let vueComponent = resolve => require(['.' + path], resolve)
-    let vueComponent = (resolve) => (require['./' + path], resolve)
-    return vueComponent
-  } else if (typeof component === 'string' && !component.startsWith('dy-')) {
-    // 基于动态组件名，需从服务端获取组件配置信息
-    return {}
+  if (typeof component === 'string') {
+    const theComponent = globalVue.component(component)
+    console.log('packages > UIManager.js > loadComponent() > theComponent: ', theComponent, 'by componentName:', component)
+    if (theComponent) {
+      return theComponent
+    } else {
+      // 基于动态组件名，需从服务端获取组件配置信息
+      let pageCode = component
+      // $gl.api.queryPageByCode(pageCode).then(function (res) {
+      //
+      // })
+      // TODO
+      return pageCode
+    }
   } else if (typeof component === 'object') {
-    // base on component
+    // base on local static component
     return component
   } else {
-    console.error("PageManger > loadComponent > 不支持的组件格式，component: ", component)
+    console.error("packages > UIManager.js > loadComponent() > 不支持的组件格式，component: ", component)
   }
 }
 
 /**
  * @param opener
- * @param modalConfig  modalConfig.body.component的值是程序包组件地址，或组件对象
+ * @param modalConfig  modalConfig.body.component的值是程序包已注册全局组件名，或组件对象
  * @returns {*}
  */
 function openStaticPage(opener, modalConfig) {
@@ -47,20 +47,20 @@ function openDynamicPage(opener, modalConfig) {
  * @param vueData
  */
 function openVue(opener, modalConfig, vueComponent) {
-  // console.log('geelato > openVue > opener >', opener)
-  // console.log('geelato > openVue > modalBody >', vueComponent)
-  // console.log('geelato > openVue > modalConfig >', modalConfig)
+  console.log('packages > UIManager.js > openVue() > opener >', opener)
+  console.log('packages > UIManager.js > openVue() > modalConfig >', modalConfig)
+  console.log('packages > UIManager.js > openVue() > modalBodyComponent >', vueComponent)
   let id = utils.uuid(16)
   let el = document.createElement('div')
   el.setAttribute('id', id)
   document.getElementById('app').appendChild(el)
-  const GlModal = globalVue.component('gl-modal')
+  const GlModal = globalVue.component('GlModal')
   // console.log('PageManger > GlModal>', GlModal)
   let modalView = new GlModal({
     propsData: {
       modalId: id,
       opener: opener,
-      body: vueComponent,
+      // body: vueComponent,
       modalConfig: modalConfig,
     }
   })
@@ -83,12 +83,9 @@ export default class UIManager {
   /**
    * 打开modal
    * @param opener 打开页面的源vue
-   * @param vuePath src下的绝对路径，可以带.vue的后缀或不带，如'/@/views/xx.vue'、'/@/views/xx'、'/@/components/xx.vue'、'/@/components/xx'
-   * @param vueConfig modalOpts的值 e.g. {title: '', actions: [], padding: '1.5em'}
-   * @param callbackSet 回调事件集合，如：{onSelected:function(){}}
+   * @param modalConfig
    */
-
-  // modal: {
+  // modalConfig: {
   //   title: '编辑用户信息',
   //   width: '1000px',
   //   height: '480px',
@@ -96,9 +93,8 @@ export default class UIManager {
   //   cancelText: '',
   //   body: {
   //     type: 'staticPage',
-  //     component: '/components/gl-form-simple/Index.vue',
+  //     component: 'gl-magic-form',
   //     opts: {
-  //       ui: {
   //         entityName: 'platform_user',
   //         fields: 'id,name,loginName,description',
   //         layout: [
@@ -106,18 +102,17 @@ export default class UIManager {
   //           [{description: [4, 20]}]
   //           ],
   //         model: {id: '@.id'}
-  //       }
   //     }
   //   }
   // }
   openModal(opener, modalConfig) {
-    if (modalConfig.body.type === 'staticPage') {
+    // staticPage is local page
+    if (modalConfig.body.type === 'staticPage' || modalConfig.body.type === 'localPage') {
       return openStaticPage(opener, modalConfig)
     } else {
       // dynamicPage that has a pageCode
       return openDynamicPage(opener, modalConfig)
     }
   }
-
 
 }

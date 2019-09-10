@@ -1,6 +1,5 @@
 <!--
   通用的加载页面，实现动态路由，通过currentView切换页面，并通过opts、query传递属性及查询参数给渲染的页面
-  注意：加载的页面，需存放于本page.vue所在目录下
 -->
 <template>
   <div>
@@ -21,7 +20,7 @@
   import mixin from '../../mixin'
 
   export default {
-    name: 'gl-page-loader',
+    name: 'GlPageLoader',
     mixins: [mixin],
     props: {
       // 模式一 opts:{code:xx,query:xx}，一般用于在modalView打开本vue时，使用
@@ -56,44 +55,44 @@
     },
     methods: {
       getPageConfig() {
-        let thisVue = this
+        let that = this
         this.message = {}
-        thisVue.pageCode = thisVue.opts && thisVue.opts.code ? thisVue.opts.code : thisVue.code
-        thisVue.queryString = thisVue.opts && thisVue.opts.query ? thisVue.opts.query : thisVue.query
-        console.log('gl-page-loader > Index > pageCode:  ', thisVue.pageCode)
-        if (!thisVue.pageCode) {
-          thisVue.$set(thisVue.message, 'header', '加载失败')
-          thisVue.$set(thisVue.message, 'text', 'PageCode为空，无法加载页面配置。')
+        that.pageCode = that.opts && that.opts.code ? that.opts.code : that.code
+        that.queryString = that.opts && that.opts.query ? that.opts.query : that.query
+        console.log('gl-page-loader > Index > pageCode:  ', that.pageCode)
+        if (!that.pageCode) {
+          that.$set(that.message, 'header', '加载失败')
+          that.$set(that.message, 'text', 'PageCode为空，无法加载页面配置。')
           return
         }
         // 注意！！！
         // 先切换到加载页面，若无该切换，操作this.currentView会保留在真正需打开的页面上
         // 若该路由变化且this.currentView require的vue是同一个时，会导致页面不刷新，
         // 就算路由的参数如id等变化也不刷新
-        thisVue.currentView = resolve => require(['./PageLoading.vue'], resolve)
+        that.currentView = resolve => require(['./PageLoading.vue'], resolve)
         // 路由的格式：page/:moduleName/:pageCode?query
-        thisVue.api.getPageCfg(thisVue.pageCode).then((res) => {
+        that.$gl.api.getPageCfg(that.pageCode).then((res) => {
           console.log('gl-page-loader > Index > getPageConfig > res: ', res)
           if (res.code === '0') {
-            console.log('gl-page-loader > Index > pageCfg.component: ', thisVue.pageCfg.component)
+            console.log('gl-page-loader > Index > pageCfg.component: ', that.pageCfg.component)
             if (res.data && res.data.length > 0) {
-              thisVue.pageCfg = JSON.parse(res.data[0].content)
-              if (typeof thisVue.pageCfg.component === 'string') {
-                if (thisVue.pageCfg.component.startsWith('/')) {
-                  console.log('gl-page-loader > Index > loading component: ', '../../' + thisVue.pageCfg.component.substring(1) + '.vue')
+              that.pageCfg = JSON.parse(res.data[0].content)
+              if (typeof that.pageCfg.component === 'string') {
+                if (that.pageCfg.component.startsWith('/')) {
+                  console.log('gl-page-loader > Index > loading component: ', '../../' + that.pageCfg.component.substring(1) + '.vue')
                   // 注意require的写法，这里写成'../'而不是'..'，后者会异常；同时url不能为多于一加号“+”拼接而成，这与require的加载机制有关
                   // componentsPath: 'components/gl-table/Index.vue'
-                  let componentsPath = thisVue.pageCfg.component.substring(1) + '.vue'
-                  thisVue.currentView = resolve => require(['../../' + componentsPath], resolve)
+                  let componentsPath = that.pageCfg.component.substring(1) + '.vue'
+                  that.currentView = resolve => require(['../../' + componentsPath], resolve)
                 } else {
-                  console.error('gl-page-loader > Index > 不支持的component格式: ', thisVue.pageCfg.component, '当前页面配置为：', thisVue.pageCfg)
+                  console.error('gl-page-loader > Index > 不支持的component格式: ', that.pageCfg.component, '当前页面配置为：', that.pageCfg)
                 }
               } else {
-                console.error('gl-page-loader > Index > 不支持的component格式: ', thisVue.pageCfg.component, '当前页面配置为：', thisVue.pageCfg)
+                console.error('gl-page-loader > Index > 不支持的component格式: ', that.pageCfg.component, '当前页面配置为：', that.pageCfg)
               }
             } else {
-              thisVue.$set(thisVue.message, 'header', '加载失败')
-              thisVue.$set(thisVue.message, 'text', '通过pageCode：“' + thisVue.pageCode + '”获取不到页面配置，请确保是否已配置、注册了该页面。')
+              that.$set(that.message, 'header', '加载失败')
+              that.$set(that.message, 'text', '通过pageCode：“' + that.pageCode + '”获取不到页面配置，请确保是否已配置、注册了该页面。')
             }
           } else {
             console.error('gl-page-loader > Index > 返回状态码code不为0。当前返回结果：', res)

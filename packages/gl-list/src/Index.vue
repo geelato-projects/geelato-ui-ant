@@ -28,7 +28,7 @@
   import mixin from '../../mixin'
 
   export default {
-    name: 'gl-list',
+    name: 'GlList',
     mixins: [mixin],
     components: {},
     props: {
@@ -59,8 +59,9 @@
     },
     mounted() {
       this.loadData({}, (res) => {
+        console.log('typeof dataHandler >', res)
         this.loading = false
-        this.allData = res.data.data
+        this.allData = res.data
       })
     },
     methods: {
