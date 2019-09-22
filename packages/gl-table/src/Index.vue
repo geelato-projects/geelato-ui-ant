@@ -1,7 +1,11 @@
+<!--
+  TODO 列内容太长时，没有自动隐藏
+-->
 <template>
-  <div class="gl-table">
+  <div class="gl-table gl-table-as-list">
     <div class="table-page-search-wrapper">
-      <top-query :fields="opts.query.mix.fields" :colPerRow="opts.query.mix.fieldPerRow" :gutter="48"
+      <top-query ref="query" :properties="opts.query.mix.properties" :colPerRow="opts.query.mix.layout.fieldPerRow"
+                 :gutter="48"
                  @input="onQuery"></top-query>
     </div>
 
@@ -11,29 +15,6 @@
                   :key="index" v-if="action.show===undefined||rungs(action.show)">{{action.text||action.title}}
         </a-button>&nbsp;
       </template>
-      <!--<template v-for="(action,index) in opts.toolbar.actions">-->
-      <!--<a-button :type="action.color||'primary'" :icon="action.icon" @click="onToolbarAction(action,index)"-->
-      <!--:key="index" v-if="action.show===undefined||rungs(action.show)">{{action.title}}-->
-      <!--</a-button>&nbsp;-->
-      <!--</template>-->
-      <!--<a-button type="primary" icon="plus" @click="handleEdit()">新建</a-button>-->
-      <!--<a-dropdown v-action:edit v-if="selectedRowKeys.length > 0">-->
-      <!--<a-menu slot="overlay">-->
-      <!--<a-menu-item key="1">-->
-      <!--<a-icon type="delete"/>-->
-      <!--删除-->
-      <!--</a-menu-item>-->
-      <!--&lt;!&ndash; lock | unlock &ndash;&gt;-->
-      <!--<a-menu-item key="2">-->
-      <!--<a-icon type="lock"/>-->
-      <!--锁定-->
-      <!--</a-menu-item>-->
-      <!--</a-menu>-->
-      <!--<a-button style="margin-left: 8px">-->
-      <!--批量操作-->
-      <!--<a-icon type="down"/>-->
-      <!--</a-button>-->
-      <!--</a-dropdown>-->
       <a-button type="dashed" @click="tableOption">{{ optionAlertShow && '关闭' || '开启' }} 提示信息</a-button>
     </div>
 
@@ -46,6 +27,7 @@
         :alert="options.alert"
         :rowSelection="options.rowSelection"
         :pageSize=opts.table.pageSize
+        :showPagination="opts.showPagination"
     >
       <span slot="serial" slot-scope="text, record, index">
         {{ index + 1 }}
@@ -71,12 +53,6 @@
                            :key="actionIndex">
                 <a @click="onRowAction(action,record)">{{action.title}}</a>
               </a-menu-item>
-              <!--<a-menu-item v-if="$auth('table.disable')">-->
-              <!--<a href="javascript:;">禁用</a>-->
-              <!--</a-menu-item>-->
-              <!--<a-menu-item v-if="$auth('table.delete')">-->
-              <!--<a href="javascript:;">删除</a>-->
-              <!--</a-menu-item>-->
             </a-menu>
           </a-dropdown>
         </template>
@@ -91,9 +67,6 @@
   import TopQuery from './TopQuery'
   import utils from '../../utils'
   import ActionHandler from '../../ActionHandler'
-
-  // import * as utilPlus from '@/utils/utilPlus'
-  // import { getRoleList } from '@/api/manage'
 
   let GEELATO_SCRIPT_PREFIX = 'gs:'
   // let REGEXP_FORM = /gs[\s]*:[\s]*\$ctx\.form\.[a-zA-Z]+[a-zA-Z0-9]*/g;
@@ -144,11 +117,14 @@
     created() {
       this.tableOption()
     },
+    mounted(){
+      this.refresh()
+    },
     methods: {
       // query组件的查询回调，获取查询条件信息，并调用loadData查询数据，并以数据驱动刷新页面
       onQuery(data) {
-        console.log('packages > gl-table > Index.vue > onQuery > data: ', data)
-        this.lastMixQueryData = data
+        console.log('gl-table > Index.vue > onQuery > data: ', data)
+        this.lastMixQueryData = data.value
         // 有e，则是来源于查询操作按钮，需重置后再查询
         if (data.e) {
           this.needResetPagination = true
@@ -162,11 +138,11 @@
         this.selectedRows = []
       },
       refresh() {
-        this.$refs.table.refresh(true)
+        this.onQuery(this.$refs.query.getCondition())
       },
       // 加载数据方法 必须为 Promise 对象
       loadData(parameter) {
-        console.log('packages > gl-table > Index.vue > loadData > parameter: ', parameter)
+        console.log('gl-table > Index.vue > loadData > parameter: ', parameter)
         const thisVue = this
         thisVue.parameter = parameter
 
@@ -187,7 +163,7 @@
           root['@p'] = parameter.pageNo + ',' + parameter.pageSize
           const gql = {}
           gql[thisVue.opts.entity] = root
-          console.log('packages > gl-table > Index.vue > loadData > genGql(): ', gql)
+          console.log('gl-table > Index.vue > loadData > genGql(): ', gql)
           return gql
         }
 
@@ -196,7 +172,7 @@
         }
 
         return this.api.queryByGql(genGql(this.lastMixQueryData)).then(res => {
-          console.log('packages > gl-table > Index.vue > loadData > res:', res)
+          console.log('gl-table > Index.vue > loadData > res:', res)
           // let result = res.header?res.data:res
           // result.pageNo = result.page
           // result.totalCount = result.taltal
@@ -234,12 +210,12 @@
 
       },
       onRowAction(action, record) {
-        console.log('packages > gl-table > Index.vue > onRowAction() > action:', action)
-        console.log('packages > gl-table > Index.vue > onRowAction() > record:', record)
+        console.log('gl-table > Index.vue > onRowAction() > action:', action)
+        console.log('gl-table > Index.vue > onRowAction() > record:', record)
         this.doAction(action, {query: record})
       },
       // onToolbarAction(action) {
-      //   console.log('packages > gl-table > Index.vue > onToolbarAction() > action:', action)
+      //   console.log('gl-table > Index.vue > onToolbarAction() > action:', action)
       //   this.$gl.ui.openModal(this, action.modal)
       // },
       onSelectChange(selectedRowKeys, selectedRows) {

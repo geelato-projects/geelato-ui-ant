@@ -2,7 +2,7 @@
 import component from './src/Index'
 import GlRow from './src/GlRow'
 import GlCell from './src/GlCell'
-import GlControl from './src/GlControl'
+import GlControl from '../gl-control/src/Index'
 import GlLabel from './src/GlLabel'
 import './src/style.css'
 

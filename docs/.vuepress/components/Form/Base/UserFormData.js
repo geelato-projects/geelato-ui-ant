@@ -18,26 +18,6 @@ export default {
         required: true
       }
     },
-    password: {
-      control: 'password',
-      title: '密码',
-      tips: '至少6位',
-      rules: {
-        required: true,
-        min: 6
-      }
-    },
-    confirmPassword: {
-      control: 'password',
-      title: '确认密码',
-      rules: {
-        required: true,
-        min: 6,
-        confirmed: 'password'
-      },
-      // 持久化到服务端时，忽略该字段
-      serverIgnore: true
-    },
     email: {
       control: 'email',
       title: '邮箱',
@@ -45,7 +25,9 @@ export default {
         required: true,
         email: true
       },
-      placeholder: 'xxx@xxx.xxx'
+      props: {
+        placeholder: 'xxx@xxx.xxx'
+      }
     },
     avatar: {
       control: 'image',
@@ -61,7 +43,9 @@ export default {
         {text: '男', value: 1},
         {text: '女', value: 0}
       ],
-      value: 2
+      props: {
+        defaultValue: 2
+      }
     },
     tel: {
       control: 'input',
@@ -70,12 +54,14 @@ export default {
       field: 'telephone',
       // 若字段需绑定其它实体，该通过该属性设置
       entity: 'platform_user',
-      placeholder: '电话号码',
       rules: {
         required: true,
         numeric: true,
         //08613912345678
         max: 14
+      },
+      props: {
+        placeholder: '电话号码'
       }
     },
     province: {
@@ -94,7 +80,9 @@ export default {
       ds: 'city',
       // js: "gs:$ctx.form.city=$ctx.form.province",
       // 当为data设置了数组项之后，默认激活项的索引
-      defaultActiveIndex: 0
+      props: {
+        defaultActiveIndex: 0
+      }
     },
     enable: {
       control: 'checkbox',
@@ -136,11 +124,6 @@ export default {
       cols: [
         {span: 8, label: true, field: 'loginName'}, {span: 16, field: 'loginName'},
         {span: 8, label: true, field: 'email'}, {span: 16, field: 'email'}
-      ]
-    }, {
-      cols: [
-        {span: 4, label: true, field: 'password'}, {span: 8, field: 'password'},
-        {span: 4, label: true, field: 'confirmPassword'}, {span: 8, field: 'confirmPassword'}
       ]
     }, {
       cols: [{

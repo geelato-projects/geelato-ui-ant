@@ -1,0 +1,11 @@
+# User Profile
+统一各组件动态加载其它组件的配置信息，如在gl-modal中打开组件，在gl-card中引放组件，在gl-tabs中引用组件等。
+<br/>
+组件分为静态组件、动态组件，静态组件是指在编码阶段已明确，在程序发布包中已包括的级件，动态组件是指由于页面配置形成的组件信息，基于组件页面在编码从服务端获取组件信息。
+
+### 展示
+<Advanced-UserProfile-Example></Advanced-UserProfile-Example>
+
+<<< @/docs/.vuepress/components/Advanced/UserProfile/Example.vue
+
+<<< @/docs/.vuepress/components/Advanced/UserProfile/data.js

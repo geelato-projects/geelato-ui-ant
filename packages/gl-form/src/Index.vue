@@ -1,3 +1,6 @@
+<!--
+TODO 修改表单下拉项无效
+-->
 <template>
   <div>
     <a-alert :showIcon="true" message="验证出错" type="error" v-if="Object.keys(errorItems).length>0">
@@ -5,14 +8,14 @@
         <span v-for="errorItem in errorItems">{{errorItem}}</span>
       </p>
     </a-alert>
-    <gl-magic-form-item v-if="refresh" ref="magicFormItem" :rows="layout.rows" :properties="properties" :form="form"
+    <gl-form-item v-if="refresh" ref="magicFormItem" :rows="layout.rows" :properties="properties" :form="form"
                         :loadedData="loadedData"
-                        @propertyUpdate="onPropertyUpdate" @loadRefData="onLoadRefData"></gl-magic-form-item>
+                        @propertyUpdate="onPropertyUpdate" @loadRefData="onLoadRefData"></gl-form-item>
   </div>
 </template>
 
 <script>
-  import GlMagicFormItem from './GlMagicFormItem'
+  import GlFormItem from './GlFormItem'
   import mixin from '../../mixin'
   import utils from '../../utils'
 
@@ -23,9 +26,9 @@
   let CONST_GQL_PARENT = '$parent'
 
   export default {
-    name: "GlMagicForm",
+    name: "GlForm",
     mixins: [mixin],
-    components: {GlMagicFormItem},
+    components: {GlFormItem},
     data() {
       return {
         init: false,
@@ -56,8 +59,8 @@
 
     },
     mounted() {
-      console.log('packages > gl-magic-form > src > Index.vue > mounted() > opts:', this.opts)
-      console.log('packages > gl-magic-form > src > Index.vue > mounted() > query:', this.query)
+      console.log('gl-form > src > Index.vue > mounted() > opts:', this.opts)
+      console.log('gl-form > src > Index.vue > mounted() > query:', this.query)
       this.reset(this.opts)
     },
     methods: {
@@ -131,8 +134,8 @@
       loadInitData() {
         // 加载主实体数据
         let that = this
-        // console.log('packages > gl-magic-form > Index.vue >loadInitData() > query:', that.query)
-        // console.log('packages > gl-magic-form > Index.vue >loadInitData() > queryFields:', that.queryFields)
+        // console.log('gl-form > Index.vue >loadInitData() > query:', that.query)
+        // console.log('gl-form > Index.vue >loadInitData() > queryFields:', that.queryFields)
         // 一般地，若未指定queryFields，则condition 为{id: that.form.id}
         let condition = {}
         let isValidCondition = false
@@ -142,7 +145,7 @@
           if (condition[field]) {
             isValidCondition = true
           } else {
-            console.log('packages > gl-magic-form > Index.vue > loadInitData() > 无效的查询参数信息，字段field:\'' + field + '\'，查询条件condition[field]:', condition[field] || '空', '。')
+            console.log('gl-form > Index.vue > loadInitData() > 无效的查询参数信息，字段field:\'' + field + '\'，查询条件condition[field]:', condition[field] || '空', '。')
           }
         }
         if (isValidCondition) {
@@ -223,7 +226,7 @@
             }
           })
         } else {
-          console.error('packages > gl-magic-form > src > Index.vue > loadData() > 未配置数据源', dataSourceName)
+          console.error('gl-form > src > Index.vue > loadData() > 未配置数据源', dataSourceName)
         }
       },
       /**
@@ -231,7 +234,7 @@
        * */
       onLoadRefData({property, propertyName}) {
         let that = this
-        // console.log('packages > gl-magic-form > Index.vue > loadRefData() >', {property, propertyName})
+        // console.log('gl-form > Index.vue > loadRefData() >', {property, propertyName})
         let propertyNames = that.dsBeDependentOn[propertyName || (property && property.identifier)] || []
         propertyNames.forEach(function (item) {
           let triggerProperty = that.getProperty(item)
@@ -244,11 +247,9 @@
        * 更新状态，强行触发重置表单
        * */
       forceRefresh() {
-        // let that = this
         this.refresh = false
         this.$nextTick(() => {
           this.refresh = true
-          // that.$nextTick()
         })
       },
       /**
@@ -308,7 +309,7 @@
               verifyPropertyAry.push(property)
             }
           } else {
-            console.error('packages > gl-magic-form > src > Index.vue > validate() > 找不到配置property:', key, that.properties)
+            console.error('gl-form > src > Index.vue > validate() > 找不到配置property:', key, that.properties)
           }
         }
 
@@ -335,17 +336,17 @@
       save() {
         let that = this
         return new Promise((resolve, reject) => {
-          this.validate().then(function (validateResult) {
+          this.validate().then(function () {
             let gql = that.getGql()
-            console.log('packages > gl-magic-form > src > Index.vue > save() > gql:', gql)
+            console.log('gl-form > src > Index.vue > save() > gql:', gql)
             that.$gl.api.saveByGql('', that.getGql()).then(function (res) {
-              console.log('packages > gl-magic-form > src > Index.vue > save() > res:', res)
+              console.log('gl-form > src > Index.vue > save() > res:', res)
               resolve(res)
             })
           }).catch(function (e) {
             // 验证不通过
-            console.log('packages > gl-magic-form > src > Index.vue > save() > validate fail.')
-            console.error('packages > gl-magic-form > src > Index.vue > save() > e: ', e)
+            console.log('gl-form > src > Index.vue > save() > validate fail.')
+            console.error('gl-form > src > Index.vue > save() > e: ', e)
             reject(e)
           })
         })
@@ -374,7 +375,7 @@
         // 找出顶层的实体信息
         let that = this
         let theForm = that.getValues()
-        console.log('packages > gl-magic-form > Index.vue >getGql > form: ', theForm)
+        console.log('gl-form > Index.vue >getGql > form: ', theForm)
         let gql = {}
         genGql(gql, this.defaultEntity, this.properties)
 
@@ -394,7 +395,7 @@
             // 转到实体保存时,需取实体的字段名fieldName,而不是配置properties中propertyName
             let fieldName = property.field
             let fieldValue = theForm[propertyName]
-            console.log('packages > gl-magic-form > src > Index.vue > getGql() > ', property.entity, entityName, property, fieldValue)
+            console.log('gl-form > src > Index.vue > getGql() > ', property.entity, entityName, property, fieldValue)
             if (property.entity === entityName) {
               // 该实体的直属属性，直接添加
               // 获取表单中填写的值
@@ -430,7 +431,7 @@
           }
           let dynamicAnalyseProperties = toAnalyseProperties
           subEntityNames.forEach((subEntityName) => {
-            console.log('packages > gl-magic-form > src > Index.vue > validate() > getGql() > subEntityNames', subEntityName, subEntityNames, dynamicAnalyseProperties)
+            console.log('gl-form > src > Index.vue > validate() > getGql() > subEntityNames', subEntityName, subEntityNames, dynamicAnalyseProperties)
             dynamicAnalyseProperties = genGql(parent[entityName], subEntityName, dynamicAnalyseProperties, confirmedProperties)
           })
           return toAnalyseProperties
@@ -453,7 +454,7 @@
             dependingPropertyNames.forEach((item) => {
               let dependProperty = that.properties[item.substring(5)]
               if (!dependProperty) {
-                console.error('packages > gl-magic-form > src > Index.vue > getGql() > properties内未配置属性：' + item.substring(5), '，解析依赖：', item, '出错，当前property为：', subEntityProperty)
+                console.error('gl-form > src > Index.vue > getGql() > properties内未配置属性：' + item.substring(5), '，解析依赖：', item, '出错，当前property为：', subEntityProperty)
               } else {
                 // 检查依赖的这个实体dependProperty.entity是否是entityName直属子级实体，是的话才加入
                 let canBeAdd = true
@@ -497,7 +498,7 @@
 
       }
       ,
-      onPropertyUpdate({property, val, oval}) {
+      onPropertyUpdate({property, val}) {
         this.$set(this.form, property.identifier, val)
       }
     }

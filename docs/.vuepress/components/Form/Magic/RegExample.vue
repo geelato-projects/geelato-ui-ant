@@ -14,7 +14,7 @@
         {{GQLData}}
       </span>
     </a-alert>
-    <gl-magic-form ref="magicForm" :opts="config"></gl-magic-form>
+    <gl-form ref="magicForm" :opts="config"></gl-form>
   </div>
 </template>
 

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <gl-table ref="table" :opts="config" :query="{em:'platform_user'}"></gl-table>
+    <gl-tabs v-bind="config"></gl-tabs>
   </div>
 </template>
 <script>
@@ -12,6 +12,7 @@
       return {
         config: data
       }
+
     },
     computed: {},
     created() {
@@ -19,13 +20,8 @@
     mounted() {
 
     },
-    methods: {
-      refreshTable() {
-        this.$refs.table.refresh(true)
-      }
-    }
+    methods: {}
   }
 </script>
 <style>
-
 </style>

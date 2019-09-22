@@ -3,8 +3,8 @@
     <gl-row type="" v-for="(row,rowIndex) in rows" :key="rowIndex">
       <gl-cell v-bind="cell" v-for="(cell,cellIndex) in row.cols" :key="cellIndex">
         <template v-if="cell.rows">
-          <gl-magic-form-item :rows="cell.rows" :properties="properties" :form="form" @propertyUpdate="onPropertyUpdate"
-                              @loadRefData="onLoadRefData"></gl-magic-form-item>
+          <gl-form-item :rows="cell.rows" :properties="properties" :form="form" @propertyUpdate="onPropertyUpdate"
+                              @loadRefData="onLoadRefData"></gl-form-item>
         </template>
         <template v-else>
           <gl-label v-if="cell.label" :label="cell.label" :property="getProperty(cell.field)"></gl-label>
@@ -18,7 +18,7 @@
 
 <script>
   export default {
-    name: "GlMagicFormItem",
+    name: "GlFormItem",
     props: {
       /**
        * 布局

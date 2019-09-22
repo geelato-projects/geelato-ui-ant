@@ -12,42 +12,31 @@ export default {
     filter: null,
     // null或''表示不展示综合查询区域
     mix: {
-      properties: [
+      fields: [
+        {field: 'name', title: '名称', cop: 'eq', type: 'string'},
+        {field: 'loginName', title: '账号', cop: 'contains', type: 'string', lop: 'or', placeholder: '登录名'},
+        {field: 'description', title: '描述', cop: 'contains', type: 'string', lop: 'and'},
+        {field: 'active', title: '激活', cop: 'eq', type: 'boolean', default: true},
         {
-          field: 'name',
-          title: '名称',
-          cop: 'eq',
-          control: 'input',
-          lop: 'or',
-          props: {placeholder: '姓名', defaultValue: ''}
-        },
-        {field: 'loginName', title: '账号', cop: 'contains', control: 'input', lop: 'or', props: {placeholder: '登录名'}},
-        {
-          field: 'sex',
-          title: '性别',
-          cop: 'eq',
-          control: 'select',
-          data: [{text: '保密', value: 2}, {text: '男', value: 1}, {text: '女', value: 0}],
-          // 增加指定选择项，如所有项、默认项，AddPreOptionText：为项的展示内容，AddPreOptionValue为项的展示值
-          props: {AddPreOptionText: '全部', AddPreOptionValue: undefined, placeholder: '请选择'}
-        },
-        {field: 'description', title: '描述', cop: 'contains', control: 'input', lop: 'and'},
-        {field: 'checkState', title: '激活', cop: 'eq', control: 'checkbox', props: {defaultValue: 1}},
+          field: 'birthday',
+          title: '生日',
+          cop: 'gte',
+          type: 'date',
+          control: 'range-picker',
+          placeholder: ['生日开始日期', '生日结束日期'],
+          format: 'yyyy-mm-dd'
+        }
         // {
-        //   field: 'birthday',
-        //   title: '生日',
-        //   cop: 'gte',
-        //   type: 'date',
-        //   control: 'range-picker',
-        //   placeholder: ['生日开始日期', '生日结束日期'],
-        //   format: 'yyyy-mm-dd'
+        //   field: 'sex',
+        //   title: '性别',
+        //   cop: 'eq',
+        //   type: 'select',
+        //   default: 'male',
+        //   options: [{key: '男', value: 'male'}, {key: '女', value: 'female'}]
         // }
       ],
-      layout: {
-        display: 'auto',
-        // 取值 1~4、6
-        fieldPerRow: 4
-      }
+      // 取值 1~4、6
+      fieldPerRow: 4
     }
   },
   toolbar: {
@@ -92,8 +81,7 @@ export default {
     }],
     css: {align: 'right'}
   },
-  alert: null,
-  showPagination: 'true',
+  info: '',
   table: {
     // select: {field: 'id', title: '', type: 'checkbox'},
     rowAction: {
@@ -135,19 +123,60 @@ export default {
             ctx: 'modal'
           }]
         }
-      }]
+      }],
+      actions2: [
+        {
+          title: '修改',
+          click: 'modal',
+          modal: {
+            title: '编辑用户信息',
+            width: '1000px',
+            height: '480px',
+            okText: '',
+            cancelText: '',
+            body: {
+              type: 'staticPage',
+              component: '/docs/.vuepress/components/Form/Base/Example.vue',
+              opts: {
+                ui: {
+                  entityName: 'platform_user',
+                  fields: 'id,name,loginName,description',
+                  layout: [
+                    [{loginName: [4, 8]}, {name: [4, 8]}],
+                    [{description: [4, 20]}]
+                  ],
+                  model: {id: '@.id'}
+                }
+              }
+            }
+          }
+        },
+        {
+          title: '详细',
+          click: 'modal',
+          modal: {
+            type: 'page',
+            value: 'platform_user_list_detail',
+            opts: {}
+          }
+        },
+        {
+          title: '详细3',
+          click: 'modal',
+          modal: {
+            type: 'page',
+            value: 'platform_user_list_detail',
+            opts: {}
+          }
+        }
+      ]
     },
     columns: [
       {title: '#', dataIndex: 'id', scopedSlots: {customRender: 'serial'}},
       {title: '名称', dataIndex: 'name', sorter: true},
       {title: '登录名', dataIndex: 'loginName', sorter: true},
       {title: '电话', dataIndex: 'telephone'},
-      {
-        title: '性别',
-        dataIndex: 'sex',
-        sorter: true,
-        customRender: (text) => text === 2 ? '保密' : (text === 1 ? '男' : '女')
-      },
+      {title: '性别', dataIndex: 'sex', sorter: true, customRender: (text) => text === 2 ? '保密' : (text === 1 ? '男':'女')},
       {title: '邮箱', dataIndex: 'email'},
       {title: '次序', dataIndex: 'seq', needTotal: true},
       {title: '描述', dataIndex: 'description'},

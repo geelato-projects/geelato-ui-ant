@@ -11,8 +11,7 @@ export default {
     body: {
       type: 'staticPage',
       component: ProjectCreate,
-      opts: {},
-      query: {}
+      props: {}
     },
     actions: [{
       text: '保存',
@@ -61,8 +60,7 @@ export default {
     body: {
       type: 'staticPage',
       component: ProjectList,
-      opts: {},
-      query: {}
+      props: {}
     },
     actions: [{
       fn: 'close',
@@ -92,8 +90,7 @@ export default {
     body: {
       type: 'staticPage',
       component: ProjectCreate,
-      opts: {},
-      query: {}
+      props: {}
     },
     actions: [{
       name: 'ok',

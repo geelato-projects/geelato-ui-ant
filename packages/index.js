@@ -1,11 +1,13 @@
 // 导入组件
 import GlPageLoader from './gl-page-loader'
 import GlContextMenu from './gl-context-menu'
+import GlControl from './gl-control'
 import GlModal from './gl-modal'
 import GlList from './gl-list'
 import GlTree from './gl-tree'
-import GlMagicForm from './gl-magic-form'
+import GlForm from './gl-form'
 import GlTable from './gl-table'
+import GlTabs from './gl-tabs'
 import GlCard from './gl-card'
 import GlCardLayout from './gl-card-layout'
 import STable from './gl-table/src/s-table'
@@ -21,12 +23,14 @@ import packageJson from '../package.json'
 const components = [
   GlPageLoader,
   GlContextMenu,
+  GlControl,
   GlModal,
   GlList,
   GlTree,
-  GlMagicForm,
+  GlForm,
   GlTable,
   GlCard,
+  GlTabs,
   // GlItem,
   GlCardLayout,
   STable
@@ -61,7 +65,7 @@ const install = function (Vue, options) {
     Vue.component(component.name, component)
   })
 
-  GlMagicForm.install(Vue)
+  GlForm.install(Vue)
 }
 
 // 判断是否是直接引入文件
@@ -75,10 +79,12 @@ export default {
   // 以下是具体的组件列表
   GlPageLoader,
   GlContextMenu,
+  GlControl,
   GlModal,
   GlList,
   GlTree,
   GlTable,
   GlCard,
+  GlTabs,
   GlCardLayout
 }

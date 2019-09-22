@@ -143,10 +143,12 @@ function genSidebarConfig(title) {
       title: '基础组件',
       collapsable: true,
       children: [
+        'ui-gl-control',
         'ui-gl-form',
         'ui-gl-table',
         'ui-gl-list',
         'ui-gl-tree',
+        'ui-gl-tabs',
         'ui-gl-card',
         'ui-gl-card-layout',
         'ui-gl-modal'
@@ -166,7 +168,15 @@ function genSidebarConfig(title) {
       children: [
         'event',
         'data',
-        'api'
+        'api',
+        'component'
+      ]
+    },
+    {
+      title: '高级应用',
+      collapsable: true,
+      children: [
+        'advanced-user-profile'
       ]
     }
   ]

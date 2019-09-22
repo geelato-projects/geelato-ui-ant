@@ -1,9 +1,9 @@
 <template>
   <div>
-    <template v-if="type==='form'">
+    <template v-if="type==='form' || type==='GLMagicForm'">
       <gl-form :opts="opts" :query="query" :ref="id"></gl-form>
     </template>
-    <template v-else-if="type==='list'">
+    <template v-else-if="type==='list' || type==='GLTable'">
       <gl-table :opts="opts" :query="query" :ref="id"></gl-table>
     </template>
     <!--自定义的，非预定义的组件库内容-->

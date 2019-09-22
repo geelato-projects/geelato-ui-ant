@@ -1,34 +1,17 @@
+<!--
+该组件面向单实体查询，查询条件中，可能存在同一个字段，多种条件的情况，如时间区间查询，故entity中用索引作为key，而不用字段名
+-->
 <template>
   <a-form layout="inline">
     <a-row :gutter="gutter">
-      <a-col :md="colSpan" :sm="24" v-for="(field,index) in fields" :key="index">
-        <!--查询条件中，可能存在同一个字段，多种条件的情况，故entity中用索引作为key，而不用字段名-->
-        <template v-if="(!advanced&&index<colPerRow-1)||advanced">
-          <a-form-item :label="field.title" v-if="field.type==='string'">
-            <a-input v-model="entity[index]" :placeholder="field.placeholder"/>
-          </a-form-item>
-          <a-form-item :label="field.title" v-if="field.type==='select'">
-            <a-select v-model="entity[index]" :placeholder="field.placeholder" default-value="0">
-              <a-select-option value="0">全部</a-select-option>
-              <a-select-option value="1">关闭</a-select-option>
-              <a-select-option value="2">运行中</a-select-option>
-            </a-select>
-          </a-form-item>
-          <a-form-item :label="field.title" v-if="field.type==='number'">
-            <a-input-number v-model="entity[index]" style="width: 100%" :placeholder="field.placeholder"/>
-          </a-form-item>
-          <a-form-item v-if="field.type==='boolean'">
-            <a-checkbox v-model="entity[index]" @change="()=>{}">{{field.title}}</a-checkbox>
-          </a-form-item>
-          <a-form-item :title="field.title" v-if="field.type==='date' && field.control==='range-picker'">
-            <a-range-picker v-model="entity[index]" :placeholder="field.placeholder"></a-range-picker>
-          </a-form-item>
-          <a-form-item :label="field.title" v-else-if="field.type==='date'">
-            <a-date-picker v-model="entity[index]" style="width: 100%" :placeholder="field.placeholder"/>
-          </a-form-item>
-        </template>
+      <a-col :md="colSpan" :sm="24" v-for="(property,index) in properties" :key="index"
+             :title="property.title+dict[property.cop]">
+        <a-form-item v-show="(!advanced&&index<colPerRow-1)||advanced" :label="property.title">
+          <gl-control :property="property" :form="entity" @propertyUpdate="onPropertyUpdate"
+                      @loadRefData="onLoadRefData"></gl-control>
+        </a-form-item>
       </a-col>
-      <a-col :md="colSpan * (colPerRow - fields.length % colPerRow -1)" v-if="advanced">
+      <a-col :md="colSpan * (colPerRow - properties.length % colPerRow -1)" v-if="advanced">
         <a-form-item>&nbsp;</a-form-item>
       </a-col>
       <a-col :md="colSpan" :sm="24">
@@ -48,11 +31,10 @@
   /* eslint-disable no-unneeded-ternary */
 
   import utils from '../../utils'
-  //  import datetime from '../base/datetime'
 
   export default {
     props: {
-      fields: {
+      properties: {
         type: Array,
         default() {
           return []
@@ -88,7 +70,8 @@
           sw: '开头包括',
           ew: '结尾包括',
           contains: '包括'
-        }
+        },
+        identifierMap: {}
       }
     },
     computed: {
@@ -96,13 +79,51 @@
         return 24 / this.colPerRow
       },
       isMultiRow() {
-        return this.fields.length > this.colPerRow
+        return this.properties.length > this.colPerRow
       }
     },
     mounted: function () {
-      this.reset()
+      this.initData()
     },
     methods: {
+      initData() {
+        // 转换初始化数据
+        for (const index in this.properties) {
+          const item = this.properties[index]
+          // 检查设置控件维一值
+          if (!item.identifier) {
+            if (!this.identifierMap[item.field]) {
+              item.identifier = item.field
+              this.identifierMap[item.identifier] = item.field
+            } else {
+              item.identifier = item.field + '_' + $gl.utils.uuid(8)
+              this.identifierMap[item.identifier] = item.field
+            }
+          }
+        }
+        this.reset()
+      },
+      reset() {
+        // 转换初始化数据
+        this.entity = {}
+        for (const index in this.properties) {
+          const item = this.properties[index]
+          // 设置查询表单实体值
+          // 优先以property.value的值为准，若无则以property.props.defaultValue的值为准，最后以property.props.defaultActiveIndex对应项的值为准
+          if (item.value !== undefined) {
+            this.$set(this.entity, item.identifier, item.value)
+          } else if (item.props && item.props.defaultValue !== undefined) {
+            this.$set(this.entity, item.identifier, item.props.defaultValue)
+          } else if (item.props && item.props.defaultActiveIndex !== undefined && item.data && item.data.length > 0) {
+            this.$set(this.entity, item.identifier, item.data[item.defaultActiveIndex].value)
+          }
+        }
+      },
+      onPropertyUpdate({property, val}) {
+        this.$set(this.entity, property.field, val)
+      },
+      onLoadRefData() {
+      },
       toggleAdvanced() {
         this.advanced = !this.advanced
       },
@@ -121,50 +142,40 @@
         }
       },
       submit(e) {
-        console.log('model submit>', e, this.model, this.fields)
+        console.log('model submit>', e, this.model, this.properties)
+        this.$emit('input', {value: this.getCondition().value, e: e})
+      },
+      getCondition() {
         const result = {}
-        for (const index in this.fields) {
-          const item = this.fields[index]
-          // ignore valid field value
-          if (this.entity[index] === undefined || this.entity[index] === null) {
+        console.log('this.properties>', this.properties)
+        for (const index in this.properties) {
+          const item = this.properties[index]
+          if (this.entity[item.identifier] === undefined || this.entity[item.identifier] === null) {
             continue
           } else {
-            if (item.type === 'boolean') {
-              result[item.field + '|' + item.cop] = this.entity[index] ? 1 : 0
-            }
-            if (item.type === 'date') {
-              const moment = this.entity[index]
+            if (item.control === 'checkbox') {
+              result[item.field + '|' + item.cop] = this.entity[item.identifier] ? 1 : 0
+            } else if (item.control === 'date') {
+              const moment = this.entity[item.identifier]
               if (moment) {
-                result[item.field + '|' + item.cop] = moment.format('L')
+                result[item.field + '|' + item.cop] = moment.format(item.format || 'L')
               }
             } else {
               try {
-                const value = utils.trim(this.entity[index])
+                const value = typeof this.entity[item.identifier] === 'number' ? this.entity[item.identifier] : utils.trim(this.entity[item.identifier])
                 if (value === '') {
                   continue
                 }
                 result[item.field + '|' + item.cop] = value
               } catch (e) {
-                console.log('this.entity[index] > ', this.entity[index])
+                console.log('this.entity[item.identifier] > ', item, this.entity[item.identifier])
                 console.log(e)
               }
             }
           }
         }
         console.log('gl-table > gql查询条件为: ', result)
-        this.$emit('input', {value: result, e: e})
-      },
-      reset() {
-        this.entity = {}
-        for (const index in this.fields) {
-          const item = this.fields[index]
-          if (item.type === 'boolean') {
-            // notice:the html element can only be change by vm.$set or Vue.set after model created.
-            this.$set(this.entity, item.field, utils.toBoolean(item.default))
-          } else {
-            this.$set(this.entity, item.field, item.default)
-          }
-        }
+        return {value: result}
       }
     }
   }

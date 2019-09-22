@@ -79,7 +79,7 @@
     },
     computed: {
       modal() {
-        console.log('packages > gl-modal > Index.vue > modal() > this: ', this)
+        console.log('gl-modal > Index.vue > modal() > this: ', this)
         return this
       },
       content() {
@@ -94,7 +94,7 @@
         let that = this
         that.loading = true
         // 解析 action
-        console.log('packages > gl-modal > Index.vue > handleAction() > index: ', index, ' action: ', action)
+        console.log('gl-modal > Index.vue > handleAction() > index: ', index, ' action: ', action)
         that.doAction(action)
         that.loading = false
       },
@@ -126,21 +126,21 @@
       loadComponent(component) {
         if (typeof component === 'string') {
           const theComponent = this.$gl.globalVue.component(component)
-          console.log('packages > gl-modal > src  > Index.vue > loadComponent() > theComponent: ', theComponent, 'by componentName:', component)
+          console.log('gl-modal > src  > Index.vue > loadComponent() > theComponent: ', theComponent, 'by componentName:', component)
           if (theComponent) {
             this.bodyComponent = theComponent
           } else {
             // 基于动态组件名，需从服务端获取组件配置信息
             let pageCode = component
             this.$gl.api.queryPageByCode(pageCode).then(function (res) {
-              console.log('packages > gl-modal > src  > Index.vue > loadComponent()  > res', res)
+              console.log('gl-modal > src  > Index.vue > loadComponent()  > res', res)
             })
           }
         } else if (typeof component === 'object') {
           // base on local static component
           this.bodyComponent = component
         } else {
-          console.error("packages > gl-modal > src  > Index.vue > loadComponent() > 不支持的组件格式，component: ", component)
+          console.error("gl-modal > src  > Index.vue > loadComponent() > 不支持的组件格式，component: ", component)
         }
       }
     }

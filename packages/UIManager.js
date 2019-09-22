@@ -93,7 +93,7 @@ export default class UIManager {
   //   cancelText: '',
   //   body: {
   //     type: 'staticPage',
-  //     component: 'gl-magic-form',
+  //     component: 'gl-form',
   //     opts: {
   //         entityName: 'platform_user',
   //         fields: 'id,name,loginName,description',
@@ -115,4 +115,7 @@ export default class UIManager {
     }
   }
 
+  loadComponent(component) {
+    return loadComponent(component)
+  }
 }

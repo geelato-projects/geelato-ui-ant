@@ -43,7 +43,9 @@ export default {
         required: true,
         email: true
       },
-      placeholder: 'xxx@xxx.xxx'
+      props: {
+        placeholder: 'xxx@xxx.xxx'
+      }
     },
     age: {
       control: 'input',
@@ -64,11 +66,11 @@ export default {
       title: '性别',
       // 若数据是动态生产成，可配置ds，基于ds加载的数据最终会设置到data中
       data: [
-        {text: '保密', value: 'none'},
-        {text: '男', value: 'male'},
-        {text: '女', value: 'female'}
+        {text: '保密', value: 2},
+        {text: '男', value: 1},
+        {text: '女', value: 0}
       ],
-      value: 'none'
+      value: 2
     },
     tel: {
       control: 'input',
@@ -77,12 +79,15 @@ export default {
       field: 'telephone',
       // 若字段需绑定其它实体，该通过该属性设置
       entity: 'platformUser',
-      placeholder: '电话号码',
       rules: {
         required: true,
         numeric: true,
         //08613912345678
+        min: 11,
         max: 14
+      },
+      props: {
+        placeholder: '电话号码'
       }
     },
     province: {
@@ -98,8 +103,10 @@ export default {
       // 基于数据源，数源名称可自取，如cityDS，不一定需等于本属性名
       ds: 'city',
       js: "gs:$ctx.form.city=$ctx.form.province",
-      // 当为data设置了数组项之后，默认激活项的索引
-      defaultActiveIndex: 0
+      props: {
+        // 当为data设置了数组项之后，默认激活项的索引
+        defaultActiveIndex: 0
+      }
     },
     enable: {
       control: 'checkbox',
