@@ -96,7 +96,7 @@
               item.identifier = item.field
               this.identifierMap[item.identifier] = item.field
             } else {
-              item.identifier = item.field + '_' + $gl.utils.uuid(8)
+              item.identifier = item.field + '_' + this.$gl.utils.uuid(8)
               this.identifierMap[item.identifier] = item.field
             }
           }

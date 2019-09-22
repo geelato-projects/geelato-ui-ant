@@ -54,11 +54,12 @@ const install = function (Vue, options) {
   Vue.prototype.$gl.utils = Vue.prototype.$gl.utils || utils
   Vue.prototype.$gl.globalVue = Vue
 
-  if (!window.$gl) {
-    window.$gl = Vue.prototype.$gl
-  } else {
-    console.error('packages > index.js > install() > window.$gl已存在：', window.$gl)
-  }
+  // window is not defined
+  // if (!window.$gl) {
+  //   window.$gl = Vue.prototype.$gl
+  // } else {
+  //   console.error('packages > index.js > install() > window.$gl已存在：', window.$gl)
+  // }
 
   // 遍历注册全局组件
   components.map(component => {

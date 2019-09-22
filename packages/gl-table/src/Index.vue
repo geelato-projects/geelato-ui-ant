@@ -2,7 +2,7 @@
   TODO 列内容太长时，没有自动隐藏
 -->
 <template>
-  <div class="gl-table gl-table-as-list">
+  <div class="gl-table gl-table-as-list" v-if="opts">
     <div class="table-page-search-wrapper">
       <top-query ref="query" :properties="opts.query.mix.properties" :colPerRow="opts.query.mix.layout.fieldPerRow"
                  :gutter="48"
@@ -117,7 +117,7 @@
     created() {
       this.tableOption()
     },
-    mounted(){
+    mounted() {
       this.refresh()
     },
     methods: {

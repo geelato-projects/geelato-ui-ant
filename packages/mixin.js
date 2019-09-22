@@ -67,7 +67,7 @@ export default {
       } else if (action.ctx === 'self' || action.ctx === 'this') {
         ctx = that
       } else {
-        ctx = $gl.utils.eval(action.ctx)
+        ctx = that.$gl.utils.eval(action.ctx)
       }
 
       if (typeof ctx[action.fn] !== 'function') {
