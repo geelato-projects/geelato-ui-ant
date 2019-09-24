@@ -59,7 +59,7 @@
         this.message = {}
         that.pageCode = that.opts && that.opts.code ? that.opts.code : that.code
         that.queryString = that.opts && that.opts.query ? that.opts.query : that.query
-        console.log('gl-page-loader > Index > pageCode:  ', that.pageCode)
+        console.log('geelato-ui-ant > gl-page-loader > Index > pageCode:  ', that.pageCode)
         if (!that.pageCode) {
           that.$set(that.message, 'header', '加载失败')
           that.$set(that.message, 'text', 'PageCode为空，无法加载页面配置。')
@@ -72,14 +72,14 @@
         that.currentView = resolve => require(['./PageLoading.vue'], resolve)
         // 路由的格式：page/:moduleName/:pageCode?query
         that.$gl.api.getPageCfg(that.pageCode).then((res) => {
-          console.log('gl-page-loader > Index > getPageConfig > res: ', res)
+          console.log('geelato-ui-ant > gl-page-loader > Index > getPageConfig > res: ', res)
           if (res.code === '0') {
-            console.log('gl-page-loader > Index > pageCfg.component: ', that.pageCfg.component)
+            console.log('geelato-ui-ant > gl-page-loader > Index > pageCfg.component: ', that.pageCfg.component)
             if (res.data && res.data.length > 0) {
               that.pageCfg = JSON.parse(res.data[0].content)
               if (typeof that.pageCfg.component === 'string') {
                 if (that.pageCfg.component.startsWith('/')) {
-                  console.log('gl-page-loader > Index > loading component: ', '../../' + that.pageCfg.component.substring(1) + '.vue')
+                  console.log('geelato-ui-ant > gl-page-loader > Index > loading component: ', '../../' + that.pageCfg.component.substring(1) + '.vue')
                   // 注意require的写法，这里写成'../'而不是'..'，后者会异常；同时url不能为多于一加号“+”拼接而成，这与require的加载机制有关
                   // componentsPath: 'components/gl-table/Index.vue'
                   let componentsPath = that.pageCfg.component.substring(1) + '.vue'

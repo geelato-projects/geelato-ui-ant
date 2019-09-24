@@ -59,7 +59,7 @@
     },
     mounted() {
       this.loadData({}, (res) => {
-        console.log('typeof dataHandler >', res)
+        console.log('geelato-ui-ant > typeof dataHandler >', res)
         this.loading = false
         this.allData = res.data
       })
@@ -106,7 +106,7 @@
         }
       },
       selectItem(item, index) {
-        console.log('gl-list > Index > selectItem() > item:', item, '  index:', index)
+        console.log('geelato-ui-ant > gl-list > Index > selectItem() > item:', item, '  index:', index)
         this.$emit('doAction', {fn: 'selectItem', item: item, index: index})
       }
     }

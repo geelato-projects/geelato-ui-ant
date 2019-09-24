@@ -188,26 +188,26 @@
     },
     methods: {
       onSelect(selectedKeys, info) {
-        console.log('gl-tree > selected: ', selectedKeys, info)
+        console.log('geelato-ui-ant > gl-tree > selected: ', selectedKeys, info)
       },
       onCheck(checkedKeys, info) {
-        console.log('gl-tree > onCheck: ', checkedKeys, info)
+        console.log('geelato-ui-ant > gl-tree > onCheck: ', checkedKeys, info)
       },
       onDragEnter(info) {
-        console.log('gl-tree > onDragEnter: ', info)
+        console.log('geelato-ui-ant > gl-tree > onDragEnter: ', info)
         // expandedKeys 需要受控时设置
         // this.expandedKeys = info.expandedKeys
       },
       onDrop(info) {
         let that = this
-        console.log('gl-tree > onDrop: ', info)
+        console.log('geelato-ui-ant > gl-tree > onDrop: ', info)
         if (!droppable(info.node.dataRef)) {
-          console.log('gl-tree > onDrop forbidden, xtype: ', info.node.dataRef.xtype)
+          console.log('geelato-ui-ant > gl-tree > onDrop forbidden, xtype: ', info.node.dataRef.xtype)
           return
         }
         const dropKey = info.node.eventKey
         const dragKey = info.dragNode.eventKey
-        console.log('gl-tree > onDrop > node: ', info.node, info.node.isLeaf2())
+        console.log('geelato-ui-ant > gl-tree > onDrop > node: ', info.node, info.node.isLeaf2())
         const dropPos = info.node.pos.split('-')
         const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1])
         const loop = (data, key, callback) => {
@@ -272,12 +272,12 @@
         this.gData = data
       },
       onRightClick(info) {
-        console.log('gl-tree > onRightClick: ', info)
+        console.log('geelato-ui-ant > gl-tree > onRightClick: ', info)
         this.contextMenuTarget = this.$refs.glTree.$el
         this.$refs.contextMenu.open()
       },
       onContextMenuItemClick(e) {
-        console.log('gl-tree > onContextMenuItemClick > e: ', e)
+        console.log('geelato-ui-ant > gl-tree > onContextMenuItemClick > e: ', e)
       }
     },
   }

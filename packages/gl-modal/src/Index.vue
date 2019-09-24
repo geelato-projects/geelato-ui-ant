@@ -79,7 +79,7 @@
     },
     computed: {
       modal() {
-        console.log('gl-modal > Index.vue > modal() > this: ', this)
+        console.log('geelato-ui-ant > gl-modal > Index.vue > modal() > this: ', this)
         return this
       },
       content() {
@@ -94,7 +94,7 @@
         let that = this
         that.loading = true
         // 解析 action
-        console.log('gl-modal > Index.vue > handleAction() > index: ', index, ' action: ', action)
+        console.log('geelato-ui-ant > gl-modal > Index.vue > handleAction() > index: ', index, ' action: ', action)
         that.doAction(action)
         that.loading = false
       },
@@ -110,7 +110,7 @@
         this.cancel()
       },
       doActionFromContent(data) {
-        // console.log('doActionFromContent: ', data, this.modalConfig.on)
+        // console.log('geelato-ui-ant > doActionFromContent: ', data, this.modalConfig.on)
         for (let index in this.modalConfig.on) {
           let action = this.modalConfig.on[index]
           if (action.ctx === 'content' && action.fn === data.fn) {
@@ -126,14 +126,14 @@
       loadComponent(component) {
         if (typeof component === 'string') {
           const theComponent = this.$gl.globalVue.component(component)
-          console.log('gl-modal > src  > Index.vue > loadComponent() > theComponent: ', theComponent, 'by componentName:', component)
+          console.log('geelato-ui-ant > gl-modal > src  > Index.vue > loadComponent() > theComponent: ', theComponent, 'by componentName:', component)
           if (theComponent) {
             this.bodyComponent = theComponent
           } else {
             // 基于动态组件名，需从服务端获取组件配置信息
             let pageCode = component
             this.$gl.api.queryPageByCode(pageCode).then(function (res) {
-              console.log('gl-modal > src  > Index.vue > loadComponent()  > res', res)
+              console.log('geelato-ui-ant > gl-modal > src  > Index.vue > loadComponent()  > res', res)
             })
           }
         } else if (typeof component === 'object') {

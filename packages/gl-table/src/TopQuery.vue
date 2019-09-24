@@ -142,12 +142,12 @@
         }
       },
       submit(e) {
-        console.log('model submit>', e, this.model, this.properties)
+        console.log('geelato-ui-ant > model submit>', e, this.model, this.properties)
         this.$emit('input', {value: this.getCondition().value, e: e})
       },
       getCondition() {
         const result = {}
-        console.log('this.properties>', this.properties)
+        console.log('geelato-ui-ant > this.properties>', this.properties)
         for (const index in this.properties) {
           const item = this.properties[index]
           if (this.entity[item.identifier] === undefined || this.entity[item.identifier] === null) {
@@ -168,13 +168,13 @@
                 }
                 result[item.field + '|' + item.cop] = value
               } catch (e) {
-                console.log('this.entity[item.identifier] > ', item, this.entity[item.identifier])
+                console.log('geelato-ui-ant > this.entity[item.identifier] > ', item, this.entity[item.identifier])
                 console.log(e)
               }
             }
           }
         }
-        console.log('gl-table > gql查询条件为: ', result)
+        console.log('geelato-ui-ant > gl-table > gql查询条件为: ', result)
         return {value: result}
       }
     }

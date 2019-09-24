@@ -20,7 +20,7 @@ let service
  * @returns {*}
  */
 function queryByGql(gql, withMeta) {
-  // console.log('api > queryByGql > gql: ', gql)
+  // console.log('geelato-ui-ant > api > queryByGql > gql: ', gql)
   let path = Array.isArray(gql) ? url.metaMultiList : url.metaList
   return service({
     url: path + '?withMeta=' + !!withMeta,
@@ -166,7 +166,7 @@ function queryPageByCode(pageCode) {
  */
 function entityDataReaderResultHandler(res, resultMapping = {}) {
 
-  console.log('packages > Api.js > entityDataReaderResultHandler() > res: ', res)
+  console.log('geelato-ui-ant > Api.js > entityDataReaderResultHandler() > res: ', res)
   let resultSet = {
     //  依据传入参数resultMapping的定义处理后的数据
     data: [],
@@ -186,7 +186,7 @@ function entityDataReaderResultHandler(res, resultMapping = {}) {
   }
   // 先找出需处理的列：resultMapping的key和value不相同，mapping，e.g. [{avatar:'https://xxxxx/xx/xx.jpg'}]
   let toStatMappingItems = []
-  // console.log('toStatMappingItems>', toStatMappingItems)
+  // console.log('geelato-ui-ant > toStatMappingItems>', toStatMappingItems)
   for (let key in resultMapping) {
     let field = resultMapping[key]
     // let resultName = resColumns[field]
@@ -196,9 +196,9 @@ function entityDataReaderResultHandler(res, resultMapping = {}) {
       resultSet.resultMapping[key] = key
     }
   }
-  console.log('packages > Api.js > entityDataReaderResultHandler() > resColumns: ', resColumns)
-  console.log('packages > Api.js > entityDataReaderResultHandler() > resultMapping: ', resultMapping)
-  console.log('packages > Api.js > entityDataReaderResultHandler() > toStatMappingItems: ', toStatMappingItems)
+  console.log('geelato-ui-ant > Api.js > entityDataReaderResultHandler() > resColumns: ', resColumns)
+  console.log('geelato-ui-ant > Api.js > entityDataReaderResultHandler() > resultMapping: ', resultMapping)
+  console.log('geelato-ui-ant > Api.js > entityDataReaderResultHandler() > toStatMappingItems: ', toStatMappingItems)
 
   // 如增加静态的列，列值格式化、列值组合;重命名列(在原有列的基础上增加重命名的列)等
   for (let i in res.data) {
@@ -213,7 +213,7 @@ function entityDataReaderResultHandler(res, resultMapping = {}) {
     }
   }
   resultSet.data = res.data
-  console.log('packages > Api.js > entityDataReaderResultHandler() > resultSet: ', resultSet)
+  console.log('geelato-ui-ant > Api.js > entityDataReaderResultHandler() > resultSet: ', resultSet)
   return resultSet
 }
 

@@ -9,8 +9,8 @@ TODO 修改表单下拉项无效
       </p>
     </a-alert>
     <gl-form-item v-if="refresh" ref="magicFormItem" :rows="layout.rows" :properties="properties" :form="form"
-                        :loadedData="loadedData"
-                        @propertyUpdate="onPropertyUpdate" @loadRefData="onLoadRefData"></gl-form-item>
+                  :loadedData="loadedData"
+                  @propertyUpdate="onPropertyUpdate" @loadRefData="onLoadRefData"></gl-form-item>
   </div>
 </template>
 
@@ -59,8 +59,8 @@ TODO 修改表单下拉项无效
 
     },
     mounted() {
-      console.log('gl-form > src > Index.vue > mounted() > opts:', this.opts)
-      console.log('gl-form > src > Index.vue > mounted() > query:', this.query)
+      console.log('geelato-ui-ant > gl-form > mounted() > opts:', this.opts)
+      console.log('geelato-ui-ant > gl-form > mounted() > query:', this.query)
       this.reset(this.opts)
     },
     methods: {
@@ -112,6 +112,8 @@ TODO 修改表单下拉项无效
               property.rules = {email: true}
             }
           }
+          // init props
+          property.props = property.props || {}
         }
         // 3、构建数据源依赖 dsBeDependentOn e.g. {provinceCode: 'gs:$ctx.form.province'}
         for (let propertyName in this.ds) {
@@ -123,7 +125,7 @@ TODO 修改表单下拉项无效
                 let dependPropertyName = item.substring(item.lastIndexOf('.') + 1)
                 that.dsBeDependentOn[dependPropertyName] = that.dsBeDependentOn[dependPropertyName] || []
                 that.dsBeDependentOn[dependPropertyName].push(propertyName)
-                // console.log('dependPropertyName>', dependPropertyName, propertyName, that.dsBeDependentOn)
+                // console.log('geelato-ui-ant > dependPropertyName>', dependPropertyName, propertyName, that.dsBeDependentOn)
               })
             }
           }
@@ -134,8 +136,8 @@ TODO 修改表单下拉项无效
       loadInitData() {
         // 加载主实体数据
         let that = this
-        // console.log('gl-form > Index.vue >loadInitData() > query:', that.query)
-        // console.log('gl-form > Index.vue >loadInitData() > queryFields:', that.queryFields)
+        // console.log('geelato-ui-ant > gl-form > Index.vue >loadInitData() > query:', that.query)
+        // console.log('geelato-ui-ant > gl-form > Index.vue >loadInitData() > queryFields:', that.queryFields)
         // 一般地，若未指定queryFields，则condition 为{id: that.form.id}
         let condition = {}
         let isValidCondition = false
@@ -145,7 +147,7 @@ TODO 修改表单下拉项无效
           if (condition[field]) {
             isValidCondition = true
           } else {
-            console.log('gl-form > Index.vue > loadInitData() > 无效的查询参数信息，字段field:\'' + field + '\'，查询条件condition[field]:', condition[field] || '空', '。')
+            console.log('geelato-ui-ant > gl-form > Index.vue > loadInitData() > 无效的查询参数信息，字段field:\'' + field + '\'，查询条件condition[field]:', condition[field] || '空', '。')
           }
         }
         if (isValidCondition) {
@@ -159,7 +161,7 @@ TODO 修改表单下拉项无效
             fieldNameAry.push(property.field || propertyName)
           }
           let fieldNames = fieldNameAry.join(',')
-          // console.log('res>', that.defaultEntity, condition, fieldNames)
+          // console.log('geelato-ui-ant > loadInitData() > res>', that.defaultEntity, condition, fieldNames)
           that.$gl.api.query(that.defaultEntity, condition, fieldNames, true).then(function (res) {
             let resForm = res.data && res.data.length > 0 ? res.data[0] : {}
             for (let field in resForm) {
@@ -179,8 +181,7 @@ TODO 修改表单下拉项无效
         // 加载属性数据，如下拉列表、字典信息等
         for (let propertyName in this.properties) {
           let property = this.properties[propertyName]
-          // && this.ds[property.ds].lazy !== true
-          if (property.ds) {
+          if (property.ds && this.ds[property.ds].lazy !== true) {
             this.loadData(propertyName, property, property.ds)
           }
         }
@@ -194,7 +195,7 @@ TODO 修改表单下拉项无效
           return
         }
         // =============================
-        // ds 示例格式 为entityDataSource
+        // dsConfig 示例格式 为entityDataSource
         // {
         //     entity: 'base_data_city',
         //     lazy: true, // default false
@@ -226,7 +227,7 @@ TODO 修改表单下拉项无效
             }
           })
         } else {
-          console.error('gl-form > src > Index.vue > loadData() > 未配置数据源', dataSourceName)
+          console.error('gl-form > loadData() > 未配置数据源', dataSourceName)
         }
       },
       /**
@@ -234,7 +235,7 @@ TODO 修改表单下拉项无效
        * */
       onLoadRefData({property, propertyName}) {
         let that = this
-        // console.log('gl-form > Index.vue > loadRefData() >', {property, propertyName})
+        // console.log('geelato-ui-ant > gl-form > Index.vue > loadRefData() >', {property, propertyName})
         let propertyNames = that.dsBeDependentOn[propertyName || (property && property.identifier)] || []
         propertyNames.forEach(function (item) {
           let triggerProperty = that.getProperty(item)
@@ -309,7 +310,7 @@ TODO 修改表单下拉项无效
               verifyPropertyAry.push(property)
             }
           } else {
-            console.error('gl-form > src > Index.vue > validate() > 找不到配置property:', key, that.properties)
+            console.error('gl-form > validate() > 找不到配置property:', key, that.properties)
           }
         }
 
@@ -338,15 +339,15 @@ TODO 修改表单下拉项无效
         return new Promise((resolve, reject) => {
           this.validate().then(function () {
             let gql = that.getGql()
-            console.log('gl-form > src > Index.vue > save() > gql:', gql)
+            console.log('geelato-ui-ant > gl-form > save() > gql:', gql)
             that.$gl.api.saveByGql('', that.getGql()).then(function (res) {
-              console.log('gl-form > src > Index.vue > save() > res:', res)
+              console.log('geelato-ui-ant > gl-form > save() > res:', res)
               resolve(res)
             })
           }).catch(function (e) {
             // 验证不通过
-            console.log('gl-form > src > Index.vue > save() > validate fail.')
-            console.error('gl-form > src > Index.vue > save() > e: ', e)
+            console.log('geelato-ui-ant > gl-form > save() > validate fail.')
+            console.error('gl-form > save() > e: ', e)
             reject(e)
           })
         })
@@ -375,12 +376,12 @@ TODO 修改表单下拉项无效
         // 找出顶层的实体信息
         let that = this
         let theForm = that.getValues()
-        console.log('gl-form > Index.vue >getGql > form: ', theForm)
+        console.log('geelato-ui-ant > gl-form > Index.vue >getGql > form: ', theForm)
         let gql = {}
         genGql(gql, this.defaultEntity, this.properties)
 
         function genGql(parent, entityName, properties, confirmedEntityProperties) {
-          // console.log('genGql>', parent, entityName, properties)
+          // console.log('geelato-ui-ant > genGql>', parent, entityName, properties)
           parent[entityName] = parent[entityName] || {}
           let toAnalyseProperties = {}
           // 已确认归属实体的属性
@@ -395,7 +396,7 @@ TODO 修改表单下拉项无效
             // 转到实体保存时,需取实体的字段名fieldName,而不是配置properties中propertyName
             let fieldName = property.field
             let fieldValue = theForm[propertyName]
-            console.log('gl-form > src > Index.vue > getGql() > ', property.entity, entityName, property, fieldValue)
+            console.log('geelato-ui-ant > gl-form > getGql() > ', property.entity, entityName, property, fieldValue)
             if (property.entity === entityName) {
               // 该实体的直属属性，直接添加
               // 获取表单中填写的值
@@ -425,13 +426,13 @@ TODO 修改表单下拉项无效
                 } else {
                   // 深层级的依赖，当前层级未能解析出来，不能记录到confirmedProperties中。
                 }
-                // console.log('分析**entityName>', entityName, '**property>', property, '之后，**subEntityNames>', subEntityNames)
+                // console.log('geelato-ui-ant > 分析**entityName>', entityName, '**property>', property, '之后，**subEntityNames>', subEntityNames)
               }
             }
           }
           let dynamicAnalyseProperties = toAnalyseProperties
           subEntityNames.forEach((subEntityName) => {
-            console.log('gl-form > src > Index.vue > validate() > getGql() > subEntityNames', subEntityName, subEntityNames, dynamicAnalyseProperties)
+            console.log('geelato-ui-ant > gl-form > validate() > getGql() > subEntityNames', subEntityName, subEntityNames, dynamicAnalyseProperties)
             dynamicAnalyseProperties = genGql(parent[entityName], subEntityName, dynamicAnalyseProperties, confirmedProperties)
           })
           return toAnalyseProperties
@@ -444,7 +445,7 @@ TODO 修改表单下拉项无效
          * @returns {Array}
          */
         function parseSubEntity(entityName, subEntityProperty) {
-          // console.log('parseSubEntity >entityName:', entityName, ',subEntityProperty', subEntityProperty.field)
+          // console.log('geelato-ui-ant > parseSubEntity >entityName:', entityName, ',subEntityProperty', subEntityProperty.field)
           if (typeof subEntityProperty.value !== 'string') {
             return undefined
           }
@@ -454,7 +455,7 @@ TODO 修改表单下拉项无效
             dependingPropertyNames.forEach((item) => {
               let dependProperty = that.properties[item.substring(5)]
               if (!dependProperty) {
-                console.error('gl-form > src > Index.vue > getGql() > properties内未配置属性：' + item.substring(5), '，解析依赖：', item, '出错，当前property为：', subEntityProperty)
+                console.error('gl-form > getGql() > properties内未配置属性：' + item.substring(5), '，解析依赖：', item, '出错，当前property为：', subEntityProperty)
               } else {
                 // 检查依赖的这个实体dependProperty.entity是否是entityName直属子级实体，是的话才加入
                 let canBeAdd = true
@@ -481,7 +482,7 @@ TODO 修改表单下拉项无效
                   canBeAdd = false
                 }
                 if (canBeAdd) {
-                  // console.log('dependProperty.entity >', subEntityProperty.entity)
+                  // console.log('geelato-ui-ant > dependProperty.entity >', subEntityProperty.entity)
                   dependEntities.push(subEntityProperty.entity)
                 }
               }

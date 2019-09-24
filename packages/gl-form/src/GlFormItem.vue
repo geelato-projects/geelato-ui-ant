@@ -80,7 +80,7 @@
         this.$emit('propertyUpdate', {property, val, oval})
       },
       onLoadRefData({property}) {
-        console.log('formItem > loadRefData', {property})
+        console.log('geelato-ui-ant > formItem > loadRefData', {property})
         this.$emit('loadRefData', {property})
       }
     }

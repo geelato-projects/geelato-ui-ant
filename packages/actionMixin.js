@@ -31,9 +31,9 @@ export default {
         })
       } else {
         that.gl_doAction(action.then)
-        // console.log('ctx[action.fn](action.params) > promise: ', promise)
-        // console.log('ctx[action.fn](action.params) > action.then: ', action.then)
-        // console.log('ctx[action.fn](action.params) > action.fail: ', action.fail)
+        // console.log('geelato-ui-ant > ctx[action.fn](action.params) > promise: ', promise)
+        // console.log('geelato-ui-ant > ctx[action.fn](action.params) > action.then: ', action.then)
+        // console.log('geelato-ui-ant > ctx[action.fn](action.params) > action.fail: ', action.fail)
       }
     },
     gl_openModal(modalConfig) {

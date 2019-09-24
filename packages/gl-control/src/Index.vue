@@ -114,15 +114,17 @@
     },
     watch: {
       model: function (val, oval) {
+        console.log('geelato-ui-ant > watch > model: ', val, oval)
         this.$emit('propertyUpdate', {property: this.property, val: val, oval: oval})
       },
       'property.data': {
         handler(val, oval) {
-          console.log(val, oval)
+          // 多次watch
+          console.log('geelato-ui-ant > watch > property.data: ', this.$el, val, oval)
           this.resetDefaultValue()
         },
         // immediate: true,
-        deep: true
+        // deep: true
       }
     },
     mounted() {
@@ -149,7 +151,7 @@
        * */
       loadRefData(property, value) {
         this.$set(this.form, property.identifier, value);
-        // console.log('GLControl.vue > loadRefData() > property,value:', this.property, value)
+        // console.log('geelato-ui-ant > GLControl.vue > loadRefData() > property,value:', this.property, value)
         this.$emit('loadRefData', {property: this.property})
       },
       /**
@@ -169,10 +171,23 @@
         }
       },
       resetDefaultValue() {
+        if(this.property.value){
+          return
+        }
         // 设置默认值，如select控件
         if (this.property.props && this.property.props.defaultActiveIndex !== undefined && this.property.data && this.property.data.length > 0) {
           this.model = this.property.data[this.property.props.defaultActiveIndex].value
         } else if (this.property.props && this.property.props.defaultActiveIndex === undefined && this.property.data && this.property.data.length > 0) {
+          // console.log('>>>', this.property.data.filter((dataItem) => {
+          //   return dataItem.value === this.property.value
+          // }))
+          // if (this.property.data.filter((dataItem) => {
+          //   return dataItem.value === this.property.value
+          // }).length > 0) {
+          //   this.model = this.property.value
+          // } else {
+          //   this.model = this.property.data[0].value
+          // }
           this.model = this.property.data[0].value
         }
       }

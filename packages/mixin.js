@@ -62,7 +62,7 @@ export default {
       } else if (action.ctx === 'modal') {
         ctx = that.modal
       } else if (action.ctx === 'content') {
-        console.log('that.$refs>', that.$refs)
+        console.log('geelato-ui-ant > that.$refs>', that.$refs)
         ctx = that.$refs.$content
       } else if (action.ctx === 'self' || action.ctx === 'this') {
         ctx = that
@@ -84,9 +84,9 @@ export default {
         })
       } else {
         that.doAction(action.then)
-        // console.log('ctx[action.fn](action.params) > promise: ', promise)
-        // console.log('ctx[action.fn](action.params) > action.then: ', action.then)
-        // console.log('ctx[action.fn](action.params) > action.fail: ', action.fail)
+        // console.log('geelato-ui-ant > ctx[action.fn](action.params) > promise: ', promise)
+        // console.log('geelato-ui-ant > ctx[action.fn](action.params) > action.then: ', action.then)
+        // console.log('geelato-ui-ant > ctx[action.fn](action.params) > action.fail: ', action.fail)
       }
     },
     openModal(params, data) {
@@ -119,7 +119,7 @@ export default {
     //     }
     //     // 先找出需处理的列mapping，e.g. [{avatar:'https://xxxxx/xx/xx.jpg'}]
     //     let toParseMappingItems = []
-    //     // console.log('toParseMappingItems>', toParseMappingItems)
+    //     // console.log('geelato-ui-ant > toParseMappingItems>', toParseMappingItems)
     //     for (let key in entityDataReader.resultMapping) {
     //       let field = entityDataReader.resultMapping[key]
     //       let resultName = resultNames[field]
@@ -136,7 +136,7 @@ export default {
     //         dataItem[mappingItem.key] = utils.eval(mappingItem.value, dataItem)
     //       }
     //     }
-    //     // console.log('res>', res)
+    //     // console.log('geelato-ui-ant > res>', res)
     //     if (typeof dataHandler === 'function') {
     //       dataHandler(res)
     //     }

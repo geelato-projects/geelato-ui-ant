@@ -123,7 +123,7 @@
     methods: {
       // query组件的查询回调，获取查询条件信息，并调用loadData查询数据，并以数据驱动刷新页面
       onQuery(data) {
-        console.log('gl-table > Index.vue > onQuery > data: ', data)
+        console.log('geelato-ui-ant > gl-table > Index.vue > onQuery > data: ', data)
         this.lastMixQueryData = data.value
         // 有e，则是来源于查询操作按钮，需重置后再查询
         if (data.e) {
@@ -142,7 +142,7 @@
       },
       // 加载数据方法 必须为 Promise 对象
       loadData(parameter) {
-        console.log('gl-table > Index.vue > loadData > parameter: ', parameter)
+        console.log('geelato-ui-ant > gl-table > Index.vue > loadData > parameter: ', parameter)
         const thisVue = this
         thisVue.parameter = parameter
 
@@ -163,7 +163,7 @@
           root['@p'] = parameter.pageNo + ',' + parameter.pageSize
           const gql = {}
           gql[thisVue.opts.entity] = root
-          console.log('gl-table > Index.vue > loadData > genGql(): ', gql)
+          console.log('geelato-ui-ant > gl-table > Index.vue > loadData > genGql(): ', gql)
           return gql
         }
 
@@ -172,7 +172,7 @@
         }
 
         return this.api.queryByGql(genGql(this.lastMixQueryData)).then(res => {
-          console.log('gl-table > Index.vue > loadData > res:', res)
+          console.log('geelato-ui-ant > gl-table > Index.vue > loadData > res:', res)
           // let result = res.header?res.data:res
           // result.pageNo = result.page
           // result.totalCount = result.taltal
@@ -210,12 +210,12 @@
 
       },
       onRowAction(action, record) {
-        console.log('gl-table > Index.vue > onRowAction() > action:', action)
-        console.log('gl-table > Index.vue > onRowAction() > record:', record)
+        console.log('geelato-ui-ant > gl-table > Index.vue > onRowAction() > action:', action)
+        console.log('geelato-ui-ant > gl-table > Index.vue > onRowAction() > record:', record)
         this.doAction(action, {query: record})
       },
       // onToolbarAction(action) {
-      //   console.log('gl-table > Index.vue > onToolbarAction() > action:', action)
+      //   console.log('geelato-ui-ant > gl-table > Index.vue > onToolbarAction() > action:', action)
       //   this.$gl.ui.openModal(this, action.modal)
       // },
       onSelectChange(selectedRowKeys, selectedRows) {
@@ -252,5 +252,8 @@
   .gl-table table {
     display: table;
     table-layout: fixed
+  }
+  .gl-table td {
+    overflow: hidden;text-overflow: ellipsis;white-space: nowrap;
   }
 </style>

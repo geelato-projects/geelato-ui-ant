@@ -6,7 +6,7 @@ let globalVue
 function loadComponent(component) {
   if (typeof component === 'string') {
     const theComponent = globalVue.component(component)
-    console.log('packages > UIManager.js > loadComponent() > theComponent: ', theComponent, 'by componentName:', component)
+    console.log('geelato-ui-ant > UIManager.js > loadComponent() > theComponent: ', theComponent, 'by componentName:', component)
     if (theComponent) {
       return theComponent
     } else {
@@ -47,15 +47,15 @@ function openDynamicPage(opener, modalConfig) {
  * @param vueData
  */
 function openVue(opener, modalConfig, vueComponent) {
-  console.log('packages > UIManager.js > openVue() > opener >', opener)
-  console.log('packages > UIManager.js > openVue() > modalConfig >', modalConfig)
-  console.log('packages > UIManager.js > openVue() > modalBodyComponent >', vueComponent)
+  console.log('geelato-ui-ant > UIManager.js > openVue() > opener >', opener)
+  console.log('geelato-ui-ant > UIManager.js > openVue() > modalConfig >', modalConfig)
+  console.log('geelato-ui-ant > UIManager.js > openVue() > modalBodyComponent >', vueComponent)
   let id = utils.uuid(16)
   let el = document.createElement('div')
   el.setAttribute('id', id)
   document.getElementById('app').appendChild(el)
   const GlModal = globalVue.component('GlModal')
-  // console.log('PageManger > GlModal>', GlModal)
+  // console.log('geelato-ui-ant > PageManger > GlModal>', GlModal)
   let modalView = new GlModal({
     propsData: {
       modalId: id,

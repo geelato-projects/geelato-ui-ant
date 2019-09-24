@@ -177,7 +177,7 @@ utils.invoke = function (obj, keyValues) {
     let objCopy = {}
     Object.assign(objCopy, obj)
     for (let i in objCopy) {
-      // console.log('解析替换' + i, objCopy[i], keyValues, utils.invoke(objCopy[i], keyValues))
+      // console.log('geelato-ui-ant > 解析替换' + i, objCopy[i], keyValues, utils.invoke(objCopy[i], keyValues))
       objCopy[i] = utils.invoke(objCopy[i], keyValues)
     }
     return objCopy
@@ -204,8 +204,8 @@ utils.compileString = function (expression, $ctx) {
  * @returns {*}
  */
 utils.eval = function (expression, $ctx, ctxName = '$ctx') {
-  // console.log('utils > expression: ', expression)
-  // console.log('utils > $ctx: ', $ctx)
+  // console.log('geelato-ui-ant > utils > expression: ', expression)
+  // console.log('geelato-ui-ant > utils > $ctx: ', $ctx)
   let $utils = utils
   let utilsName = '$utils'
   let Fn = Function
