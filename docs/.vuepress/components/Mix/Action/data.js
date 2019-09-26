@@ -8,13 +8,13 @@ export default {
     fn: 'save',
     // opener、content、modal，默认为content
     ctx: 'content',
+    // 传递给save方法的参数
     params: {},
     then: {
       fn: 'close',
       ctx: 'modal',
       params: {},
-      then: {},
-      fail: {}
+      then: {}
     }
   }, {
     fn: 'close',
@@ -30,7 +30,7 @@ export default {
       ctx: 'modal',
       params: {},
       then: {},
-      fail: {}
+      // fail: {}
     }
   }]
 }

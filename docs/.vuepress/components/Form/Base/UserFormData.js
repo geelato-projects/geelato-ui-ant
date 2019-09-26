@@ -23,7 +23,9 @@ export default {
       title: '邮箱',
       rules: {
         required: true,
-        email: true
+        email: true,
+        // 唯一的，不重复的
+        unique:true
       },
       props: {
         placeholder: 'xxx@xxx.xxx'

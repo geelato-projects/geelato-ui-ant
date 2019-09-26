@@ -9,7 +9,7 @@ export default {
     okText: '保存',
     cancelText: '取消',
     body: {
-      type: 'staticPage',
+      type: 'static',
       component: ProjectCreate,
       props: {}
     },

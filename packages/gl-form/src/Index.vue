@@ -1,6 +1,3 @@
-<!--
-TODO 修改表单下拉项无效
--->
 <template>
   <div>
     <a-alert :showIcon="true" message="验证出错" type="error" v-if="Object.keys(errorItems).length>0">
@@ -155,7 +152,7 @@ TODO 修改表单下拉项无效
           for (let propertyName in that.properties) {
             let property = that.properties[propertyName]
             // 过滤不需要保存到服务端的属性
-            if (property.serverIgnore === true) {
+            if (property.isServerSaveIgnore === true) {
               continue
             }
             fieldNameAry.push(property.field || propertyName)
@@ -337,17 +334,19 @@ TODO 修改表单下拉项无效
       save() {
         let that = this
         return new Promise((resolve, reject) => {
-          this.validate().then(function () {
+          that.validate().then(function () {
             let gql = that.getGql()
             console.log('geelato-ui-ant > gl-form > save() > gql:', gql)
             that.$gl.api.saveByGql('', that.getGql()).then(function (res) {
               console.log('geelato-ui-ant > gl-form > save() > res:', res)
-              resolve(res)
+              that.$set(that.form, 'id', res.result)
+              let result = that.getValues()
+              resolve(result)
             })
           }).catch(function (e) {
             // 验证不通过
             console.log('geelato-ui-ant > gl-form > save() > validate fail.')
-            console.error('gl-form > save() > e: ', e)
+            console.error('geelato-ui-ant > gl-form > save() > e: ', e)
             reject(e)
           })
         })
@@ -390,7 +389,7 @@ TODO 修改表单下拉项无效
           for (let propertyName in properties) {
             let property = properties[propertyName]
             // 过滤不需要保存到服务端的属性
-            if (property.serverIgnore === true) {
+            if (property.isServerSaveIgnore === true) {
               continue
             }
             // 转到实体保存时,需取实体的字段名fieldName,而不是配置properties中propertyName
@@ -455,7 +454,7 @@ TODO 修改表单下拉项无效
             dependingPropertyNames.forEach((item) => {
               let dependProperty = that.properties[item.substring(5)]
               if (!dependProperty) {
-                console.error('gl-form > getGql() > properties内未配置属性：' + item.substring(5), '，解析依赖：', item, '出错，当前property为：', subEntityProperty)
+                console.error('geelato-ui-ant > gl-form > getGql() > properties内未配置属性：' + item.substring(5), '，解析依赖：', item, '出错，当前property为：', subEntityProperty)
               } else {
                 // 检查依赖的这个实体dependProperty.entity是否是entityName直属子级实体，是的话才加入
                 let canBeAdd = true

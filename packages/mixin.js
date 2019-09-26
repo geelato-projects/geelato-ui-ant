@@ -52,7 +52,7 @@ export default {
         return
       }
       if (typeof action !== 'object' || !action.fn) {
-        console.warn('packages > mixin.js > doAction > 无效的action: ', action)
+        console.warn('geelato-ui-ant > mixin.js > doAction() > 无效的action: ', action)
         return
       }
       // let content = Object.values(that.$refs.$content.$refs)[0]
@@ -62,7 +62,7 @@ export default {
       } else if (action.ctx === 'modal') {
         ctx = that.modal
       } else if (action.ctx === 'content') {
-        console.log('geelato-ui-ant > that.$refs>', that.$refs)
+        console.log('geelato-ui-ant > mixin.js > doAction() > that.$refs for content >', that.$refs)
         ctx = that.$refs.$content
       } else if (action.ctx === 'self' || action.ctx === 'this') {
         ctx = that
@@ -71,10 +71,16 @@ export default {
       }
 
       if (typeof ctx[action.fn] !== 'function') {
-        console.error('packages > mixin.js > doAction > fail, no fn "' + action.fn + '" in ctx:', ctx)
+        console.error('geelato-ui-ant > mixin.js > doAction() > fail, no fn "' + action.fn + '" in ctx:', ctx)
         return
       }
-      let promise = ctx[action.fn](action.params, data)
+      let promise = undefined
+      try {
+        promise = ctx[action.fn](action.params, data)
+      } catch (e) {
+        console.error('geelato-ui-ant > mixin.js > doAction() > action: ', action, 'data: ', data, 'e: ', e)
+      }
+      console.log('geelato-ui-ant > mixin.js > doAction() > action: ', action, 'return promise: ', promise)
       // let promise = ctx[action.fn](action.params, data, content)
       if (promise && typeof promise.then === 'function') {
         promise.then(function (data) {
@@ -83,10 +89,7 @@ export default {
           that.doAction(action.fail, data)
         })
       } else {
-        that.doAction(action.then)
-        // console.log('geelato-ui-ant > ctx[action.fn](action.params) > promise: ', promise)
-        // console.log('geelato-ui-ant > ctx[action.fn](action.params) > action.then: ', action.then)
-        // console.log('geelato-ui-ant > ctx[action.fn](action.params) > action.fail: ', action.fail)
+        that.doAction(action.then, data)
       }
     },
     openModal(params, data) {

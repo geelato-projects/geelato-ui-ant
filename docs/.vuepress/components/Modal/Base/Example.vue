@@ -34,14 +34,14 @@
       openListPage() {
         this.$gl.ui.openModal(this, data.staticListPageConfig)
       },
-      onSave(params, data, content) {
+      onSave(params, data) {
         this.callbackParams = params
         this.callbackData = data
       },
       openerFnExample(params, data, content) {
         this.$message.info('这是回调opener的示例。')
         this.callbackParams = params
-        this.callbackData = typeof content.getValue === 'function' ? content.getValue('name') : ''
+        this.callbackData = data
       },
       openerFnExampleByContent(params, data, content) {
         this.$message.info('这是由Modal的内容直接触发的事件。')

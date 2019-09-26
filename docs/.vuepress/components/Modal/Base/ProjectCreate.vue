@@ -17,18 +17,19 @@
       name: {
         control: 'input',
         title: '名称',
+        field: 'name',
         rules: {
           required: true
         }
       },
       tree: {
-        control: 'input',
-        title: '名称',
-        value: 'tree'
+        field: 'tree',
+        value: ''
       },
       description: {
         control: 'textarea',
-        title: '描述'
+        title: '描述',
+        field: 'description'
       }
     },
     layout: {
@@ -50,6 +51,14 @@
     data() {
       return {
         config: formConfig
+      }
+    },
+    mounted() {
+      console.log('>>$validator', this.$validator)
+    },
+    methods: {
+      save() {
+        return this.$refs.magicForm.save()
       }
     }
   }

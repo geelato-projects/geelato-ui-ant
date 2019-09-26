@@ -27,7 +27,7 @@ export default {
         confirmed: 'password'
       },
       // 持久化到服务端时，忽略该字段
-      serverIgnore: true
+      isServerSaveIgnore: true
     },
     tel: {
       control: 'input',
@@ -54,7 +54,7 @@ export default {
         required: false
       },
       // 持久化到服务端时，忽略该字段
-      serverIgnore: true
+      isServerSaveIgnore: true
     }
   },
   layout: {
