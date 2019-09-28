@@ -3,12 +3,12 @@ import EntityDataReader from './EntityDataReader'
 
 export default {
   props: {
-    api: {
-      type: Object,
-      default() {
-        return this.$gl.api
-      }
-    },
+    // api: {
+    //   type: Object,
+    //   default() {
+    //     return this.$gl.api
+    //   }
+    // },
     // 组件渲染配置信息
     opts: {
       type: Object,
@@ -76,7 +76,9 @@ export default {
       }
       let promise = undefined
       try {
-        promise = ctx[action.fn](action.params, data)
+        let convertedData = that.$gl.api.entityDataMappingHandler(data, action.dataMapping)
+        console.log('geelato-ui-ant > mixin.js > doAction() > action.dataMapping: ', action.dataMapping, 'data: ', data, 'convertedData: ', convertedData)
+        promise = ctx[action.fn](action.params, convertedData)
       } catch (e) {
         console.error('geelato-ui-ant > mixin.js > doAction() > action: ', action, 'data: ', data, 'e: ', e)
       }
@@ -108,7 +110,7 @@ export default {
     //     '@fs': entityDataReader.fields || '*'
     //   }
     //   Object.assign(gql[entityDataReader.entity], params || {})
-    //   this.api.queryByGql(gql, entityDataReader.withMeta).then(res => {
+    //   this.$gl.api.queryByGql(gql, entityDataReader.withMeta).then(res => {
     //     // 返回结果预处理
     //     // 获取返回结果的列名
     //     let resultNames = {}

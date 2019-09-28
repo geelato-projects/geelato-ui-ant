@@ -1,6 +1,7 @@
 import formData from '../../Form/Base/UserFormData.js'
 import tableData from '../../Table/Base/data.js'
 import treeData from '../../Tree/Base/data.js'
+import FormData from "../../Form/Base/UserFormData";
 
 
 export default {
@@ -11,54 +12,70 @@ export default {
       actions: [{title: '更多'}],
       bordered: true,
       style: '',
-      type: 'GlTable',
-      opts: tableData,
+      content: {
+        type: 'static',
+        component: 'GlTable',
+        // component: resolve => require(['/components/Form/Base/Example.vue'], resolve),
+        props: {opts:JSON.parse(JSON.stringify(tableData))}
+      },
       // 权限描述符
       permission: 'table1'
     },
     form1: {
       id: 'form1',
       title: '这是一个表单Card',
-      type: 'GlForm',
-      opts: {opts: formData}
+      content: {
+        type: 'static',
+        component: 'GlForm',
+        // component: resolve => require(['/components/Form/Base/Example.vue'], resolve),
+        props: {opts:JSON.parse(JSON.stringify(formData))}
+      }
     },
     tree1: {
       id: 'tree1',
       title: '这是一个树Card',
-      type: 'GlTree',
-      opts: treeData
+      content: {
+        type: 'static',
+        component: 'GlTree',
+        // component: resolve => require(['/components/Form/Base/Example.vue'], resolve),
+        props: JSON.parse(JSON.stringify(treeData))
+      }
     },
     list1: {
       id: 'tree1',
       title: '这是一个列表Card',
-      type: 'a-list',
-      opts: [
-        {
-          "gender": "male",
-          "name": {"title": "mr", "first": "aldaír", "last": "lima"},
-          "email": "aldaír.lima@example.com",
-          "nat": "BR"
-        }, {
-          "gender": "female",
-          "name": {"title": "mrs", "first": "ella", "last": "gagnon"},
-          "email": "ella.gagnon@example.com",
-          "nat": "CA"
-        }, {
-          "gender": "male",
-          "name": {"title": "mr", "first": "jörgen", "last": "seewald"},
-          "email": "jörgen.seewald@example.com",
-          "nat": "DE"
-        }, {
-          "gender": "female",
-          "name": {"title": "miss", "first": "molly", "last": "wilson"},
-          "email": "molly.wilson@example.com",
-          "nat": "NZ"
-        }, {
-          "gender": "male",
-          "name": {"title": "mr", "first": "jean", "last": "olivier"},
-          "email": "jean.olivier@example.com",
-          "nat": "FR"
-        }]
+      content: {
+        type: 'static',
+        component: 'a-list',
+        // component: resolve => require(['/components/Form/Base/Example.vue'], resolve),
+        props: [
+          {
+            "gender": "male",
+            "name": {"title": "mr", "first": "aldaír", "last": "lima"},
+            "email": "aldaír.lima@example.com",
+            "nat": "BR"
+          }, {
+            "gender": "female",
+            "name": {"title": "mrs", "first": "ella", "last": "gagnon"},
+            "email": "ella.gagnon@example.com",
+            "nat": "CA"
+          }, {
+            "gender": "male",
+            "name": {"title": "mr", "first": "jörgen", "last": "seewald"},
+            "email": "jörgen.seewald@example.com",
+            "nat": "DE"
+          }, {
+            "gender": "female",
+            "name": {"title": "miss", "first": "molly", "last": "wilson"},
+            "email": "molly.wilson@example.com",
+            "nat": "NZ"
+          }, {
+            "gender": "male",
+            "name": {"title": "mr", "first": "jean", "last": "olivier"},
+            "email": "jean.olivier@example.com",
+            "nat": "FR"
+          }]
+      }
     }
   },
   layout: {

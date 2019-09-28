@@ -1,5 +1,6 @@
 <template>
   <a-list
+      class="gl-list"
       :class=clazz
       :loading="loading"
       itemLayout="horizontal"
@@ -10,16 +11,15 @@
       <a-spin v-if="loadingMore"/>
       <a-button v-else @click="onLoadMore">加载更多</a-button>
     </div>
-    <a-list-item slot="renderItem" slot-scope="item, index">
+    <a-list-item slot="renderItem" slot-scope="item, index" :title="resultSet.resultMapping.tips?item.tips:''">
       <!--<a slot="actions">edit</a>-->
       <!--<a slot="actions">more</a>-->
-      <a-list-item-meta
-          :description="resultSet.resultMapping.description?item.description:''">
+      <a-list-item-meta :description="resultSet.resultMapping.description?item.description:''">
         <a slot="title" @click="selectItem(item,index)">{{item.title}}</a>
-        <a-avatar v-if="resultSet.resultMapping.avatarUrl" slot="avatar"
+        <a-avatar v-if="entityDataReader.resultMapping.avatarUrl&&resultSet.resultMapping.avatarUrl" slot="avatar"
                   :src="item.avatarUrl"/>
       </a-list-item-meta>
-      <div>{{item.content}}</div>
+      <div v-if="entityDataReader.resultMapping.content">{{item.content}}</div>
     </a-list-item>
   </a-list>
 </template>
@@ -69,10 +69,10 @@
         let that = this
         let entityDataReader = that.entityDataReader
         entityDataReader.params = params || {}
-        Object.assign(this.resultSet.resultMapping = {}, this.entityDataReader.resultMapping)
+        Object.assign(that.resultSet.resultMapping = {}, that.entityDataReader.resultMapping)
 
-        that.api.queryByEntityDataReader(entityDataReader).then(res => {
-          that.api.resultHandler(res, that.resultSet.resultMapping)
+        that.$gl.api.queryByEntityDataReader(entityDataReader).then(res => {
+          that.$gl.api.resultHandler(res, that.resultSet.resultMapping)
           if (typeof dataHandler === 'function') {
             dataHandler(res)
           }
@@ -113,5 +113,9 @@
   }
 </script>
 
-<style scoped>
+<style>
+  .gl-list .ant-list-item:hover {
+    background-color: #f5f5f5;
+    cursor: default;
+  }
 </style>

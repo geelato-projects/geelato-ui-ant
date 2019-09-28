@@ -2,22 +2,24 @@
   <div>
     <a-row v-for="(row,rowIndex) in rows" :gutter="row.gutter" :key="rowIndex">
       <a-col v-for="(col,colIndex) in row.cols" :span="col.span" :offset="col.offset" :key="colIndex">
-        <template v-if="col.card">
-          <a-card style="margin-top: 8px">
+        <!--设置col.cardConfig的值-->
+        <template v-if="col.card&&(col.cardConfig=getCardConfig(col.card))">
+          <a-card v-bind="col.cardConfig">
             <span href="#" slot="title">
-              {{getCardConfig(col.card).title}}
+              <a-icon v-if="col.cardConfig.icon" :type="col.cardConfig.icon"/>
+              {{col.cardConfig.title}}
             </span>
             <!--<component :ref="col.card" :is="getCardComponent(col.card)"-->
-            <!--:opts="getCardConfig(col.card).opts"-->
-            <!--:query="getCardConfig(col.card).query">-->
+            <!--:opts="col.cardConfig.opts"-->
+            <!--:query="col.cardConfig.query">-->
             <!--正在加载...-->
             <!--</component>-->
             <component :ref="col.card" :is="getCardComponent(col.card)"
-                       v-bind="getCardConfig(col.card).opts">
+                       v-bind="col.cardConfig.content.props">
               正在加载...
             </component>
             <span href="#" slot="extra">
-              <!--<a><a-icon type="eye-invisible" @click="getCardConfig(col.card).visible=false;$nextTick()"/></a>-->
+              <!--<a><a-icon type="eye-invisible" @click="col.cardConfig.visible=false;$nextTick()"/></a>-->
             </span>
           </a-card>
         </template>
@@ -31,6 +33,7 @@
 
 <script>
   import Vue from 'vue'
+
   export default {
     name: "GlCardLayoutItem",
     props: {
@@ -49,7 +52,7 @@
       },
       getCardComponent(cardId) {
         let card = this.getCardConfig(cardId)
-        return Vue.component(card.type)
+        return Vue.component(card.content.component)
       }
     }
   }

@@ -218,6 +218,24 @@ function entityDataReaderResultHandler(res, resultMapping = {}) {
 }
 
 /**
+ * 实体对像的数据转换
+ * @param <Object> data 简单一层对象，如：{id:'123456',name:'张三'}
+ * @param <Object> dataMapping  可为可层对象，如两层对像：{query: {fullName: '$ctx.name'}}
+ * @return <Object> {query: {fullName: '张三'}}
+ */
+function entityDataMappingHandler(data, dataMapping = {}) {
+  let convertedData = {}
+  for (let key in dataMapping) {
+    if (typeof dataMapping[key] === 'object') {
+      convertedData[key] = entityDataMappingHandler(data, dataMapping[key])
+    } else {
+      convertedData[key] = utils.eval(dataMapping[key], data)
+    }
+  }
+  return convertedData
+}
+
+/**
  * 查询数据定义信息，即元数据信息
  * @param gqlObject or gqlArray
  * @param withMeta 是否需同时查询出各列表字段的元数据信息
@@ -300,6 +318,7 @@ function ApiHelper(options) {
     queryByGql: queryByGql,
     queryByEntityDataReader: queryByEntityDataReader,
     resultHandler: entityDataReaderResultHandler,
+    entityDataMappingHandler: entityDataMappingHandler,
     save: save,
     saveByGql: saveByGql,
     update: update,

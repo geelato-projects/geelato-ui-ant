@@ -176,7 +176,8 @@ function genSidebarConfig(title) {
       title: '高级应用',
       collapsable: true,
       children: [
-        'advanced-user-profile'
+        'advanced-user-profile',
+        'advanced-meta'
       ]
     }
   ]

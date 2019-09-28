@@ -4,6 +4,7 @@ import GlContextMenu from './gl-context-menu'
 import GlControl from './gl-control'
 import GlModal from './gl-modal'
 import GlList from './gl-list'
+import GlListPlus from './gl-list-plus'
 import GlTree from './gl-tree'
 import GlForm from './gl-form'
 import GlTable from './gl-table'
@@ -26,6 +27,7 @@ const components = [
   GlControl,
   GlModal,
   GlList,
+  GlListPlus,
   GlTree,
   GlForm,
   GlTable,
@@ -83,6 +85,7 @@ export default {
   GlControl,
   GlModal,
   GlList,
+  GlListPlus,
   GlTree,
   GlTable,
   GlCard,

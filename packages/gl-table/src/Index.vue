@@ -171,7 +171,7 @@
           return field === '' || field === '空' || field === '无' || field === undefined
         }
 
-        return this.api.queryByGql(genGql(this.lastMixQueryData)).then(res => {
+        return this.$gl.api.queryByGql(genGql(this.lastMixQueryData)).then(res => {
           console.log('geelato-ui-ant > gl-table > Index.vue > loadData > res:', res)
           // let result = res.header?res.data:res
           // result.pageNo = result.page

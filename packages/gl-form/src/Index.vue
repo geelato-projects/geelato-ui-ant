@@ -1,3 +1,6 @@
+<!--
+  TODO 指定字段创建之后，则不允许修改；保存时，select控件默认选择项值未获取
+-->
 <template>
   <div>
     <a-alert :showIcon="true" message="验证出错" type="error" v-if="Object.keys(errorItems).length>0">
@@ -74,7 +77,7 @@
         }
         this.initConvertData()
         this.loadInitData()
-        // this.forceRefresh()
+        this.forceRefresh()
       },
       /**
        * 1、将简化的配置信息转换成完整的配置信息，如只设置了email类型，则将默认增加email验证规则
@@ -97,6 +100,8 @@
           // 若query已存在属性值，则以query的值为准
           if (that.query && that.query[propertyName]) {
             that.$set(that.form, propertyName, that.query[propertyName])
+            // 更新属性中的值
+            that.$set(property, 'value', that.query[propertyName])
           } else {
             that.$set(that.form, propertyName, property.value === undefined ? '' : property.value)
           }
@@ -128,6 +133,7 @@
           }
         }
         this.init = true
+        console.log('geelato-ui-ant > gl-form > initConvertData() > that.form: ', JSON.stringify(that.form))
       },
       // 加载远程的初始化数据，如字典信息
       loadInitData() {
@@ -401,10 +407,10 @@
               // 获取表单中填写的值
               // boolean类型的值可以转换成数值的方式表示
               if (typeof fieldValue === 'boolean') {
-                if (property.convert === 'number') {
-                  parent[entityName][fieldName] = fieldValue ? 1 : 0
-                } else {
+                if (property.saveAsBoolean) {
                   parent[entityName][fieldName] = fieldValue
+                } else {
+                  parent[entityName][fieldName] = fieldValue ? 1 : 0
                 }
               } else {
                 parent[entityName][fieldName] = typeof fieldValue !== 'string' ? fieldValue : fieldValue.replace(REGEXP_CTX, CONST_GQL_PARENT)
