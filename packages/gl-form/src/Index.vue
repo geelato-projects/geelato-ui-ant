@@ -91,6 +91,8 @@
           let property = this.properties[propertyName]
           // identifier 在form对象中的唯一标识
           property.identifier = propertyName
+          // init props
+          property.props = property.props || {}
           // 未设置实体时，默认为defaultEntity
           property.entity = property.entity || this.defaultEntity
           property.field = property.field || propertyName
@@ -101,9 +103,15 @@
           if (that.query && that.query[propertyName]) {
             that.$set(that.form, propertyName, that.query[propertyName])
             // 更新属性中的值
-            that.$set(property, 'value', that.query[propertyName])
+            property.value = that.query[propertyName]
+            // that.$set(property, 'value', that.query[propertyName])
           } else {
-            that.$set(that.form, propertyName, property.value === undefined ? '' : property.value)
+            that.$set(that.form, propertyName, property.value = property.value || property.props.defaultValue || '')
+            // 如果值还为空，则试着以defaultIndex指定的值来进行设置，如select控件
+            if (!that.form[propertyName] && property.data && property.data.length > 0) {
+              let dataIndex = property.props.defaultActiveIndex || 0
+              that.$set(that.form, propertyName, property.data[dataIndex].value)
+            }
           }
           // this.form[key] = property.value === undefined ? '' : property.value
           // 依据字段类型，自动构建字段验证规则信息，兼容semantic ui form validate
@@ -114,8 +122,6 @@
               property.rules = {email: true}
             }
           }
-          // init props
-          property.props = property.props || {}
         }
         // 3、构建数据源依赖 dsBeDependentOn e.g. {provinceCode: 'gs:$ctx.form.province'}
         for (let propertyName in this.ds) {

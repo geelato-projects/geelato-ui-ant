@@ -171,24 +171,20 @@
         }
       },
       resetDefaultValue() {
-        if(this.property.value){
+        let that = this
+        if (that.property.value) {
           return
         }
         // 设置默认值，如select控件
-        if (this.property.props && this.property.props.defaultActiveIndex !== undefined && this.property.data && this.property.data.length > 0) {
-          this.model = this.property.data[this.property.props.defaultActiveIndex].value
-        } else if (this.property.props && this.property.props.defaultActiveIndex === undefined && this.property.data && this.property.data.length > 0) {
-          // console.log('>>>', this.property.data.filter((dataItem) => {
-          //   return dataItem.value === this.property.value
-          // }))
-          // if (this.property.data.filter((dataItem) => {
-          //   return dataItem.value === this.property.value
-          // }).length > 0) {
-          //   this.model = this.property.value
-          // } else {
-          //   this.model = this.property.data[0].value
-          // }
-          this.model = this.property.data[0].value
+        // if (this.property.props && this.property.props.defaultActiveIndex !== undefined && this.property.data && this.property.data.length > 0) {
+        //   this.model = this.property.data[this.property.props.defaultActiveIndex].value
+        // } else if (this.property.props && this.property.props.defaultActiveIndex === undefined && this.property.data && this.property.data.length > 0) {
+        //   this.model = this.property.data[0].value
+        // }
+
+        if (that.property.props && that.property.data && that.property.data.length > 0) {
+          let dataIndex = that.property.props.defaultActiveIndex || 0
+          that.model = that.property.data[dataIndex].value
         }
       }
     }

@@ -37,8 +37,11 @@ export default {
       data: [
         {text: 'MySql', value: 'MySql'},
         {text: 'Oracle', value: 'Oracle'},
-        {text: 'MSSql', value: 'MSSql'}
+        {text: 'MSSqlServer', value: 'MSSqlServer'}
       ],
+      rules: {
+        required: true
+      },
       props: {
         defaultValue: 'MySql'
       }

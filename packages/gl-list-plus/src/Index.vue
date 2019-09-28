@@ -10,8 +10,8 @@
           <a href="#" slot="extra">
             <a-dropdown v-if="listAction&&listAction.actions&&listAction.actions.length>0">
               <a class="ant-dropdown-link" href="#">
-                {{listAction.title}}
-                <a-icon type="down"/>
+                <!--{{listAction.title}}-->
+                <a-icon type="ellipsis" />
               </a>
               <a-menu slot="overlay">
                 <a-menu-item v-for="(action,index) in listAction.actions" :key="index">
@@ -39,7 +39,7 @@
                 <a-dropdown
                     v-if="listGroupItemAction&&listGroupItemAction.actions&&listGroupItemAction.actions.length>0">
                   <a class="ant-dropdown-link" href="#">
-                    <a-icon type="down"/>
+                    <a-icon type="ellipsis" />
                   </a>
                   <a-menu slot="overlay">
                     <a-menu-item v-for="(action,index) in listGroupItemAction.actions" :key="index">
@@ -210,6 +210,11 @@
   /*有分组时，列表需缩进*/
   .gl-list-group .ant-list-item {
     padding-left: 2em;
+  }
+
+  .gl-list-plus .anticon.anticon-ellipsis {
+    font-size: 20px;
+    color: #000000;
   }
 
 </style>
