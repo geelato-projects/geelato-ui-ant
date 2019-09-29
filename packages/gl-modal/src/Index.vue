@@ -95,7 +95,7 @@
         that.loading = true
         // 解析 action
         console.log('geelato-ui-ant > gl-modal > Index.vue > handleAction() > index: ', index, ' action: ', action)
-        that.doAction(action)
+        that.$_doAction(action)
         that.loading = false
       },
       ok() {
@@ -114,7 +114,7 @@
         for (let index in this.modalConfig.on) {
           let action = this.modalConfig.on[index]
           if (action.ctx === 'content' && action.fn === data.fn) {
-            this.doAction(action.then, data)
+            this.$_doAction(action.then, data)
             break
           }
         }

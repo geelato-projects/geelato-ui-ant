@@ -46,6 +46,7 @@ export default {
       title: '同步状态',
       // 采用1、0来代替true、false
       props: {
+        disabled: true,
         placeholder: '',
         defaultValue: 0
       },

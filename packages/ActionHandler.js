@@ -7,7 +7,7 @@ export default class ActionHandler {
     console.log('geelato-ui-ant > ActionHandler.js > constructor() > this:', this)
   }
 
-  doAction(action, data) {
+  $_doAction(action, data) {
     let that = this
     if (!action) {
       return
@@ -30,18 +30,18 @@ export default class ActionHandler {
 
     // 默认从指定的上下文中执行该方法，若无指定上下文，则执行本actionHandler的方法
     let fn = typeof ctx[action.fn] === 'function' ? ctx[action.fn] : this[action.fn]
-    console.log('geelato-ui-ant > ActionHandler.js > doAction() > ctx:', ctx)
-    console.log('geelato-ui-ant > ActionHandler.js > doAction() > fn:', fn)
+    console.log('geelato-ui-ant > ActionHandler.js > $_doAction() > ctx:', ctx)
+    console.log('geelato-ui-ant > ActionHandler.js > $_doAction() > fn:', fn)
 
     let promise = fn(action.params, data, that.content)
     if (promise && typeof promise.then === 'function') {
       promise.then(function (data) {
-        that.doAction(action.then, data)
+        that.$_doAction(action.then, data)
       }).catch(function (data) {
-        that.doAction(action.fail, data)
+        that.$_doAction(action.fail, data)
       })
     } else {
-      that.doAction(action.then)
+      that.$_doAction(action.then)
       // console.log('geelato-ui-ant > ctx[action.fn](action.params) > promise: ', promise)
       // console.log('geelato-ui-ant > ctx[action.fn](action.params) > action.then: ', action.then)
       // console.log('geelato-ui-ant > ctx[action.fn](action.params) > action.fail: ', action.fail)

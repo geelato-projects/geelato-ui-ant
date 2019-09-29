@@ -1,5 +1,5 @@
 <!--
-  TODO 列内容太长时，没有自动隐藏
+
 -->
 <template>
   <div class="gl-table gl-table-as-list" v-if="opts">
@@ -11,7 +11,8 @@
 
     <div class="table-operator">
       <template v-for="(action,index) in opts.toolbar.actions">
-        <a-button :type="action.type||'primary'" :icon="action.icon" @click="doAction(action,{index:index})"
+        <a-button :type="action.type||'primary'" :icon="action.icon"
+                  @click="$_doAction(action,{rowSelection:options.rowSelection,index:index})"
                   :key="index" v-if="action.show===undefined||rungs(action.show)">{{action.text||action.title}}
         </a-button>&nbsp;
       </template>
@@ -110,7 +111,7 @@
             onChange: this.onSelectChange
           }
         },
-        optionAlertShow: false
+        optionAlertShow: true
       }
     },
     computed: {},
@@ -139,6 +140,9 @@
       },
       refresh() {
         this.onQuery(this.$refs.query.getCondition())
+      },
+      $_onDeleted(params, data) {
+        this.refresh()
       },
       // 加载数据方法 必须为 Promise 对象
       loadData(parameter) {
@@ -212,7 +216,7 @@
       onRowAction(action, record) {
         console.log('geelato-ui-ant > gl-table > Index.vue > onRowAction() > action:', action)
         console.log('geelato-ui-ant > gl-table > Index.vue > onRowAction() > record:', record)
-        this.doAction(action, {query: record})
+        this.$_doAction(action, record)
       },
       // onToolbarAction(action) {
       //   console.log('geelato-ui-ant > gl-table > Index.vue > onToolbarAction() > action:', action)
@@ -241,9 +245,9 @@
         }
       }
       // ,
-      // doAction(action, data) {
+      // $_doAction(action, data) {
       //   let actionHandler = new ActionHandler({ui: this.$gl.ui, opener: this})
-      //   return actionHandler.doAction(action, data)
+      //   return actionHandler.$_doAction(action, data)
       // }
     }
   }
@@ -253,7 +257,14 @@
     display: table;
     table-layout: fixed
   }
+
   .gl-table td {
-    overflow: hidden;text-overflow: ellipsis;white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .gl-table th {
+    overflow: hidden;
   }
 </style>

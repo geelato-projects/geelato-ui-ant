@@ -3,7 +3,7 @@ import EntityDataReader from './EntityDataReader'
 
 export default {
   methods: {
-    gl_doAction(action, data) {
+    gl_$_doAction(action, data) {
       let that = this
       if (!action) {
         return
@@ -25,12 +25,12 @@ export default {
       let promise = ctx[action.fn](action.params, data, content)
       if (promise && typeof promise.then === 'function') {
         promise.then(function (data) {
-          that.gl_doAction(action.then, data)
+          that.gl_$_doAction(action.then, data)
         }).catch(function (data) {
-          that.gl_doAction(action.fail, data)
+          that.gl_$_doAction(action.fail, data)
         })
       } else {
-        that.gl_doAction(action.then)
+        that.gl_$_doAction(action.then)
         // console.log('geelato-ui-ant > ctx[action.fn](action.params) > promise: ', promise)
         // console.log('geelato-ui-ant > ctx[action.fn](action.params) > action.then: ', action.then)
         // console.log('geelato-ui-ant > ctx[action.fn](action.params) > action.fail: ', action.fail)

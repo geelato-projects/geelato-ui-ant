@@ -20,14 +20,18 @@ let listEntityDataReader = {
   resultMapping: {
     // avatarUrl: `'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png'`,
     title: `$ctx.tableName +'('+ $ctx.title + ')'`,
-    tips: 'tableComment'
+    tips: 'tableComment',
+    content: ''
+  },
+  params: {
+    connectId: '$ctx.id',
   }
 }
 
 let plus = {
   cardMap: {
-    form1: {
-      id: 'form1',
+    table1: {
+      id: 'table1',
       title: '详细信息',
       actions: [{title: '更多'}],
       bordered: false,
@@ -46,7 +50,7 @@ let plus = {
       {
         gutter: 10,
         cols: [
-          {span: 24, offset: 0, card: 'form1'}
+          {span: 24, offset: 0, card: 'table1'}
         ]
       }
     ]
@@ -55,7 +59,7 @@ let plus = {
 
 export default {
   listTitle: '实体与视图列表',
-  listAction: {
+  listHeaderAction: {
     title: '操作',
     actions: [{
       text: '添加数据库连接',
@@ -106,7 +110,7 @@ export default {
   },
   listSearch: {placeholder: '查询实体、视图'},
   listGroupIcon: {type: "database", theme: "twoTone", twoToneColor: "#52c41a"},
-  listGroupItemAction: {
+  listGroupAction: {
     title: '',
     actions: [
       {
@@ -137,7 +141,7 @@ export default {
               fn: 'close',
               ctx: 'modal',
               then: {
-                fn: 'refresh',
+                fn: 'refreshCurrentList',
                 ctx: 'opener'
               }
             }
@@ -193,9 +197,73 @@ export default {
           query: {id: '$ctx.id'}
         }
       }, {
-        fn: 'delete',
+        fn: '$_delete',
         text: '删除数据库连接',
-        ctx: 'self'
+        ctx: 'this',
+        dataMapping: {
+          entity: '"platform_dev_db_connect"',
+          query: {id: '$ctx.id'},
+          preDelete: {entity: '"platform_dev_table"', query: {connectId: '$ctx.id'}}
+        },
+        // then: {
+        //   fn: 'refresh',
+        //   ctx: 'this'
+        // }
+      }]
+  },
+  listGroupItemAction: {
+    title: '',
+    actions: [
+      {
+        text: '修改实体',
+        icon: 'plus',
+        type: 'primary',
+        fn: 'openModal',
+        // opener、content、modal、handler，默认为handler
+        ctx: 'this',
+        params: {
+          title: '编辑实体信息',
+          width: '1200px',
+          height: '480px',
+          body: {
+            type: 'staticPage',
+            component: 'GlForm',
+            // component: resolve => require(['/components/Form/Base/Example.vue'], resolve),
+            props: {opts: JSON.parse(JSON.stringify(EntityFormData))},
+          },
+          actions: [{
+            text: '保存',
+            type: 'primary',
+            fn: 'save',
+            // opener、content、modal，默认为content
+            ctx: 'content',
+            params: {},
+            then: {
+              fn: 'close',
+              ctx: 'modal',
+              then: {
+                fn: 'refresh',
+                ctx: 'opener'
+              }
+            }
+          }, {
+            fn: 'close',
+            text: '取消',
+            ctx: 'modal'
+          }]
+        },
+        // 输入数据的转换
+        dataMapping: {
+          query: {id: '$ctx.id'}
+        }
+      }, {
+        text: '删除实体',
+        icon: 'delete',
+        type: 'primary',
+        fn: '$_delete',
+        // opener、content、modal、handler，默认为handler
+        ctx: 'this',
+        dataMapping: {entity: '"platform_dev_table"', query: {id: '$ctx.id'}}
       }]
   },
   listGroupEntityDataReader: listGroupEntityDataReader,

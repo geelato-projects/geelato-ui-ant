@@ -15,7 +15,7 @@ export default {
         //   props: {placeholder: '中文名称', defaultValue: ''}
         // },
         {field: 'columnName', title: '列名', cop: 'contains', control: 'input', lop: 'and', props: {placeholder: ''}},
-        {field: 'linked', title: '是否已同步', cop: 'eq', control: 'checkbox', props: {defaultValue: 1}},
+        {field: 'linked', title: '是否已同步', cop: 'eq', control: 'checkbox', props: {defaultValue: 0}},
       ],
       layout: {
         display: 'auto',
@@ -67,40 +67,10 @@ export default {
       text: '同步到数据库',
       icon: 'swap-right',
       type: 'primary',
-      fn: 'openModal',
+      fn: '$_doApi',
       // opener、content、modal、handler，默认为handler
       ctx: 'this',
-      params: {
-        title: '编辑用户信息',
-        width: '1200px',
-        height: '480px',
-        body: {
-          type: 'staticPage',
-          component: 'GlForm',
-          // component: resolve => require(['/components/Form/Base/Example.vue'], resolve),
-          props: {opts: JSON.parse(JSON.stringify(FormData))}
-        },
-        actions: [{
-          text: '保存',
-          type: 'primary',
-          fn: 'save',
-          // opener、content、modal，默认为content
-          ctx: 'content',
-          params: {},
-          then: {
-            fn: 'close',
-            ctx: 'modal',
-            then: {
-              fn: 'refresh',
-              ctx: 'opener'
-            }
-          }
-        }, {
-          fn: 'close',
-          text: '取消',
-          ctx: 'modal'
-        }]
-      }
+      params: {}
     }],
     css: {align: 'right'}
   },
@@ -117,20 +87,18 @@ export default {
         // opener、content、modal、handler，默认为handler
         ctx: 'this',
         params: {
-          title: '编辑用户信息',
+          title: '编辑列信息',
           width: '1200px',
           height: '480px',
           body: {
             type: 'staticPage',
             component: 'GlForm',
-            // component: resolve => require(['/components/Form/Base/Example.vue'], resolve),
             props: {opts: JSON.parse(JSON.stringify(FormData))}
           },
           actions: [{
             text: '保存',
             type: 'primary',
             fn: 'save',
-            // opener、content、modal，默认为content
             ctx: 'content',
             params: {},
             then: {
@@ -146,19 +114,36 @@ export default {
             text: '取消',
             ctx: 'modal'
           }]
+        },
+        dataMapping: {
+          query: {id: '$ctx.id'}
+        }
+      }, {
+        text: '删除',
+        icon: 'delete',
+        type: 'primary',
+        fn: '$_delete',
+        // opener、content、modal、handler，默认为handler
+        ctx: 'this',
+        dataMapping: {
+          entity: '"platform_dev_column"', query: {id: '$ctx.id'}
         }
       }]
     },
     columns: [
       {title: '#', dataIndex: 'id', scopedSlots: {customRender: 'serial'}},
-      {title: '名称', dataIndex: 'title', sorter: true},
       {title: '列名', dataIndex: 'name', sorter: true},
+      {title: '标题', dataIndex: 'title', sorter: true},
       {title: '数据类型', dataIndex: 'dataType'},
+      {title: '可空', dataIndex: 'nullable', customRender: (text) => text === 1 ? '可为空' : '不可为空'},
+      {title: '最大长度', dataIndex: 'charMaxLength'},
+      {title: '数值位数（precision）', dataIndex: 'numericPrecision'},
+      {title: '小数位数（scale）', dataIndex: 'numericScale'},
       {
-        title: '链接',
+        title: '同步',
         dataIndex: 'linked',
         sorter: true,
-        customRender: (text) => text === 2 ? '保密' : (text === 1 ? '男' : '女')
+        customRender: (text) => text === 0 ? '未同步' : (text === 1 ? '已同步' : '未同步')
       },
       {title: '次序', dataIndex: 'seq', needTotal: true},
       {

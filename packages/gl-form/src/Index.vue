@@ -1,5 +1,5 @@
 <!--
-  TODO 指定字段创建之后，则不允许修改；保存时，select控件默认选择项值未获取
+  TODO 指定字段创建之后，则不允许修改；checkbox必填，checkbox未设置时报错
 -->
 <template>
   <div>

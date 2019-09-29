@@ -46,13 +46,18 @@ export default {
     }
   },
   methods: {
-    doAction(action, data) {
+    $_doAction(action, data, callback) {
       let that = this
       if (!action) {
+        if (typeof callback === 'function') {
+          console.log('geelato-ui-ant > mixin.js > $_doAction() > End callback of $_doAction.')
+          callback(action, data)
+        }
+        console.log('geelato-ui-ant > mixin.js > $_doAction() > End $_doAction.')
         return
       }
       if (typeof action !== 'object' || !action.fn) {
-        console.warn('geelato-ui-ant > mixin.js > doAction() > 无效的action: ', action)
+        console.warn('geelato-ui-ant > mixin.js > $_doAction() > 无效的action: ', action)
         return
       }
       // let content = Object.values(that.$refs.$content.$refs)[0]
@@ -62,7 +67,7 @@ export default {
       } else if (action.ctx === 'modal') {
         ctx = that.modal
       } else if (action.ctx === 'content') {
-        console.log('geelato-ui-ant > mixin.js > doAction() > that.$refs for content >', that.$refs)
+        console.log('geelato-ui-ant > mixin.js > $_doAction() > that.$refs for content >', that.$refs)
         ctx = that.$refs.$content
       } else if (action.ctx === 'self' || action.ctx === 'this') {
         ctx = that
@@ -71,28 +76,49 @@ export default {
       }
 
       if (typeof ctx[action.fn] !== 'function') {
-        console.error('geelato-ui-ant > mixin.js > doAction() > fail, no fn "' + action.fn + '" in ctx:', ctx)
+        console.error('geelato-ui-ant > mixin.js > $_doAction() > fail, no fn "' + action.fn + '" in ctx:', ctx)
         return
       }
       let promise = undefined
       try {
+        // 执行方法
         let convertedData = that.$gl.api.entityDataMappingHandler(data, action.dataMapping)
-        console.log('geelato-ui-ant > mixin.js > doAction() > action.dataMapping: ', action.dataMapping, 'data: ', data, 'convertedData: ', convertedData)
+        console.log('geelato-ui-ant > mixin.js > $_doAction() > action.dataMapping: ', action.dataMapping, 'data: ', data, 'convertedData: ', convertedData)
         promise = ctx[action.fn](action.params, convertedData)
       } catch (e) {
-        console.error('geelato-ui-ant > mixin.js > doAction() > action: ', action, 'data: ', data, 'e: ', e)
+        console.error('geelato-ui-ant > mixin.js > $_doAction() > action: ', action, 'data: ', data, 'e: ', e)
       }
-      console.log('geelato-ui-ant > mixin.js > doAction() > action: ', action, 'return promise: ', promise)
+      console.log('geelato-ui-ant > mixin.js > $_doAction() > action: ', action, 'return promise: ', promise)
       // let promise = ctx[action.fn](action.params, data, content)
       if (promise && typeof promise.then === 'function') {
         promise.then(function (data) {
-          that.doAction(action.then, data)
+          that.$_doAction(action.then, data, callback)
         }).catch(function (data) {
-          that.doAction(action.fail, data)
+          that.$_doAction(action.fail, data, callback)
         })
       } else {
-        that.doAction(action.then, data)
+        that.$_doAction(action.then, data, callback)
       }
+    },
+    $_delete(params, data) {
+      let that = this
+      return new Promise((resolve, reject) => {
+        if (typeof data.preDelete === "object") {
+          that.$gl.api.delete(data.preDelete.entity, data.preDelete.query, data.biz).then(function (res) {
+            that.$gl.api.delete(data.entity, data.query, data.biz).then(function (res2) {
+              if (typeof that.$_onDeleted === "function") {
+                that.$_onDeleted(params, data)
+              }
+            })
+          })
+        } else {
+          that.$gl.api.delete(data.entity, data.query, data.biz).then(function (res) {
+            if (typeof that.$_onDeleted === "function") {
+              that.$_onDeleted(params, data)
+            }
+          })
+        }
+      })
     },
     openModal(params, data) {
       if (!params.body.props) {

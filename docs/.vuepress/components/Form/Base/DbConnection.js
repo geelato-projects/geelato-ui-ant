@@ -67,7 +67,8 @@ export default {
       title: '连接端口',
       tips: '',
       rules: {
-        required: true
+        required: true,
+        numeric: true
       }
     },
     dbHostnameIp: {

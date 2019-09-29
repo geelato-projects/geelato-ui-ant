@@ -134,6 +134,9 @@ export default {
             text: '取消',
             ctx: 'modal'
           }]
+        },
+        dataMapping: {
+          query: {id: '$ctx.id'}
         }
       }]
     },

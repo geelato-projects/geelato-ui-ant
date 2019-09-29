@@ -25,7 +25,7 @@ export default {
         required: true,
         email: true,
         // 唯一的，不重复的
-        unique:true
+        // unique:true
       },
       props: {
         placeholder: 'xxx@xxx.xxx'

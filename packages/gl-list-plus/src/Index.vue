@@ -8,48 +8,54 @@
             {{listTitle}}
             </span>
           <a href="#" slot="extra">
-            <a-dropdown v-if="listAction&&listAction.actions&&listAction.actions.length>0">
+            <a-dropdown v-if="listHeaderAction&&listHeaderAction.actions&&listHeaderAction.actions.length>0">
               <a class="ant-dropdown-link" href="#">
-                <!--{{listAction.title}}-->
-                <a-icon type="ellipsis" />
+                <!--{{listHeaderAction.title}}-->
+                <a-icon type="ellipsis"/>
               </a>
               <a-menu slot="overlay">
-                <a-menu-item v-for="(action,index) in listAction.actions" :key="index">
-                  <a href="javascript:;" @click="doAction(action,{})">{{action.text}}</a>
+                <a-menu-item v-for="(action,index) in listHeaderAction.actions" :key="index">
+                  <a href="javascript:;" @click="$_doAction(action,{})">{{action.text}}</a>
                 </a-menu-item>
               </a-menu>
             </a-dropdown>
           </a>
-          <div v-if="listSearch">
-            <a-input :placeholder="listSearch.placeholder">
-              <a-icon slot="prefix" type="search" style="color: rgba(0,0,0,.25)"/>
-            </a-input>
+          <!--<div v-if="listSearch">-->
+          <!--<a-input :placeholder="listSearch.placeholder">-->
+          <!--<a-icon slot="prefix" type="search" style="color: rgba(0,0,0,.25)"/>-->
+          <!--</a-input>-->
+          <!--</div>-->
+          <div style="text-align: center;padding: 0.5em" v-if="!listGroupAllData||listGroupAllData.length===0">
+            **没有数据***
           </div>
-          <div class="gl-list-group" v-for="(groupItem,index) in listGroupAllData" :key="index"
+          <div class="gl-list-group" v-for="(groupItem,groupItemIndex) in listGroupAllData" :key="groupItemIndex"
                style="padding-bottom: 1px">
             <div class="gl-list-group-header">
               <span style="cursor: pointer">
-                <a-icon type="minus-square" v-if="groupItem.isOpened===true" @click="$set(groupItem,'isOpened',false)"/>
-                <a-icon type="plus-square" v-if="groupItem.isOpened!==true" @click="$set(groupItem,'isOpened',true)"/>
+                <a-icon type="minus-square" v-if="groupItem.isOpened===true"
+                        @click="closeGroupItem(groupItem,groupItemIndex)"/>
+                <a-icon type="plus-square" v-if="groupItem.isOpened!==true"
+                        @click="openGroupItem(groupItem,groupItemIndex)"/>
               </span>
               <a-icon v-if="listGroupIcon.type" :type="listGroupIcon.type" :theme="listGroupIcon.theme"
                       :twoToneColor="listGroupIcon.twoToneColor" style="margin:0 0.1em 0 0.3em"/>
               {{groupItem.title}}
               <span style="float: right">
                 <a-dropdown
-                    v-if="listGroupItemAction&&listGroupItemAction.actions&&listGroupItemAction.actions.length>0">
+                    v-if="listGroupAction&&listGroupAction.actions&&listGroupAction.actions.length>0">
                   <a class="ant-dropdown-link" href="#">
-                    <a-icon type="ellipsis" />
+                    <a-icon type="ellipsis"/>
                   </a>
                   <a-menu slot="overlay">
-                    <a-menu-item v-for="(action,index) in listGroupItemAction.actions" :key="index">
-                      <a href="javascript:;" @click="doAction(action,groupItem)">{{action.text}}</a>
+                    <a-menu-item v-for="(action,index) in listGroupAction.actions" :key="index">
+                      <a href="javascript:;"
+                         @click="currentGroupItem=groupItem;currentGroupItemIndex=index;$_doAction(action,groupItem)">{{action.text}}</a>
                     </a-menu-item>
                   </a-menu>
                 </a-dropdown>
               </span>
             </div>
-            <gl-list v-if="groupItem.isOpened" v-bind="listConfig"
+            <gl-list v-if="groupItem.isOpened" v-bind="listConfig" :query="groupItem.query"
                      @selectItem="(item)=>{selectedItem = item}"></gl-list>
           </div>
         </a-card>
@@ -77,7 +83,7 @@
           return '列表'
         }
       },
-      listAction: Object,
+      listHeaderAction: Object,
       listSearch: {
         type: Object
       },
@@ -93,6 +99,7 @@
           return {}
         }
       },
+      listGroupAction: {type: Object},
       listGroupItemAction: {type: Object},
       listLoading: {
         type: Boolean,
@@ -128,6 +135,7 @@
       return {
         listConfig: {
           entityDataReader: this.listEntityDataReader,
+          action: this.listGroupItemAction,
           clazz: this.listClazz,
           loading: this.listLoading,
           showLoadingMore: this.listShowLoadingMore
@@ -143,7 +151,9 @@
             // content: 'code',
             // description: 'description'
           }
-        }
+        },
+        currentGroupItem: {},
+        currentGroupItemIndex: 0
       }
     },
     mounted() {
@@ -163,17 +173,32 @@
           }
         })
       },
+      closeGroupItem(groupItem) {
+        this.$set(groupItem, 'isOpened', false)
+      },
+      openGroupItem(groupItem) {
+        this.$set(groupItem, 'query', groupItem)
+        this.$set(groupItem, 'isOpened', true)
+      },
+      $_onDeleted(params, data) {
+        this.refresh()
+      },
       refresh() {
-        console.log('refresh...')
-        this.loadData({}, (res) => {
+        let that = this
+        that.loadData({}, (res) => {
           console.log('geelato-ui-ant > gl-list-plus > mounted() > typeof dataHandler >', res)
           // this.loading = false
-          this.listGroupAllData = res.data
+          // this.$nextTick()
+          that.listGroupAllData = res.data
           // 初始化展开第一项
-          if (this.listGroupAllData && this.listGroupAllData.length > 0) {
-            this.$set(this.listGroupAllData[0], 'isOpened', true)
+          if (that.listGroupAllData && this.listGroupAllData.length > 0) {
+            that.openGroupItem(that.listGroupAllData[0])
           }
         })
+      },
+      refreshCurrentList() {
+        this.closeGroupItem(this.currentGroupItem)
+        this.openGroupItem(this.currentGroupItem)
       },
       selectItem(item, index) {
         console.log('geelato-ui-ant > gl-list > Index > selectItem() > item:', item, '  index:', index)
@@ -215,6 +240,11 @@
   .gl-list-plus .anticon.anticon-ellipsis {
     font-size: 20px;
     color: #000000;
+  }
+
+  .gl-list-plus .ant-list-item-content {
+    flex: none;
+    margin-right: .5em;
   }
 
 </style>

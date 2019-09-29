@@ -132,8 +132,8 @@ function saveByGql(biz, gql) {
   })
 }
 
-function doDelete(entityName, keyValues, biz, successMsg, errorMsg) {
-  return update(url.apiMetaDelete, entityName, keyValues, biz, successMsg || '删除成功', errorMsg || '删除失败')
+function doDelete(entityName, keyValues, biz) {
+  return update(url.apiMetaDelete, entityName, keyValues, biz)
 }
 
 
