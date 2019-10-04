@@ -110,7 +110,7 @@
         this.cancel()
       },
       doActionFromContent(data) {
-        // console.log('geelato-ui-ant > doActionFromContent: ', data, this.modalConfig.on)
+        console.log('geelato-ui-ant > gl-modal > doActionFromContent(): ', data, this.modalConfig.on)
         for (let index in this.modalConfig.on) {
           let action = this.modalConfig.on[index]
           if (action.ctx === 'content' && action.fn === data.fn) {

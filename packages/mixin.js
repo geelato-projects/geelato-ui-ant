@@ -81,9 +81,10 @@ export default {
       }
       let promise = undefined
       try {
-        // 执行方法
+        // 转换数据
         let convertedData = that.$gl.api.entityDataMappingHandler(data, action.dataMapping)
         console.log('geelato-ui-ant > mixin.js > $_doAction() > action.dataMapping: ', action.dataMapping, 'data: ', data, 'convertedData: ', convertedData)
+        // 执行方法
         promise = ctx[action.fn](action.params, convertedData)
       } catch (e) {
         console.error('geelato-ui-ant > mixin.js > $_doAction() > action: ', action, 'data: ', data, 'e: ', e)

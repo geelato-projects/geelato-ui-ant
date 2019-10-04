@@ -15,6 +15,7 @@ import STable from './gl-table/src/s-table'
 import UIManager from './UIManager'
 import Api from './Api'
 import utils from './utils'
+import mixin from './mixin'
 // import GlContextMenu from '@xunlei/vue-context-menu'
 import './style.css'
 import packageJson from '../package.json'
@@ -90,5 +91,8 @@ export default {
   GlTable,
   GlCard,
   GlTabs,
-  GlCardLayout
+  GlCardLayout,
+  //
+  utils,
+  mixin
 }

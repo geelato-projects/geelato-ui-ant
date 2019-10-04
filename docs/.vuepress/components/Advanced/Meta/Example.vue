@@ -3,7 +3,7 @@
 </template>
 <script>
   import data from './data.js'
-
+  import Form from '../Form'
 
   export default {
     components: {},
@@ -17,7 +17,11 @@
     created() {
     },
     mounted() {
-
+      console.log('Form > ', Form, Form.methods, Object.keys(Form.methods).filter((item) => {
+        return item.indexOf('$_') !== -1
+      }))
+      console.log('Form.props.query.type>', Form.props.query.type.name)
+      console.log('Form.props.name.type>', Form.props.name.type.name)
     },
     methods: {}
   }

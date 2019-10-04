@@ -44,6 +44,7 @@
         this.callbackData = data
       },
       openerFnExampleByContent(params, data, content) {
+        console.log('openerFnExampleByContent', params, data)
         this.$message.info('这是由Modal的内容直接触发的事件。')
         this.callbackParams = params
         this.callbackData = data

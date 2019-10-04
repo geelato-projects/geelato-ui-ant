@@ -77,6 +77,10 @@ export default {
         then: {
           fn: 'close',
           ctx: 'modal'
+        },
+        dataMapping: {
+          id: '$ctx.item.id',
+          name: '$ctx.item.name'
         }
       }
     }]

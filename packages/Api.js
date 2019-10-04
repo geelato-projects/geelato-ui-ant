@@ -221,7 +221,7 @@ function entityDataReaderResultHandler(res, resultMapping = {}) {
  * 实体对像的数据转换
  * @param <Object> data 简单一层对象，如：{id:'123456',name:'张三'}
  * @param <Object> dataMapping  可为可层对象，如两层对像：{query: {fullName: '$ctx.name'}}
- * @return <Object> {query: {fullName: '张三'}}
+ * @return <Object> 若dataMapping为空，则直接返回data，{query: {fullName: '张三'}}
  */
 function entityDataMappingHandler(data, dataMapping = {}) {
   let convertedData = {}
