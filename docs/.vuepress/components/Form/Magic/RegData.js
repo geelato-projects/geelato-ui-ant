@@ -120,6 +120,8 @@ export default {
   },
   layout: {
     type: 'table',
+    // 默认为right
+    label: {align: 'left'},
     rows: [{
       cols: [
         {

@@ -1,6 +1,7 @@
 // 导入组件
 import GlPageLoader from './gl-page-loader'
 import GlContextMenu from './gl-context-menu'
+import GlLabel from './gl-label'
 import GlControl from './gl-control'
 import GlModal from './gl-modal'
 import GlList from './gl-list'
@@ -25,6 +26,7 @@ import packageJson from '../package.json'
 const components = [
   GlPageLoader,
   GlContextMenu,
+  GlLabel,
   GlControl,
   GlModal,
   GlList,
@@ -83,6 +85,7 @@ export default {
   // 以下是具体的组件列表
   GlPageLoader,
   GlContextMenu,
+  GlLabel,
   GlControl,
   GlModal,
   GlList,

@@ -39,7 +39,7 @@
         return property.rules && property.rules.required
       },
       copyTips(tips) {
-        console.log('geelato-ui-ant > tips >', tips)
+        console.log('geelato-ui-ant > gl-label > tips >', tips)
       }
     }
   }

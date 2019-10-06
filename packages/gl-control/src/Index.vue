@@ -114,13 +114,13 @@
     },
     watch: {
       model: function (val, oval) {
-        console.log('geelato-ui-ant > watch > model: ', val, oval)
+        // console.log('geelato-ui-ant > gl-control > watch > model: ', val, oval)
         this.$emit('propertyUpdate', {property: this.property, val: val, oval: oval})
       },
       'property.data': {
         handler(val, oval) {
           // 多次watch
-          console.log('geelato-ui-ant > watch > property.data: ', this.$el, val, oval)
+          console.log('geelato-ui-ant > gl-control > watch > property.data: ', this.$el, val, oval)
           this.resetDefaultValue()
         },
         // immediate: true,

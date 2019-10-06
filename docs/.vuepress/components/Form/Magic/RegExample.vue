@@ -14,7 +14,7 @@
         {{GQLData}}
       </span>
     </a-alert>
-    <gl-form ref="magicForm" :opts="config"></gl-form>
+    <gl-form ref="magicForm" :opts="config" @propertyUpdate="onPropertyUpdate"></gl-form>
   </div>
 </template>
 
@@ -52,6 +52,9 @@
         this.$refs.magicForm.validate(RegData).then(function (res) {
         }).catch(function (e) {
         })
+      },
+      onPropertyUpdate({property, val, oval}) {
+        console.log('onPropertyUpdate>', property, val, oval)
       }
     }
   }
