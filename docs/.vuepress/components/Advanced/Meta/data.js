@@ -19,8 +19,9 @@ let listEntityDataReader = {
   withMeta: false,
   resultMapping: {
     // avatarUrl: `'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png'`,
-    title: `$ctx.tableName +'('+ $ctx.title + ')'`,
-    tips: 'tableComment',
+    title: `$ctx.tableName`,
+    tips: 'title',
+    description:'tableComment',
     content: ''
   },
   params: {

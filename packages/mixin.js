@@ -81,15 +81,23 @@ export default {
       }
       let promise = undefined
       try {
-        // 转换数据
-        let convertedData = that.$gl.api.entityDataMappingHandler(data, action.dataMapping)
-        console.log('geelato-ui-ant > mixin.js > $_doAction() > action.dataMapping: ', action.dataMapping, 'data: ', data, 'convertedData: ', convertedData)
+        console.log('geelato-ui-ant > mixin.js > $_doAction() > fn:', action.fn, 'start >>>>>>>>>>>>>>>>>>>>>>>>')
+        let convertedData = data
+        if (!action.dataMapping) {
+          console.log('geelato-ui-ant > mixin.js > $_doAction() > fn:', action.fn + ' for action.dataMapping is "' + action.dataMapping + '",set data as convertedData(the second parameter of fn):', data)
+        } else {
+          // 转换数据
+          convertedData = that.$gl.api.entityDataMappingHandler(data, action.dataMapping)
+          console.log('geelato-ui-ant > mixin.js > $_doAction() > fn:', action.fn, 'by action.dataMapping:', action.dataMapping, 'and data: ', data, 'convertedData:', convertedData)
+        }
+        console.log('geelato-ui-ant > mixin.js > $_doAction() > fn:', action.fn + '(params,convertedData):', action.params, convertedData)
         // 执行方法
         promise = ctx[action.fn](action.params, convertedData)
+        console.log('geelato-ui-ant > mixin.js > $_doAction() > fn:', action.fn, 'return promise: ', promise)
+        console.log('geelato-ui-ant > mixin.js > $_doAction() > fn:', action.fn, "end <<<<<<<<<<<<<<<<<<<<<<<<")
       } catch (e) {
-        console.error('geelato-ui-ant > mixin.js > $_doAction() > action: ', action, 'data: ', data, 'e: ', e)
+        console.error('geelato-ui-ant > mixin.js > $_doAction() > fn:', action.fn, '.e: ', e)
       }
-      console.log('geelato-ui-ant > mixin.js > $_doAction() > action: ', action, 'return promise: ', promise)
       // let promise = ctx[action.fn](action.params, data, content)
       if (promise && typeof promise.then === 'function') {
         promise.then(function (data) {

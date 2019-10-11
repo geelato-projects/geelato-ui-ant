@@ -3,13 +3,13 @@
 -->
 <template>
   <div class="gl-table gl-table-as-list" v-if="opts">
-    <div class="table-page-search-wrapper">
+    <div class="table-page-search-wrapper" v-show="opts.query.show||opts.query.show===undefined">
       <top-query ref="query" :properties="opts.query.mix.properties" :colPerRow="opts.query.mix.layout.fieldPerRow"
-                 :gutter="48"
+                 :gutter="opts.query.mix.layout.gutter||48"
                  @input="onQuery"></top-query>
     </div>
 
-    <div class="table-operator">
+    <div class="table-operator" v-show="opts.toolbar.show||opts.toolbar.show===undefined">
       <template v-for="(action,index) in opts.toolbar.actions">
         <a-button :type="action.type||'primary'" :icon="action.icon"
                   @click="$_doAction(action,{rowSelection:options.rowSelection,index:index})"
@@ -24,6 +24,7 @@
         size="default"
         rowKey="id"
         :columns=opts.table.columns
+        :showHeader="opts.table.showHeader"
         :data="loadData"
         :alert="options.alert"
         :rowSelection="options.rowSelection"
