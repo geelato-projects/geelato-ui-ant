@@ -57,10 +57,10 @@ function queryByEntityDataReader(entityDataReader) {
  * 实体查询，内部依据参数构建gql对象进行查询
  * 更复杂、高级的查询@see queryByGql
  * @param entityName e.g. platform_dev_project
- * @param keyValues 查询要件键值对 e.g. {id:123456,name:'张三'}
  * @param fieldNames 查询的列字段 e.g. id,name
+ * @param keyValues 查询要件键值对 e.g. {id:123456,name:'张三'}
  */
-function query(entityName, keyValues, fieldNames, withMeta) {
+function query(entityName, fieldNames, keyValues, withMeta) {
   if (!fieldNames) {
     throw '查询列（fieldNames）不能为空。'
   }

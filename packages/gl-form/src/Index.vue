@@ -172,7 +172,7 @@
           }
           let fieldNames = fieldNameAry.join(',')
           // console.log('geelato-ui-ant > loadInitData() > res>', that.defaultEntity, condition, fieldNames)
-          that.$gl.api.query(that.defaultEntity, condition, fieldNames, true).then(function (res) {
+          that.$gl.api.query(that.defaultEntity, fieldNames, condition, true).then(function (res) {
             let resForm = res.data && res.data.length > 0 ? res.data[0] : {}
             for (let field in resForm) {
               let propertyName = that.fieldPropertyNameMap[field]
@@ -226,7 +226,7 @@
               params[key] = this.rungs(value)
             }
           }
-          that.$gl.api.query(dsConfig.entity, params, dsConfig.fields).then(function (res) {
+          that.$gl.api.query(dsConfig.entity, dsConfig.fields, params).then(function (res) {
             let property = that.properties[propertyName]
             // 依据数据源的配置，处理返回的数据结果
             that.$gl.api.resultHandler(res, dsConfig.resultMapping)
