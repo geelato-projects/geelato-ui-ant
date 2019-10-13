@@ -23,7 +23,7 @@
         ref="table"
         size="default"
         rowKey="id"
-        :columns=opts.table.columns
+        :columns=columns
         :showHeader="opts.table.showHeader"
         :data="loadData"
         :alert="options.alert"
@@ -115,7 +115,23 @@
         optionAlertShow: true
       }
     },
-    computed: {},
+    computed: {
+      columns(){
+        for (let i in this.opts.table.columns) {
+          let column = this.opts.table.columns[i]
+          // 列自定义渲染辅助字段
+          // column.customRenderString = (column.customRenderString === undefined ? '' : column.customRenderString)
+          if (column.customRenderString) {
+            try {
+              column.customRender = eval(column.customRenderString)
+            } catch (e) {
+              console.error('geelato-ui-ant > gl-table > The format of column.customRenderString is incorrect:', column.customRenderString + '.', e)
+            }
+          }
+        }
+        return this.opts.table.columns
+      }
+    },
     created() {
       this.tableOption()
     },
@@ -178,9 +194,6 @@
 
         return this.$gl.api.queryByGql(genGql(this.lastMixQueryData)).then(res => {
           console.log('geelato-ui-ant > gl-table > Index.vue > loadData > res:', res)
-          // let result = res.header?res.data:res
-          // result.pageNo = result.page
-          // result.totalCount = result.taltal
           return res
         })
       },

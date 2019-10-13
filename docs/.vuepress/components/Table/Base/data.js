@@ -149,7 +149,9 @@ export default {
         title: '性别',
         dataIndex: 'sex',
         sorter: true,
-        customRender: (text) => text === 2 ? '保密' : (text === 1 ? '男' : '女')
+        customRender: (text) => text === 2 ? '保密' : (text === 1 ? '男' : '女'),
+        // 若设置了customRenderString，则该属性优先于customRender
+        customRenderString: '(text) => text === 2 ? \'保密\' : (text === 1 ? \'男\' : \'女\')'
       },
       {title: '邮箱', dataIndex: 'email'},
       {title: '次序', dataIndex: 'seq', needTotal: true},
