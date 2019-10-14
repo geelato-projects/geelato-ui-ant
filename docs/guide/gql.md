@@ -117,7 +117,7 @@ as 别名，格式name as alias，例如agesum:age|sum表示将求和的列名�
 * eq("eq"), neq("neq"), lt("lt"), lte("lte"), gt("gt"), gte("gte"), startWith("sw"), endWith("ew"), contains("contains");
 * in 已支持
   **/
-* 
+*
 
 示例
 
@@ -188,7 +188,7 @@ HAVING SUM(OrderPrice)>1500
 
 {
 	'@biz':'xxxxx',
-	'platform_page_config':{
+	'platform_dev_page':{
 	'code':'IUJDYWGS',
 	'content':''
 	}

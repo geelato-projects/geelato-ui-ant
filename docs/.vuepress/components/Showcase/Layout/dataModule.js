@@ -327,7 +327,7 @@ export default {
         {title: '手机', dataIndex: 'mobilePhone'},
         {title: '性别', dataIndex: 'sex', sorter: true, customRender: (text) => text === 0 ? '男' : '女'},
         {title: '邮箱', dataIndex: 'email'},
-        {title: '次序', dataIndex: 'seq', needTotal: true},
+        {title: '次序', dataIndex: 'seqNo', needTotal: true},
         {title: '描述', dataIndex: 'description'},
         // {
         //   title: '服务调用次数',

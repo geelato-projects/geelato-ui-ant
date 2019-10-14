@@ -145,7 +145,7 @@ export default {
         sorter: true,
         customRender: (text) => text === 0 ? '未同步' : (text === 1 ? '已同步' : '未同步')
       },
-      {title: '次序', dataIndex: 'seq', needTotal: true},
+      {title: '次序', dataIndex: 'seqNo', needTotal: true},
       {
         title: '更新时间',
         dataIndex: 'updateAt',

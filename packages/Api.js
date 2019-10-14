@@ -145,7 +145,7 @@ function doDelete(entityName, keyValues, biz) {
 function queryPageByCode(pageCode) {
   // gql查询语句
   let gql = {
-    'platform_page_config': {
+    'platform_dev_page': {
       '@p': '1,1',
       '@fs': 'id,code,content',
       'code': pageCode

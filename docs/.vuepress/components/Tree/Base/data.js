@@ -4,7 +4,7 @@ export default {
   treeEntityNameField: 'name',
   treeId: 'UIYEHUWIUIYEHUWIUIYEHUWIUIYEHUWI',
   treeName: '测试项目',
-  nodeEntityName: 'platform_page_config',
+  nodeEntityName: 'platform_dev_page',
   nodeEntityPkField: 'id',
   nodeEntityNameField: 'code',
   treeData: [{
