@@ -4,14 +4,15 @@
 <template>
   <div class="gl-table gl-table-as-list" v-if="opts">
     <div class="table-page-search-wrapper" v-show="opts.query.show||opts.query.show===undefined">
-      <top-query ref="query" :properties="opts.query.mix.properties" :colPerRow="opts.query.mix.layout.fieldPerRow"
+      <top-query ref="query" :controlRefs="controlRefs" :properties="opts.query.mix.properties"
+                 :colPerRow="opts.query.mix.layout.fieldPerRow"
                  :gutter="opts.query.mix.layout.gutter||48"
                  @input="onQuery"></top-query>
     </div>
 
     <div class="table-operator" v-show="opts.toolbar.show||opts.toolbar.show===undefined">
-      <template v-for="(action,index) in opts.toolbar.actions">
-        <a-button :type="action.type||'primary'" :icon="action.icon"
+      <template v-for="(action,index) in opts.toolbar.actions" v-if="action.gid=action.gid||$gl.utils.uuid(8)">
+        <a-button :ref="action.gid" :type="action.type||'primary'" :icon="action.icon"
                   @click="$_doAction(action,{rowSelection:options.rowSelection,index:index})"
                   :key="index" v-if="action.show===undefined||rungs(action.show)">{{action.text||action.title}}
         </a-button>&nbsp;
@@ -112,11 +113,12 @@
             onChange: this.onSelectChange
           }
         },
-        optionAlertShow: true
+        optionAlertShow: true,
+        controlRefs: {}
       }
     },
     computed: {
-      columns(){
+      columns() {
         for (let i in this.opts.table.columns) {
           let column = this.opts.table.columns[i]
           // 列自定义渲染辅助字段
@@ -137,6 +139,16 @@
     },
     mounted() {
       this.refresh()
+      for (let i in this.$refs) {
+        this.controlRefs[i] = this.$refs[i][0]
+      }
+      console.log('geelato-ui-ant > gl-table > mounted() > $refs,controlRefs: ', this.$refs, this.controlRefs)
+    },
+    destroyed() {
+      for (let i in this.$refs) {
+        delete this.controlRefs[i]
+      }
+      console.log('geelato-ui-ant > gl-table > destroyed() > $refs,controlRefs: ', this.$refs, this.controlRefs)
     },
     methods: {
       // query组件的查询回调，获取查询条件信息，并调用loadData查询数据，并以数据驱动刷新页面
@@ -257,12 +269,10 @@
         } else {
           return str
         }
+      },
+      $_getRefByGid(gid) {
+        return this.controlRefs[gid]
       }
-      // ,
-      // $_doAction(action, data) {
-      //   let actionHandler = new ActionHandler({ui: this.$gl.ui, opener: this})
-      //   return actionHandler.$_doAction(action, data)
-      // }
     }
   }
 </script>

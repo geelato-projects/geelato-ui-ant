@@ -3,12 +3,14 @@
     <gl-row type="" v-for="(row,rowIndex) in rows" :key="rowIndex">
       <gl-cell v-bind="cell" v-for="(cell,cellIndex) in row.cols" :key="cellIndex">
         <template v-if="cell.rows">
-          <gl-form-item :rows="cell.rows" :properties="properties" :form="form" @propertyUpdate="onPropertyUpdate"
-                              @loadRefData="onLoadRefData"></gl-form-item>
+          <gl-form-item :rows="cell.rows" :properties="properties" :form="form" :controlRefs="controlRefs"
+                        @propertyUpdate="onPropertyUpdate"
+                        @loadRefData="onLoadRefData"></gl-form-item>
         </template>
         <template v-else>
           <gl-label v-if="cell.label" :label="cell.label" :property="getProperty(cell.field)"></gl-label>
-          <gl-control v-if="!cell.label" :form="form" :property="getProperty(cell.field)"
+          <gl-control :ref="getProperty(cell.field).gid" v-if="!cell.label" :form="form"
+                      :property="getProperty(cell.field)"
                       @propertyUpdate="onPropertyUpdate" @loadRefData="onLoadRefData"></gl-control>
         </template>
       </gl-cell>
@@ -40,6 +42,10 @@
         default() {
           return {}
         }
+      },
+      controlRefs: {
+        type: Object,
+        required: true
       }
     },
     watch: {
@@ -52,6 +58,17 @@
       // }
     },
     mounted() {
+      for (let i in this.$refs) {
+        // TODO this.$refs[i]是否存在多个值的情况？
+        this.controlRefs[i] = this.$refs[i][0]
+      }
+      console.log('geelato-ui-ant > gl-form-item > mounted() > $refs,controlRefs: ', this.$refs, this.controlRefs)
+    },
+    destroyed() {
+      for (let i in this.$refs) {
+        delete this.controlRefs[i]
+      }
+      console.log('geelato-ui-ant > gl-form-item > destroyed() > $refs,controlRefs: ', this.$refs, this.controlRefs)
     },
     updated() {
     },
@@ -69,7 +86,7 @@
       },
       getProperty(name) {
         if (!name || !this.properties[name]) {
-          return {control: 'null', title: ' '}
+          return {control: 'null', title: ' ', gid: this.$gl.utils.uuid(8)}
         }
         return this.properties[name]
       },

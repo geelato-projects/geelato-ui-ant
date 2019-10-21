@@ -9,6 +9,7 @@
       </p>
     </a-alert>
     <gl-form-item v-if="refresh" ref="magicFormItem" :rows="layout.rows" :properties="properties" :form="form"
+                  :controlRefs="controlRefs"
                   :loadedData="loadedData"
                   @propertyUpdate="onPropertyUpdate" @loadRefData="onLoadRefData"></gl-form-item>
   </div>
@@ -52,7 +53,9 @@
         // 表单验证出错的信息
         errorItems: {},
         refresh: true,
-        validatingCount: 0
+        validatingCount: 0,
+        // 在表单中直接引用控件
+        controlRefs: {}
       }
     },
     created() {
@@ -90,8 +93,8 @@
         for (let propertyName in this.properties) {
           // 设置一些默认值，添加默认配置等
           let property = this.properties[propertyName]
-          // identifier 在form对象中的唯一标识
-          property.identifier = propertyName
+          // gid 在form对象中的唯一标识
+          property.gid = propertyName
           // init props
           property.props = property.props || {}
           // 未设置实体时，默认为defaultEntity
@@ -246,7 +249,7 @@
       onLoadRefData({property, propertyName}) {
         let that = this
         // console.log('geelato-ui-ant > gl-form > Index.vue > loadRefData() >', {property, propertyName})
-        let propertyNames = that.dsBeDependentOn[propertyName || (property && property.identifier)] || []
+        let propertyNames = that.dsBeDependentOn[propertyName || (property && property.gid)] || []
         propertyNames.forEach(function (item) {
           let triggerProperty = that.getProperty(item)
           if (triggerProperty) {
@@ -331,7 +334,7 @@
               let result = results[i]
               let property = verifyPropertyAry[i]
               if (result.valid === false) {
-                that.$set(that.errorItems, property.identifier, result.errors)
+                that.$set(that.errorItems, property.gid, result.errors)
                 isFail = true
               }
             }
@@ -513,9 +516,13 @@
       }
       ,
       onPropertyUpdate({property, val, oval}) {
-        this.$set(this.form, property.identifier, val)
+        this.$set(this.form, property.gid, val)
         this.$emit('propertyUpdate', {property, val, oval})
+      },
+      $_getRefByGid(gid) {
+        return this.controlRefs[gid]
       }
+
     }
   }
 </script>

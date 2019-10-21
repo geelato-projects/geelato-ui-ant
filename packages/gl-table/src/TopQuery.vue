@@ -7,7 +7,7 @@
       <a-col :md="colSpan" :sm="24" v-for="(property,index) in properties" :key="index"
              :title="property.title+dict[property.cop]">
         <a-form-item v-show="(!advanced&&index<colPerRow-1)||advanced" :label="property.title">
-          <gl-control :property="property" :form="entity" @propertyUpdate="onPropertyUpdate"
+          <gl-control :ref="property.gid" :property="property" :form="entity" @propertyUpdate="onPropertyUpdate"
                       @loadRefData="onLoadRefData"></gl-control>
         </a-form-item>
       </a-col>
@@ -34,6 +34,10 @@
 
   export default {
     props: {
+      controlRefs: {
+        type: Object,
+        required: true
+      },
       properties: {
         type: Array,
         default() {
@@ -71,7 +75,7 @@
           ew: '结尾包括',
           contains: '包括'
         },
-        identifierMap: {}
+        gidMap: {}
       }
     },
     computed: {
@@ -82,8 +86,18 @@
         return this.properties.length > this.colPerRow
       }
     },
-    mounted: function () {
+    mounted() {
       this.initData()
+      for (let i in this.$refs) {
+        this.controlRefs[i] = this.$refs[i][0]
+      }
+      console.log('geelato-ui-ant > gl-table-top-query > mounted() > $refs,controlRefs: ', this.$refs, this.controlRefs)
+    },
+    destroyed() {
+      for (let i in this.$refs) {
+        delete this.controlRefs[i]
+      }
+      console.log('geelato-ui-ant > gl-table-top-query > destroyed() > $refs,controlRefs: ', this.$refs, this.controlRefs)
     },
     methods: {
       initData() {
@@ -91,13 +105,13 @@
         for (const index in this.properties) {
           const item = this.properties[index]
           // 检查设置控件维一值
-          if (!item.identifier) {
-            if (!this.identifierMap[item.field]) {
-              item.identifier = item.field
-              this.identifierMap[item.identifier] = item.field
+          if (!item.gid) {
+            if (!this.gidMap[item.field]) {
+              item.gid = item.field
+              this.gidMap[item.gid] = item.field
             } else {
-              item.identifier = item.field + '_' + this.$gl.utils.uuid(8)
-              this.identifierMap[item.identifier] = item.field
+              item.gid = item.field + '_' + this.$gl.utils.uuid(8)
+              this.gidMap[item.gid] = item.field
             }
           }
         }
@@ -111,11 +125,11 @@
           // 设置查询表单实体值
           // 优先以property.value的值为准，若无则以property.props.defaultValue的值为准，最后以property.props.defaultActiveIndex对应项的值为准
           if (item.value !== undefined) {
-            this.$set(this.entity, item.identifier, item.value)
+            this.$set(this.entity, item.gid, item.value)
           } else if (item.props && item.props.defaultValue !== undefined) {
-            this.$set(this.entity, item.identifier, item.props.defaultValue)
+            this.$set(this.entity, item.gid, item.props.defaultValue)
           } else if (item.props && item.props.defaultActiveIndex !== undefined && item.data && item.data.length > 0) {
-            this.$set(this.entity, item.identifier, item.data[item.defaultActiveIndex].value)
+            this.$set(this.entity, item.gid, item.data[item.defaultActiveIndex].value)
           }
         }
       },
@@ -150,25 +164,25 @@
         console.log('geelato-ui-ant > this.properties>', this.properties)
         for (const index in this.properties) {
           const item = this.properties[index]
-          if (this.entity[item.identifier] === undefined || this.entity[item.identifier] === null) {
+          if (this.entity[item.gid] === undefined || this.entity[item.gid] === null) {
             continue
           } else {
             if (item.control === 'checkbox') {
-              result[item.field + '|' + item.cop] = this.entity[item.identifier] ? 1 : 0
+              result[item.field + '|' + item.cop] = this.entity[item.gid] ? 1 : 0
             } else if (item.control === 'date') {
-              const moment = this.entity[item.identifier]
+              const moment = this.entity[item.gid]
               if (moment) {
                 result[item.field + '|' + item.cop] = moment.format(item.format || 'L')
               }
             } else {
               try {
-                const value = typeof this.entity[item.identifier] === 'number' ? this.entity[item.identifier] : utils.trim(this.entity[item.identifier])
+                const value = typeof this.entity[item.gid] === 'number' ? this.entity[item.gid] : utils.trim(this.entity[item.gid])
                 if (value === '') {
                   continue
                 }
                 result[item.field + '|' + item.cop] = value
               } catch (e) {
-                console.log('geelato-ui-ant > this.entity[item.identifier] > ', item, this.entity[item.identifier])
+                console.log('geelato-ui-ant > this.entity[item.gid] > ', item, this.entity[item.gid])
                 console.log(e)
               }
             }

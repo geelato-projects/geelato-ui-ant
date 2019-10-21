@@ -28,7 +28,7 @@ function queryByGql(gql, withMeta) {
     data: gql,
     headers: {
       "Access-Control-Allow-Origin": "*"
-    }
+    },
   })
 }
 
@@ -271,10 +271,6 @@ function queryList(path, data) {
 }
 
 
-// config.headers['Access-Control-Allow-Origin'] = '*'
-// config.headers['Access-Control-Allow-Methods'] = 'PUT,POST,GET,DELETE,OPTIONS'
-// config.headers['Access-Control-Allow-Headers'] = 'X-Requested-With,Content-Type'
-// config.headers['Access-Control-Max-Age'] = '86400'
 function ApiHelper(options) {
   // axios.all('*', function (req, res, next) {
   //   res.header("Access-Control-Allow-Origin", "*")
@@ -289,18 +285,14 @@ function ApiHelper(options) {
     headers: (options && options.headers) || {
       //   'Request-Method': 'PUT,POST,GET,DELETE,OPTIONS',
       //   'Request-Headers': 'Authorization,Origin, X-Requested-With, Content-Type, Accept',
-      'Access-Control-Allow-Origin': '*',
+      //   'Access-Control-Allow-Origin': '*',
       //   'Allow-Methods': 'PUT,POST,GET,DELETE,OPTIONS',
       //   'Allow-Headers': 'Authorization,Origin, X-Requested-With, Content-Type, Accept'
     }
     ,
     withCredentials: true,
-    crossDomain: true
+    // crossDomain: true
   })
-
-  service.defaults.headers['Access-Control-Allow-Origin'] = '*';
-  // service.defaults.headers['Accept'] = 'application/json, text/javascript';
-  // service.defaults.headers['Content-Type'] = 'application/json';
 
   if (options && options.url) {
     url = options.url

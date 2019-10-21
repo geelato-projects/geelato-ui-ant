@@ -24,8 +24,9 @@ export default ({
   let auiOptions = {
     // 修改服务地址，默认为http://localhost:8080/api
     api: new ApiSettings({
-      baseURL: 'http://localhost:8080/api',
-    })
+      // baseURL: 'http://localhost:8080/api',
+      baseURL: 'https://api.geelato.org:8080/api',
+    }).options
   }
 
   // 注册组件库

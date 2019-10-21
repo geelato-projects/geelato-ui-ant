@@ -150,7 +150,7 @@
        * 级联加载数据
        * */
       loadRefData(property, value) {
-        this.$set(this.form, property.identifier, value);
+        this.$set(this.form, property.gid, value);
         // console.log('geelato-ui-ant > GLControl.vue > loadRefData() > property,value:', this.property, value)
         this.$emit('loadRefData', {property: this.property})
       },
