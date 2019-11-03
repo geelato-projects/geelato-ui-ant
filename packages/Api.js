@@ -147,7 +147,7 @@ function queryPageByCode(pageCode) {
   let gql = {
     'platform_dev_page': {
       '@p': '1,1',
-      '@fs': 'id,code,content',
+      '@fs': 'id,code,release_content',
       'code': pageCode
     }
   }
