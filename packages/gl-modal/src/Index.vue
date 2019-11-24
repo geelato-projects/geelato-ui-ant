@@ -9,17 +9,21 @@
       v-model="modalVisible"
       @ok="ok"
   >
-    <template slot="footer" v-if="modalConfig.actions">
-      <a-button v-for="(action,index) in modalConfig.actions"
-                :type="action.type?action.type:defaultBtnType"
-                :size="action.size?action.size:defaultBtnSize"
-                :loading="loading"
-                :key="index"
-                @click="handleAction(action,index)">{{action.text}}
-      </a-button>
-      <!--<a-button key="submit" type="primary"  @click="ok">-->
-      <!--Submit-->
-      <!--</a-button>-->
+    <template slot="footer">
+      <template v-if="modalConfig.actions">
+        <div :style="{'text-align': modalConfig.actionAlign||'center'}">
+          <a-button v-for="(action,index) in modalConfig.actions"
+                    :type="action.type?action.type:defaultBtnType"
+                    :size="action.size?action.size:defaultBtnSize"
+                    :loading="loading"
+                    :key="index"
+                    @click="handleAction(action,index)">{{action.text}}
+          </a-button>
+        </div>
+      </template>
+      <template>
+        <div></div>
+      </template>
     </template>
     <component ref="$content" :componentUpdated="isMounted=true" :is="bodyComponent"
                v-bind='modalConfig.body.opts || modalConfig.body.props'

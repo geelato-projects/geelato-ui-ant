@@ -3,6 +3,7 @@ import GlPageLoader from './gl-page-loader'
 import GlContextMenu from './gl-context-menu'
 import GlLabel from './gl-label'
 import GlControl from './gl-control'
+import GlHeader from './gl-header'
 import GlModal from './gl-modal'
 import GlList from './gl-list'
 import GlListPlus from './gl-list-plus'
@@ -28,6 +29,7 @@ const components = [
   GlContextMenu,
   GlLabel,
   GlControl,
+  GlHeader,
   GlModal,
   GlList,
   GlListPlus,

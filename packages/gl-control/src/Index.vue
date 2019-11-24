@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="gl-control">
     <template v-if="property.control==='input'">
       <a-input type="text" :name="getFieldNameByCell(property)" v-model="model" :readOnly="isReadonly(property)"
                v-bind="property.props"/>
@@ -83,6 +83,9 @@
         <a-icon slot="prefix" type="lock"/>
         <!--<a-icon v-if="userName" slot="suffix" type="close-circle" @click="emitEmpty" />-->
       </a-input>
+    </template>
+    <template v-else-if="property.control==='button'">
+      <a-button v-bind="property.props" :readOnly="isReadonly(property)">{{property.title}}</a-button>
     </template>
     <template v-else>
       {{form[getFieldNameByCell(property)]}}
@@ -191,6 +194,8 @@
   }
 </script>
 
-<style scoped>
-
+<style>
+  .gl-control {
+    display: inline-block
+  }
 </style>

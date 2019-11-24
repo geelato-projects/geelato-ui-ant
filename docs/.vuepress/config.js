@@ -144,6 +144,7 @@ function genSidebarConfig(title) {
       collapsable: true,
       children: [
         'ui-gl-control',
+        'ui-gl-header',
         'ui-gl-form',
         'ui-gl-table',
         'ui-gl-list',
