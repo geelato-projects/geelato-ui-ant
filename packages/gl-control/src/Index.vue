@@ -196,6 +196,7 @@
 
 <style>
   .gl-control {
-    display: inline-block
+    display: inline-block;
+    width: 100%
   }
 </style>

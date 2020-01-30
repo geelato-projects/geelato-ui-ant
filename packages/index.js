@@ -89,6 +89,7 @@ export default {
   GlContextMenu,
   GlLabel,
   GlControl,
+  GlHeader,
   GlModal,
   GlList,
   GlListPlus,

@@ -62,4 +62,9 @@
   .gl-header > .gl-header-extra {
     display: inline-block;
   }
+
+  /* 设置gl-control的width,从100%转为auto*/
+  .gl-header .gl-control {
+    width: auto;
+  }
 </style>
