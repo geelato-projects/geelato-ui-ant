@@ -32,7 +32,7 @@ export default {
           props: {AddPreOptionText: '全部', AddPreOptionValue: undefined, placeholder: '请选择'}
         },
         {field: 'description', title: '描述', cop: 'contains', control: 'input', lop: 'and'},
-        {field: 'checkState', title: '激活', cop: 'eq', control: 'checkbox', props: {defaultValue: 1}},
+        // {field: 'checkState', title: '激活', cop: 'eq', control: 'checkbox', props: {defaultValue: 1}},
         // {
         //   field: 'birthday',
         //   title: '生日',

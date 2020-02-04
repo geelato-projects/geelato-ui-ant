@@ -6,20 +6,14 @@ export default {
   query: {
     mix: {
       fields: [
-        {field: 'title', title: '标题', cop: 'contains', type: 'string', control: 'input'},
-        {field: 'type', title: '类型', cop: 'eq', type: 'select', data: [{ss:''}], ds: {}},
-        {
-          field: 'createAt',
-          title: '提醒时间',
-          cop: 'between',
-          type: 'date',
-          control: 'range-picker',
-          lop: 'or',
-          placeholder: '登录名'
-        }
+        {field: 'title', title: '标题', cop: 'contains', control: 'input'},
+        {field: 'content', title: '内容', cop: 'contains', control: 'input'}
       ],
-      // 取值 1~4、6
-      fieldPerRow: 4
+      layout: {
+        display: 'auto',
+        // 取值 1~4、6
+        fieldPerRow: 4
+      }
     }
   },
   toolbar: {},
@@ -39,8 +33,8 @@ export default {
     columns: [
       {title: '#', dataIndex: 'id', scopedSlots: {customRender: 'serial'}},
       {title: '标题', dataIndex: 'title', sorter: true},
-      {title: '类型', dataIndex: 'type', sorter: true},
-      {title: '创建时间', dataIndex: 'createAt', sorter: true},
+      {title: '内容', dataIndex: 'content', sorter: true},
+      {title: '发送时间', dataIndex: 'sendTime', sorter: true},
       {
         title: '操作',
         dataIndex: '',

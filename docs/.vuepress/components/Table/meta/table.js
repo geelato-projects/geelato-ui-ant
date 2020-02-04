@@ -1,7 +1,7 @@
 import FormData from '../../Form/Base/meta'
 
 export default {
-  title: '用户信息',
+  title: '数据列元数据',
   entity: 'platform_dev_column',
   query: {
     mix: {
@@ -14,7 +14,7 @@ export default {
         //   lop: 'and',
         //   props: {placeholder: '中文名称', defaultValue: ''}
         // },
-        {field: 'columnName', title: '列名', cop: 'contains', control: 'input', lop: 'and', props: {placeholder: ''}},
+        {field: 'name', title: '列名', cop: 'contains', control: 'input', lop: 'and', props: {placeholder: ''}},
         {field: 'linked', title: '是否已同步', cop: 'eq', control: 'checkbox', props: {defaultValue: 0}},
       ],
       layout: {

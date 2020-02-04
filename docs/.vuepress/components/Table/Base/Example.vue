@@ -1,10 +1,10 @@
 <template>
   <div>
-    <gl-table ref="table" :opts="config" :query="{em:'platform_user'}"></gl-table>
+    <gl-table ref="table" :opts="config" :query="{em:'platform_demo_entity'}"></gl-table>
   </div>
 </template>
 <script>
-  import data from './data.js'
+  import data from './demo.js'
 
   export default {
     components: {},
