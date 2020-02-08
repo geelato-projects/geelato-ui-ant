@@ -8,17 +8,30 @@
         <span v-for="errorItem in errorItems">{{errorItem}}</span>
       </p>
     </a-alert>
+    <div class="gl-table-header"></div>
     <gl-form-item v-if="refresh" ref="magicFormItem" :rows="layout.rows" :properties="properties" :form="form"
                   :controlRefs="controlRefs"
                   :loadedData="loadedData"
                   @propertyUpdate="onPropertyUpdate" @loadRefData="onLoadRefData"></gl-form-item>
+    <div class="gl-table-toolbar" v-show="toolbar.show||toolbar.show===undefined" style="text-align: center">
+      <template v-for="(action,index) in toolbar.actions" v-if="action.gid=action.gid||$gl.utils.uuid(8)">
+        <a-button :ref="action.gid" :type="action.type||'primary'" :icon="action.icon"
+                  :key="index" v-if="action.show===undefined||action.show===''||rungs(action.show)"
+                  @click="$_doAction(action)"
+        >
+          {{action.text||action.title}}
+        </a-button>&nbsp;
+      </template>
+    </div>
   </div>
 </template>
 
 <script>
+  import ActionResult from '../../ActionResult'
   import GlFormItem from './GlFormItem'
   import mixin from '../../mixin'
   import utils from '../../utils'
+  import Action from '../../Action'
 
   let GEELATO_SCRIPT_PREFIX = 'gs:'
   let REGEXP_FORM = /gs[\s]*:[\s]*\$ctx\.form\.[a-zA-Z]+[a-zA-Z0-9]*/g;
@@ -54,6 +67,19 @@
         errorItems: {},
         refresh: true,
         validatingCount: 0,
+        // 工具条
+        toolbar: {
+          show: true,
+          actions: [new Action({
+            gid: utils.uuid(8),
+            text: '保存',
+            type: 'primary',
+            fn: 'save',
+            show: 'true',
+            icon: '',
+            ctx: 'self'
+          })]
+        },
         // 在表单中直接引用控件
         controlRefs: {}
       }
@@ -357,12 +383,14 @@
               console.log('geelato-ui-ant > gl-form > save() > res:', res)
               that.$set(that.form, 'id', res.result)
               let result = that.getValues()
+              // that.$emit('doAction', new ActionResult({fn: 'save', code: '0', message: '保存成功1', data: result}))
               resolve(result)
             })
           }).catch(function (e) {
             // 验证不通过
             console.log('geelato-ui-ant > gl-form > save() > validate fail.')
             console.error('geelato-ui-ant > gl-form > save() > e: ', e)
+            // that.$emit('doAction', new ActionResult({fn: 'save', code: '-1', message: '验证不通过', data: e}))
             reject(e)
           })
         })
@@ -393,6 +421,7 @@
         let that = this
         let theForm = that.getValues()
         console.log('geelato-ui-ant > gl-form > Index.vue >getGql > form: ', theForm)
+        console.log('geelato-ui-ant > gl-form > Index.vue >getGql > properties: ', this.properties)
         let gql = {}
         genGql(gql, this.defaultEntity, this.properties)
 
@@ -508,13 +537,13 @@
         }
 
         return gql
-      }
-      ,
-
+      },
+      doAction(action) {
+        this[action.fn](action.params)
+      },
       initFormValue() {
 
-      }
-      ,
+      },
       onPropertyUpdate({property, val, oval}) {
         this.$set(this.form, property.gid, val)
         this.$emit('propertyUpdate', {property, val, oval})

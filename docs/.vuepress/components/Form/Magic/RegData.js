@@ -1,7 +1,7 @@
 export default {
   type: 'object',
   // 表单可绑定多实体，这是默认第一实体
-  defaultEntity: 'platformUser',
+  defaultEntity: 'platform_user',
   // update|create|read
   state: 'save',
   properties: {
@@ -78,7 +78,7 @@ export default {
       // 如果实体的字段名称与tel不一样，或因多实体都存在tel字段，可通过field指定，field未设置时，field:'tel'
       field: 'telephone',
       // 若字段需绑定其它实体，该通过该属性设置
-      entity: 'platformUser',
+      entity: 'platform_user',
       rules: {
         required: true,
         numeric: true,

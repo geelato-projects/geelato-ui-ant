@@ -192,7 +192,7 @@
             }
           }
           root['@fs'] = fsAry.join(',')
-          root['@order'] = thisVue.opts.table.order
+          root['@order'] = parameter.field ? parameter.field + '|' + (parameter.sortOrder === 'descend' ? 'desc' : 'asc') : thisVue.opts.table.order
           root['@p'] = parameter.pageNo + ',' + parameter.pageSize
           const gql = {}
           gql[thisVue.opts.entity] = root

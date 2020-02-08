@@ -14,22 +14,27 @@
         {{GQLData}}
       </span>
     </a-alert>
-    <gl-form ref="magicForm" :opts="config" @propertyUpdate="onPropertyUpdate"></gl-form>
+    <gl-form ref="magicForm" :opts="config" @propertyUpdate="onPropertyUpdate" @doAction="onAction"></gl-form>
+    <component :is="xform" :opts="config" @doAction="onAction">
+    </component>
   </div>
 </template>
 
 <script>
-  import RegData from './RegData.js'
+  import RegData from './RegData2.js'
+  import XForm from '../../../../../packages/gl-form/src/Index'
 
   export default {
     name: "RegExample",
+    component: {},
     data() {
       return {
         config: RegData,
         formData: {},
         GQLData: {},
         showFormValue: false,
-        showGQL: false
+        showGQL: false,
+        xform: XForm
       }
     },
     methods: {
@@ -55,6 +60,9 @@
       },
       onPropertyUpdate({property, val, oval}) {
         console.log('onPropertyUpdate>', property, val, oval)
+      },
+      onAction(data) {
+        console.log('onAction data>', data)
       }
     }
   }

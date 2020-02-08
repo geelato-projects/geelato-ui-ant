@@ -1,14 +1,13 @@
 // import utils from './utils'
 import EntityDataReader from './EntityDataReader'
+import ActionResult from './ActionResult.js'
+// import utils from './utils.js'
 
 export default {
   props: {
-    // api: {
-    //   type: Object,
-    //   default() {
-    //     return this.$gl.api
-    //   }
-    // },
+    gid: {
+      type: String
+    },
     // 组件渲染配置信息
     opts: {
       type: Object,
@@ -101,8 +100,11 @@ export default {
       // let promise = ctx[action.fn](action.params, data, content)
       if (promise && typeof promise.then === 'function') {
         promise.then(function (data) {
+          that.$emit('doAction', new ActionResult({fn: action.fn, code: '0', message: '操作成功', data: data}))
+          console.log('geelato-ui-ant > mixin.js > $_doAction() > fn:', action.fn, 'invoke promise then() ', promise.then, data)
           that.$_doAction(action.then, data, callback)
         }).catch(function (data) {
+          that.$emit('doAction', new ActionResult({fn: action.fn, code: '-1', message: '操作失败', data: data}))
           that.$_doAction(action.fail, data, callback)
         })
       } else {

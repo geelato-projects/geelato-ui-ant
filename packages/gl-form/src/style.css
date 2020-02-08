@@ -118,3 +118,8 @@
     border-top-width: 1px;
     border-top-style: solid;
 }
+
+.gl-table-header, .gl-table-toolbar {
+    margin-top: 0.25em;
+    margin-bottom: 0.25em;
+}
