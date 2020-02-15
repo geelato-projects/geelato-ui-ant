@@ -78,12 +78,12 @@ Vue.use(AntDesign)
 - 准备数据
 src\components\data.js
 
-<<< @/docs/.vuepress/components/Form/Base/data.js
+<<< @/docs/.vuepress/components/Form/Magic/RegData.js
 
 - 创建示例文件
 src\components\Example.vue
 
-<<< @/docs/.vuepress/components/Form/Base/Example.vue
+<<< @/docs/.vuepress/components/Form/Magic/RegExample.vue
 
 - 修改app.vue，导入并使用Example组件。
 ``` vue

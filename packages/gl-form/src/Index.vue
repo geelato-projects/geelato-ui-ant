@@ -13,7 +13,7 @@
                   :controlRefs="controlRefs"
                   :loadedData="loadedData"
                   @propertyUpdate="onPropertyUpdate" @loadRefData="onLoadRefData"></gl-form-item>
-    <div class="gl-table-toolbar" v-show="toolbar.show||toolbar.show===undefined" style="text-align: center">
+    <div class="gl-table-toolbar" v-show="toolbar.show" style="text-align: center">
       <template v-for="(action,index) in toolbar.actions" v-if="action.gid=action.gid||$gl.utils.uuid(8)">
         <a-button :ref="action.gid" :type="action.type||'primary'" :icon="action.icon"
                   :key="index" v-if="action.show===undefined||action.show===''||rungs(action.show)"
@@ -68,18 +68,7 @@
         refresh: true,
         validatingCount: 0,
         // 工具条
-        toolbar: {
-          show: true,
-          actions: [new Action({
-            gid: utils.uuid(8),
-            text: '保存',
-            type: 'primary',
-            fn: 'save',
-            show: 'true',
-            icon: '',
-            ctx: 'self'
-          })]
-        },
+        toolbar: {},
         // 在表单中直接引用控件
         controlRefs: {}
       }
@@ -98,6 +87,18 @@
           let options = opts
           this.properties = options.properties
           this.layout = options.layout
+          this.toolbar = options.toolbar || {
+            show: false,
+            actions: [new Action({
+              gid: utils.uuid(8),
+              text: '保存',
+              type: 'primary',
+              fn: 'save',
+              show: 'true',
+              icon: '',
+              ctx: 'self'
+            })]
+          }
           this.defaultEntity = options.defaultEntity
           this.queryFields = options.queryFields || ['id']
           this.ds = options.ds

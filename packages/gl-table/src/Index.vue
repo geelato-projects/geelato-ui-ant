@@ -69,7 +69,7 @@
   import moment from 'moment'
   import TopQuery from './TopQuery'
   import utils from '../../utils'
-  import ActionHandler from '../../ActionHandler'
+  // import ActionHandler from '../../ActionHandler'
 
   let GEELATO_SCRIPT_PREFIX = 'gs:'
   // let REGEXP_FORM = /gs[\s]*:[\s]*\$ctx\.form\.[a-zA-Z]+[a-zA-Z0-9]*/g;

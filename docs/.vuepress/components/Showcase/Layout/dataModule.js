@@ -1,4 +1,4 @@
-import FormData from "../../Form/Base/data";
+import FormData from "../../Form/Base/UserFormData";
 
 export default {
   opts: {

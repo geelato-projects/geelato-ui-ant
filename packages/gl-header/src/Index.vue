@@ -4,8 +4,8 @@
     <div class="gl-header-title">{{title}}</div>
     <div class="gl-header-extra" :style="{float: extra.align || 'right'}"
          v-if="extra&&extra.controls&&extra.controls.length>0">
-      <template v-for="control in extra.controls">
-        <gl-control :property="control" :form="form" style="margin-right: 0.1em"></gl-control>
+      <template v-for="(control,controlIndex) in extra.controls">
+        <gl-control :property="control" :form="form" style="margin-right: 0.1em" :key="controlIndex"></gl-control>
       </template>
     </div>
   </div>

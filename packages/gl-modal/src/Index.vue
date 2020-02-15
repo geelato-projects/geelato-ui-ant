@@ -3,7 +3,7 @@
   <!--:cancelText=modalConfig.cancelText-->
   <a-modal
       :title=modalConfig.title
-      :width=modalConfig.width || 520
+      :width=modalWidth
       :maskClosable="false"
       :closable="true"
       v-model="modalVisible"
@@ -76,6 +76,7 @@
         bodyComponent: undefined,
         isMounted: false,
         modalVisible: true,
+        modalWidth: this.modalConfig.width || '520px',
         loading: false,
         defaultBtnType: 'default',
         defaultBtnSize: 'default'
@@ -91,7 +92,10 @@
       }
     },
     mounted() {
-      this.loadComponent(this.modalConfig.body.component)
+      console.log('geelato-ui-ant > gl-modal > Index.vue > mounted() this.modalConfig: ', this.modalConfig)
+      if (this.modalConfig.body) {
+        this.loadComponent(this.modalConfig.body.component)
+      }
     },
     methods: {
       handleAction(action, index) {

@@ -32,7 +32,6 @@
 </template>
 
 <script>
-  import Vue from 'vue'
 
   export default {
     name: "GlCardLayoutItem",
@@ -52,7 +51,7 @@
       },
       getCardComponent(cardId) {
         let card = this.getCardConfig(cardId)
-        return Vue.component(card.content.component)
+        return this.$gl.globalVue.component(card.content.component)
       }
     }
   }
