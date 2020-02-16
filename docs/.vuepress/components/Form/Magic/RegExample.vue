@@ -15,14 +15,14 @@
       </span>
     </a-alert>
     <gl-form ref="magicForm" :opts="config" @propertyUpdate="onPropertyUpdate" @doAction="onAction"></gl-form>
-    <component :is="xform" :opts="config" @doAction="onAction">
-    </component>
+    <!--<component :is="xform" :opts="config" @doAction="onAction">-->
+    <!--</component>-->
   </div>
 </template>
 
 <script>
   import RegData from './RegData2.js'
-  import XForm from '../../../../../packages/gl-form/src/Index'
+  // import XForm from '../../../../../packages/gl-form/src/Index'
 
   export default {
     name: "RegExample",
@@ -34,7 +34,7 @@
         GQLData: {},
         showFormValue: false,
         showGQL: false,
-        xform: XForm
+        // xform: XForm
       }
     },
     methods: {

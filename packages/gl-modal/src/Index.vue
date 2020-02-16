@@ -117,12 +117,19 @@
       close() {
         this.cancel()
       },
-      doActionFromContent(data) {
-        console.log('geelato-ui-ant > gl-modal > doActionFromContent(): ', data, this.modalConfig.on)
+      /**
+       *  @param data e.g. {fn:'save',code:'-1',message:'操作失败',data:{}}，成功时，code:'0',若无code也表示成功
+       */
+      doActionFromContent(actionResult) {
+        console.log('geelato-ui-ant > gl-modal > doActionFromContent() > actionResult:', actionResult)
+        console.log('geelato-ui-ant > gl-modal > doActionFromContent() > modalConfig.on ', this.modalConfig.on)
         for (let index in this.modalConfig.on) {
           let action = this.modalConfig.on[index]
-          if (action.ctx === 'content' && action.fn === data.fn) {
-            this.$_doAction(action.then, data)
+          if (action.ctx === 'content' && action.fn === actionResult.fn) {
+            if (actionResult.code === '0' || actionResult.code === 0 || actionResult.code === undefined || actionResult.code === '') {
+              // 来源的操作是成功的，才执行下一步操作
+              this.$_doAction(action.then, actionResult)
+            }
             break
           }
         }

@@ -19,7 +19,12 @@
       </template>
       <a-button type="dashed" @click="tableOption">{{ optionAlertShow && '关闭' || '开启' }} 提示信息</a-button>
     </div>
-
+    <!--由于下拉菜单在收起状态时，ref选不中，这里增加一个隐藏状态的按钮用于在设计时可选择配置-->
+    <div class="table-columns-operator" v-show="false">
+      <template v-for="action in opts.table.rowAction.actions" v-if="action.gid=action.gid||$gl.utils.uuid(8)">
+        <a-button type="link" :key="action.gid" :ref="action.gid">{{action.text}}</a-button>
+      </template>
+    </div>
     <s-table
         ref="table"
         size="default"
@@ -36,7 +41,8 @@
         {{ index + 1 }}
       </span>
       <span slot="action" slot-scope="text, record">
-        <template v-if="opts.table.rowAction.actions.length <=2">
+        <template
+            v-if="opts.table.rowAction.actions.length <=(opts.table.rowAction.maxShow || 2)">
           <template v-for="(action,actionIndex) in opts.table.rowAction.actions">
             <a @click="onRowAction(action,record)" :key="actionIndex">{{action.text}}</a>
             <a-divider type="vertical" :key="actionIndex" v-if="opts.table.rowAction.actions.length>1"/>
@@ -53,8 +59,8 @@
             </a>
             <a-menu slot="overlay">
               <a-menu-item v-for="(action,actionIndex) in opts.table.rowAction.actions" v-if="actionIndex>0"
-                           :key="actionIndex">
-                <a @click="onRowAction(action,record)">{{action.title}}</a>
+                           :key="action.gid">
+                <a @click="onRowAction(action,record)">{{action.text}}</a>
               </a-menu-item>
             </a-menu>
           </a-dropdown>
@@ -240,9 +246,12 @@
 
       },
       onRowAction(action, record) {
+        let controlComponent = this.$_getRefByGid(action.gid)
         console.log('geelato-ui-ant > gl-table > Index.vue > onRowAction() > action:', action)
         console.log('geelato-ui-ant > gl-table > Index.vue > onRowAction() > record:', record)
-        this.$_doAction(action, record)
+        console.log('geelato-ui-ant > gl-table > Index.vue > onRowAction() > control:', controlComponent)
+        // this.$_doAction(action, record)
+        controlComponent.$emit('click', this, record)
       },
       // onToolbarAction(action) {
       //   console.log('geelato-ui-ant > gl-table > Index.vue > onToolbarAction() > action:', action)

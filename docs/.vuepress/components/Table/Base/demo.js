@@ -75,8 +75,10 @@ export default {
   "showPagination": "true",
   "table": {
     "rowAction": {
+      maxShow: 2,
       "actions": [
         {
+          gid: '11111111',
           "text": "修改",
           "icon": "plus",
           "type": "primary",
@@ -197,6 +199,26 @@ export default {
             ]
           },
           "dataMapping": {"query": {"id": "$ctx.id"}}
+        },
+        {
+          gid: '22222222',
+          "text": "查看",
+          "icon": "plus",
+          "type": "primary",
+          "fn": "openModal",
+          "ctx": "this",
+          params: {},
+          dataMapping: {}
+        },
+        {
+          gid: '33333333',
+          "text": "设置密码",
+          "icon": "plus",
+          "type": "primary",
+          "fn": "openModal",
+          "ctx": "this",
+          params: {},
+          dataMapping: {}
         }
       ]
     },

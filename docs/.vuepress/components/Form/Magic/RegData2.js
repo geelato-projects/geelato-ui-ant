@@ -130,5 +130,17 @@ export default {
       "props": {}
     }
   },
-  "ds": {}
+  "ds": {},
+  toolbar: {
+    show: true,
+    actions: [{
+      gid: '',
+      text: '保存',
+      type: 'primary',
+      fn: 'save',
+      show: 'true',
+      icon: '',
+      ctx: 'self'
+    }]
+  }
 }
