@@ -14,7 +14,8 @@
       <template v-for="(action,index) in opts.toolbar.actions" v-if="action.gid=action.gid||$gl.utils.uuid(8)">
         <a-button :ref="action.gid" :type="action.type||'primary'" :icon="action.icon"
                   @click="$_doAction(action,{rowSelection:options.rowSelection,index:index})"
-                  :key="index" v-if="action.show===undefined||rungs(action.show)">{{action.text||action.title}}
+                  :key="action.gid" v-if="action.show===undefined||rungs(action.show)" style="margin-right:0.5em">
+          {{action.title||action.text}}
         </a-button>&nbsp;
       </template>
       <a-button type="dashed" @click="tableOption">{{ optionAlertShow && '关闭' || '开启' }} 提示信息</a-button>
@@ -22,7 +23,7 @@
     <!--由于下拉菜单在收起状态时，ref选不中，这里增加一个隐藏状态的按钮用于在设计时可选择配置-->
     <div class="table-columns-operator" v-show="false">
       <template v-for="action in opts.table.rowAction.actions" v-if="action.gid=action.gid||$gl.utils.uuid(8)">
-        <a-button type="link" :key="action.gid" :ref="action.gid">{{action.text}}</a-button>
+        <a-button type="link" :key="action.gid" :ref="action.gid">{{action.title||action.text}}</a-button>
       </template>
     </div>
     <s-table
@@ -44,7 +45,7 @@
         <template
             v-if="opts.table.rowAction.actions.length <=(opts.table.rowAction.maxShow || 2)">
           <template v-for="(action,actionIndex) in opts.table.rowAction.actions">
-            <a @click="onRowAction(action,record)" :key="actionIndex">{{action.text}}</a>
+            <a @click="onRowAction(action,record)" :key="action.gid">{{action.text}}</a>
             <a-divider type="vertical" :key="actionIndex" v-if="opts.table.rowAction.actions.length>1"/>
           </template>
         </template>
@@ -123,6 +124,11 @@
         controlRefs: {}
       }
     },
+    updated() {
+      console.log('geelato-ui-ant > gl-table > updated() ')
+      this.clearControlRef()
+      this.generateControlRef()
+    },
     computed: {
       columns() {
         for (let i in this.opts.table.columns) {
@@ -145,16 +151,10 @@
     },
     mounted() {
       this.refresh()
-      for (let i in this.$refs) {
-        this.controlRefs[i] = this.$refs[i][0]
-      }
-      console.log('geelato-ui-ant > gl-table > mounted() > $refs,controlRefs: ', this.$refs, this.controlRefs)
+      this.generateControlRef()
     },
     destroyed() {
-      for (let i in this.$refs) {
-        delete this.controlRefs[i]
-      }
-      console.log('geelato-ui-ant > gl-table > destroyed() > $refs,controlRefs: ', this.$refs, this.controlRefs)
+      this.clearControlRef()
     },
     methods: {
       // query组件的查询回调，获取查询条件信息，并调用loadData查询数据，并以数据驱动刷新页面
@@ -278,6 +278,18 @@
         } else {
           return str
         }
+      },
+      generateControlRef() {
+        for (let i in this.$refs) {
+          this.controlRefs[i] = this.$refs[i][0]
+        }
+        console.log('geelato-ui-ant > gl-table > generateControlRef() > $refs,controlRefs: ', this.$refs, this.controlRefs)
+      },
+      clearControlRef() {
+        for (let i in this.$refs) {
+          delete this.controlRefs[i]
+        }
+        console.log('geelato-ui-ant > gl-table > clearControlRef() > $refs,controlRefs: ', this.$refs, this.controlRefs)
       },
       $_getRefByGid(gid) {
         return this.controlRefs[gid]
