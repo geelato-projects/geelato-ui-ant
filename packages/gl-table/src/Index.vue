@@ -11,9 +11,9 @@
     </div>
 
     <div class="table-operator" v-show="opts.toolbar.show||opts.toolbar.show===undefined">
-      <template v-for="(action,index) in opts.toolbar.actions" v-if="action.gid=action.gid||$gl.utils.uuid(8)">
+      <template v-for="(action) in opts.toolbar.actions" v-if="action.gid=action.gid||$gl.utils.uuid(8)">
+        <!--@click="onToolbarAction(action,{rowSelection:options.rowSelection,index:index})"-->
         <a-button :ref="action.gid" :type="action.type||'primary'" :icon="action.icon"
-                  @click="$_doAction(action,{rowSelection:options.rowSelection,index:index})"
                   :key="action.gid" v-if="action.show===undefined||rungs(action.show)" style="margin-right:0.5em">
           {{action.title||action.text}}
         </a-button>&nbsp;
@@ -45,13 +45,13 @@
         <template
             v-if="opts.table.rowAction.actions.length <=(opts.table.rowAction.maxShow || 2)">
           <template v-for="(action,actionIndex) in opts.table.rowAction.actions">
-            <a @click="onRowAction(action,record)" :key="action.gid">{{action.text}}</a>
+            <a @click="onRowAction(action,record)" :key="action.gid">{{action.title||action.text}}</a>
             <a-divider type="vertical" :key="actionIndex" v-if="opts.table.rowAction.actions.length>1"/>
           </template>
         </template>
         <template v-else>
           <template>
-            <a @click="onRowAction(opts.table.rowAction.actions[0],record)">{{opts.table.rowAction.actions[0].text}}</a>
+            <a @click="onRowAction(opts.table.rowAction.actions[0],record)">{{opts.table.rowAction.actions[0].title||opts.table.rowAction.actions[0].text}}</a>
             <a-divider type="vertical"/>
           </template>
          <a-dropdown>
@@ -61,7 +61,7 @@
             <a-menu slot="overlay">
               <a-menu-item v-for="(action,actionIndex) in opts.table.rowAction.actions" v-if="actionIndex>0"
                            :key="action.gid">
-                <a @click="onRowAction(action,record)">{{action.text}}</a>
+                <a @click="onRowAction(action,record)">{{action.title||action.text}}</a>
               </a-menu-item>
             </a-menu>
           </a-dropdown>
@@ -176,6 +176,23 @@
       refresh() {
         this.onQuery(this.$refs.query.getCondition())
       },
+      deleteSelectedRowsByEntity({entityName}) {
+        if (this.selectedRowKeys && this.selectedRowKeys.length > 0) {
+          return this.$gl.api.delete(entityName, {'id|in': this.selectedRowKeys.join(',')})
+        } else {
+          this.$message.warn('未选择需删除的项。')
+          return false
+        }
+      },
+      deleteOneByEntity({entityName, data}) {
+        if (data && data.id) {
+          return this.$gl.api.delete(entityName, {'id': data.id})
+        } else {
+          this.$message.warn('指定删除的记录无效。')
+          console.error('geelato-ui-ant > gl-table > Index.vue > deleteOneByEntity() > data:', data)
+          return false
+        }
+      },
       $_onDeleted(params, data) {
         this.refresh()
       },
@@ -245,6 +262,12 @@
       handleOk() {
 
       },
+      // onToolbarAction(action, rowSelection) {
+      //   let controlComponent = this.$_getRefByGid(action.gid)
+      //   console.log('geelato-ui-ant > gl-table > Index.vue > onToolbarAction() > action:', action)
+      //   console.log('geelato-ui-ant > gl-table > Index.vue > onToolbarAction() > rowSelection:', rowSelection)
+      //   console.log('geelato-ui-ant > gl-table > Index.vue > onToolbarAction() > control:', controlComponent)
+      // },
       onRowAction(action, record) {
         let controlComponent = this.$_getRefByGid(action.gid)
         console.log('geelato-ui-ant > gl-table > Index.vue > onRowAction() > action:', action)
