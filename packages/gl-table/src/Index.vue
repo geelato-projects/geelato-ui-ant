@@ -176,17 +176,24 @@
       refresh() {
         this.onQuery(this.$refs.query.getCondition())
       },
+      /**
+       *  @param entityName 未设置时，默认为当前列表绑定的实体
+       * */
       deleteSelectedRowsByEntity({entityName}) {
         if (this.selectedRowKeys && this.selectedRowKeys.length > 0) {
-          return this.$gl.api.delete(entityName, {'id|in': this.selectedRowKeys.join(',')})
+          return this.$gl.api.delete(entityName || this.opts.entity, {'id|in': this.selectedRowKeys.join(',')})
         } else {
           this.$message.warn('未选择需删除的项。')
           return false
         }
       },
+      /**
+       *  @param entityName 未设置时，默认为当前列表绑定的实体
+       *  @param data 数据行信息
+       * */
       deleteOneByEntity({entityName, data}) {
         if (data && data.id) {
-          return this.$gl.api.delete(entityName, {'id': data.id})
+          return this.$gl.api.delete(entityName || this.opts.entity, {'id': data.id})
         } else {
           this.$message.warn('指定删除的记录无效。')
           console.error('geelato-ui-ant > gl-table > Index.vue > deleteOneByEntity() > data:', data)

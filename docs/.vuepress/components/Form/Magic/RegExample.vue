@@ -21,7 +21,7 @@
 </template>
 
 <script>
-  import RegData from './RegData2.js'
+  import RegData from './RegData3.js'
   // import XForm from '../../../../../packages/gl-form/src/Index'
 
   export default {
