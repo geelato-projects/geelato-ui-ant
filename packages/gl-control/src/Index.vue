@@ -2,10 +2,10 @@
   <div class="gl-control">
     <template v-if="property.control==='input'">
       <a-input type="text" :name="getFieldNameByCell(property)" v-model="model" :readOnly="isReadonly(property)"
-               v-bind="property.props"/>
+               v-bind="property.props" />
     </template>
     <template v-else-if="property.control==='date'">
-      <a-date-picker @change="onChange" :name="getFieldNameByCell(property)" v-model="model"
+      <a-date-picker @change='loadRefData(property, $event)' :name="getFieldNameByCell(property)" v-model="model"
                      :readOnly="isReadonly(property)"
                      v-bind="property.props"/>
     </template>
@@ -13,22 +13,24 @@
       <a-time-picker use12Hours format="h:mm:ss A"
                      :name="getFieldNameByCell(property)"
                      v-model="model" :readOnly="isReadonly(property)"
-                     v-bind="property.props"/>
+                     v-bind="property.props"
+                     @change='loadRefData(property, $event)'/>
     </template>
     <template v-else-if="property.control==='textarea'">
       <a-textarea rows="5" :name="getFieldNameByCell(property)"
                   v-model="model" :readOnly="isReadonly(property)"
-                  v-bind="property.props"></a-textarea>
+                  v-bind="property.props"
+                  @change='loadRefData(property, $event)'></a-textarea>
     </template>
     <template v-else-if="property.control==='checkbox'">
       <a-checkbox :name="getFieldNameByCell(property)" :defaultChecked="model?true:false"
-                  @change="(e)=>{model = e.target.checked}"
+                  @change="(e)=>{model = e.target.checked;loadRefData(property, $event)}"
                   :readOnly="isReadonly(property)"
                   v-bind="property.props">{{property.placeholder}}
       </a-checkbox>
     </template>
     <template v-else-if="property.control==='radio'">
-      <a-radio-group :defaultValue="property.value" v-model="model">
+      <a-radio-group :defaultValue="property.value" v-model="model" @change='loadRefData(property, $event)'>
         <a-radio v-for="(radioItem,radioItemKey) in property.data" :key="radioItemKey"
                  :value="radioItem.value">{{radioItem.text}}
         </a-radio>
@@ -72,14 +74,16 @@
     <template v-else-if="property.control==='email'">
       <a-input type="email" :name="getFieldNameByCell(property)"
                v-model="model" :readOnly="isReadonly(property)"
-               v-bind="property.props">
+               v-bind="property.props"
+               @change='loadRefData(property, $event)'>
         <a-icon slot="prefix" type="mail"/>
       </a-input>
     </template>
     <template v-else-if="property.control==='password'">
       <a-input :name="getFieldNameByCell(property)"
                v-model="model" :readOnly="isReadonly(property)"
-               v-bind="property.props" type="password">
+               v-bind="property.props" type="password"
+               @change='loadRefData(property, $event)'>
         <a-icon slot="prefix" type="lock"/>
         <!--<a-icon v-if="userName" slot="suffix" type="close-circle" @click="emitEmpty" />-->
       </a-input>

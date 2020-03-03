@@ -7,8 +7,7 @@
       <a-col :md="colSpan" :sm="24" v-for="(property,index) in properties" :key="index"
              :title="property.title+dict[property.cop]">
         <a-form-item v-show="(!advanced&&index<colPerRow-1)||advanced" :label="property.title">
-          <gl-control :ref="property.gid" :property="property" :form="entity" @propertyUpdate="onPropertyUpdate"
-                      @loadRefData="onLoadRefData"></gl-control>
+          <gl-control :ref="property.gid" :property="property" :form="entity" @propertyUpdate="onPropertyUpdate"></gl-control>
         </a-form-item>
       </a-col>
       <a-col :md="colSpan * (colPerRow - properties.length % colPerRow -1)" v-if="advanced">
@@ -29,8 +28,9 @@
 </template>
 <script>
   /* eslint-disable no-unneeded-ternary */
-
+  import EntityDataReaderHandler from '../../EntityDataReaderHandler'
   import utils from '../../utils'
+  import selectItem from '../../base/selectItems.js'
 
   export default {
     props: {
@@ -44,6 +44,12 @@
           return []
         },
         required: true
+      },
+      ds: {
+        type: Object,
+        default() {
+          return {}
+        }
       },
       colPerRow: {
         type: Number,
@@ -64,18 +70,14 @@
         // 高级搜索 展开/关闭
         advanced: false,
         defaultValue: {},
-        dict: {
-          eq: '等于',
-          neq: '不等于',
-          lt: '小于',
-          lte: '小于等于',
-          gt: '大于',
-          gte: '大于等于',
-          sw: '开头包括',
-          ew: '结尾包括',
-          contains: '包括'
-        },
-        gidMap: {}
+        dict: selectItem.copDict,
+        gidMap: {},
+        entityDataReaderHandler: new EntityDataReaderHandler({
+          $gl: this.$gl,
+          ds: this.ds,
+          dataMountTargetProperties: this.properties,
+          ctxLoader: this.ctxLoader
+        })
       }
     },
     computed: {
@@ -91,16 +93,19 @@
       for (let i in this.$refs) {
         this.controlRefs[i] = this.$refs[i][0]
       }
-      console.log('geelato-ui-ant > gl-table-top-query > mounted() > $refs,controlRefs: ', this.$refs, this.controlRefs)
+      console.log('geelato-ui-ant > gl-table > top-query > mounted() > $refs,controlRefs: ', this.$refs, this.controlRefs)
+      this.entityDataReaderHandler.execute()
+      console.log('geelato-ui-ant > gl-table > top-query > entityDataReaderHandler:', this.entityDataReaderHandler)
     },
     destroyed() {
       for (let i in this.$refs) {
         delete this.controlRefs[i]
       }
-      console.log('geelato-ui-ant > gl-table-top-query > destroyed() > $refs,controlRefs: ', this.$refs, this.controlRefs)
+      console.log('geelato-ui-ant > gl-table > top-query > destroyed() > $refs,controlRefs: ', this.$refs, this.controlRefs)
     },
     methods: {
       initData() {
+        let that = this
         // 转换初始化数据
         for (const index in this.properties) {
           const item = this.properties[index]
@@ -115,6 +120,7 @@
             }
           }
         }
+
         this.reset()
       },
       reset() {
@@ -134,9 +140,9 @@
         }
       },
       onPropertyUpdate({property, val}) {
-        this.$set(this.entity, property.field, val)
-      },
-      onLoadRefData() {
+        this.$set(this.entity, property.gid, val)
+        // 该属性值已改变，试着加载级联数据
+        this.entityDataReaderHandler.onLoadRefData({property})
       },
       toggleAdvanced() {
         this.advanced = !this.advanced
@@ -156,12 +162,12 @@
         }
       },
       submit(e) {
-        console.log('geelato-ui-ant > model submit>', e, this.model, this.properties)
+        console.log('geelato-ui-ant > gl-table > top-query > submit >e, model, properties', e, this.model, this.properties)
         this.$emit('input', {value: this.getCondition().value, e: e})
       },
       getCondition() {
         const result = {}
-        console.log('geelato-ui-ant > this.properties>', this.properties)
+        console.log('geelato-ui-ant > gl-table > top-query > getCondition() > before, this.properties>', this.properties)
         for (const index in this.properties) {
           const item = this.properties[index]
           if (this.entity[item.gid] === undefined || this.entity[item.gid] === null) {
@@ -182,14 +188,21 @@
                 }
                 result[item.field + '|' + item.cop] = value
               } catch (e) {
-                console.log('geelato-ui-ant > this.entity[item.gid] > ', item, this.entity[item.gid])
+                console.log('geelato-ui-ant >  gl-table > top-query > this.entity[item.gid] > ', item, this.entity[item.gid])
                 console.log(e)
               }
             }
           }
         }
-        console.log('geelato-ui-ant > gl-table > gql查询条件为: ', result)
+        console.log('geelato-ui-ant > gl-table > top-query > gql查询条件为: ', result)
         return {value: result}
+      },
+      ctxLoader() {
+        // let $ctx = {form: this.getValues(), vars: {}}
+        // for (let varName in (that.vars || [])) {
+        //   $ctx.vars[varName] = typeof that.vars[varName] === 'object' ? that.vars[varName].value : that.vars[varName]
+        // }
+        return this.entity
       }
     }
   }

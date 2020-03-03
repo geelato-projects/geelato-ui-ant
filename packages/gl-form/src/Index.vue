@@ -27,7 +27,6 @@
 </template>
 
 <script>
-  import ActionResult from '../../ActionResult'
   import GlFormItem from './GlFormItem'
   import mixin from '../../mixin'
   import utils from '../../utils'

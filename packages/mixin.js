@@ -1,5 +1,5 @@
 // import utils from './utils'
-import EntityDataReader from './EntityDataReader'
+import EntityDataReaderInfo from './EntityDataReaderInfo'
 import ActionResult from './ActionResult.js'
 // import utils from './utils.js'
 
@@ -25,7 +25,7 @@ export default {
       type: Object,
       required: false,
       default() {
-        return new EntityDataReader()
+        return new EntityDataReaderInfo()
       }
     }
   },

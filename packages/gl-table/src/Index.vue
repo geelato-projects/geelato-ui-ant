@@ -7,6 +7,7 @@
       <top-query ref="query" :controlRefs="controlRefs" :properties="opts.query.mix.properties"
                  :colPerRow="opts.query.mix.layout.fieldPerRow"
                  :gutter="opts.query.mix.layout.gutter||48"
+                 :ds = "opts.query.ds"
                  @input="onQuery"></top-query>
     </div>
 
@@ -135,7 +136,7 @@
           let column = this.opts.table.columns[i]
           // 列自定义渲染辅助字段
           // column.customRenderString = (column.customRenderString === undefined ? '' : column.customRenderString)
-          if (column.customRenderString) {
+          if (column && column.customRenderString) {
             try {
               column.customRender = eval(column.customRenderString)
             } catch (e) {

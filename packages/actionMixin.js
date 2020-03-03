@@ -1,5 +1,5 @@
 // import utils from './utils'
-import EntityDataReader from './EntityDataReader'
+import EntityDataReaderInfo from './EntityDataReaderInfo'
 
 export default {
   methods: {

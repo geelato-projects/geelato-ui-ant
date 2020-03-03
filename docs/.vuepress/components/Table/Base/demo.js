@@ -35,6 +35,7 @@ export default {
           "title": "类型",
           "cop": "eq",
           "control": "select",
+          dsName: 'txw8n567',
           "data": [
             {"text": "默认", "value": 0},
             {"text": "类型一", "value": 1},
@@ -56,6 +57,21 @@ export default {
         }
       ],
       "layout": {"display": "auto", "fieldPerRow": 4}
+    },
+    "ds": {
+      "txw8n567": {
+        "entity": "platform_demo_entity",
+        "lazy": false,
+        "fields": "name,id",
+        "resultMapping": {"text": "name", "value": "id"},
+        // 该信息会自动加入计算属性中，当province的值变动时，该数据源会重新加载计算
+        "params": [{
+          name: 'name',
+          cop: 'contains',
+          value: 'gs:$ctx.name'
+        }],
+        "description": "这是一个下拉列表数据源，带参数"
+      }
     }
   },
   "toolbar": {
