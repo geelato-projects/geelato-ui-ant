@@ -70,7 +70,7 @@ export default {
       control: 'select',
       field: 'provinceCode',
       title: '省份',
-      ds: 'province',
+      dsName: 'province',
       // 广东省
       value: '440000'
     },
@@ -79,7 +79,7 @@ export default {
       title: '城市',
       field: 'cityCode',
       // 基于数据源，数源名称可自取，如cityDS，不一定需等于本属性名
-      ds: 'city',
+      dsName: 'city',
       // js: "gs:$ctx.form.city=$ctx.form.province",
       // 当为data设置了数组项之后，默认激活项的索引
       props: {

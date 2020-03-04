@@ -23,6 +23,12 @@ export default class EntityDataReaderHandler {
     }
     this.properties = dataMountTargetProperties
     this.dsBeDependentOn = {}
+    if (!ds || !dataMountTargetProperties) {
+      console.error('geelato-ui-ant > EntityDataReaderHandler.js > constructor() > {ds, dataMountTargetProperties} 不允许为空！', {
+        ds,
+        dataMountTargetProperties
+      })
+    }
     this.parseDependent()
   }
 
@@ -37,12 +43,15 @@ export default class EntityDataReaderHandler {
       let propertyDs = that.ds[dsName]
       for (let paramIndex in propertyDs.params) {
         let param = propertyDs.params[paramIndex]
+        console.log('geelato-ui-ant > EntityDataReaderHandler.js > parseDependent() > parsing dependent of dsName "', dsName, '" by param:', param.value)
         if (REGEXP_FORM.test(param.value)) {
           param.value.match(REGEXP_FORM).forEach(function (item) {
             let dependPropertyName = item.substring(item.lastIndexOf('.') + 1)
+            let beBeDependentProperty = that.getPropertyByDsName(dsName)
+            console.log('geelato-ui-ant > EntityDataReaderHandler.js > parseDependent() > parsed dependent of dsName "', dsName, '" beBeDependentProperty:', JSON.parse(JSON.stringify(beBeDependentProperty)), beBeDependentProperty.gid, that.dsBeDependentOn[dependPropertyName])
             that.dsBeDependentOn[dependPropertyName] = that.dsBeDependentOn[dependPropertyName] || []
-            that.dsBeDependentOn[dependPropertyName].push(that.getPropertyByDsName(dsName).gid)
-            console.log('geelato-ui-ant > EntityDataReaderHandler.js > parseDependent() > dependPropertyName:', dependPropertyName, ', dsName:', dsName, that.getPropertyByDsName(dsName))
+            that.dsBeDependentOn[dependPropertyName].push(beBeDependentProperty.gid)
+            console.log('geelato-ui-ant > EntityDataReaderHandler.js > parseDependent() > dependPropertyName:', dependPropertyName, ', dsName:', dsName)
           })
         }
       }
@@ -80,9 +89,9 @@ export default class EntityDataReaderHandler {
       if (entityDataReaderInfo.params && entityDataReaderInfo.params.length > 0) {
         for (let paramIndex in entityDataReaderInfo.params) {
           let param = entityDataReaderInfo.params[paramIndex]
-          let property = this.getPropertyByName(param.name)
-          console.log('geelato-ui-ant > EntityDataReaderHandler.js > loadData() > property:', property, ', param:', param)
-          params[property.field + '|' + param.cop || 'eq'] = this.rungs(param.value)
+          // let property = this.getPropertyByName(param.name)
+          // console.log('geelato-ui-ant > EntityDataReaderHandler.js > loadData() > property:', property, ', param:', param)
+          params[param.name + '|' + param.cop || 'eq'] = this.rungs(param.value)
         }
       }
       that.$gl.api.query(entityDataReaderInfo.entity, entityDataReaderInfo.fields, params).then(function (res) {
@@ -157,20 +166,20 @@ export default class EntityDataReaderHandler {
   }
 
   getPropertyByDsName(dsName) {
-    // console.log('geelato-ui-ant > EntityDataReaderHandler.js > getPropertyByDsName() > dsName:', dsName, ' in properties:', this.properties)
+    console.log('geelato-ui-ant > EntityDataReaderHandler.js > getPropertyByDsName() > dsName:', dsName, ' in properties:', this.properties)
     const defaultProperty = {control: 'null', title: ' '}
-    if (!this.properties || typeof  this.properties !== 'object' || !dsName) {
-      return defaultProperty
-    }
-
-    for (let propertyNameOrIndex in this.properties) {
-      let property = this.properties[propertyNameOrIndex]
-      // console.log('geelato-ui-ant > EntityDataReaderHandler.js > getPropertyByDsName() > dsName:', dsName, ', property:', property)
-      if (property.dsName === dsName) {
-        return property
+    if (this.properties && typeof  this.properties === 'object' && dsName) {
+      for (let propertyNameOrIndex in this.properties) {
+        let property = this.properties[propertyNameOrIndex]
+        console.log('geelato-ui-ant > EntityDataReaderHandler.js > getPropertyByDsName() > dsName:', dsName, ', property:', property)
+        if (property.dsName === dsName) {
+          console.log('geelato-ui-ant > EntityDataReaderHandler.js > getPropertyByDsName() > find by dsName:', dsName, ', the property:', property)
+          return property
+        }
       }
     }
 
+    console.log('geelato-ui-ant > EntityDataReaderHandler.js > getPropertyByDsName() > not found by dsName, user defaultProperty:', defaultProperty)
     return defaultProperty
   }
 

@@ -93,7 +93,7 @@ export default {
     province: {
       control: 'select',
       title: '省份',
-      ds: 'province',
+      dsName: 'province',
       // 广东省
       value: '440000'
     },
@@ -101,8 +101,8 @@ export default {
       control: 'select',
       title: '城市',
       // 基于数据源，数源名称可自取，如cityDS，不一定需等于本属性名
-      ds: 'city',
-      js: "gs:$ctx.form.city=$ctx.form.province",
+      dsName: 'city',
+      js: "gs:$ctx.city=$ctx.province",
       props: {
         // 当为data设置了数组项之后，默认激活项的索引
         defaultActiveIndex: 0
@@ -193,10 +193,12 @@ export default {
         value: 'code'
       },
       // 带参数查询的数据源
-      params: {
+      params: [{
         // 该信息会自动加入计算属性中，当province的值变动时，该数据源会重新加载计算
-        provinceCode: 'gs:$ctx.form.province'
-      },
+        name: 'provinceCode',
+        cop: 'eq',
+        value: 'gs:$ctx.province'
+      }],
       description: '这是一个下拉列表数据源，带参数'
     }
   },

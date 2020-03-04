@@ -94,8 +94,8 @@
         this.controlRefs[i] = this.$refs[i][0]
       }
       console.log('geelato-ui-ant > gl-table > top-query > mounted() > $refs,controlRefs: ', this.$refs, this.controlRefs)
+      // 解析数据源，并初始化加载数据
       this.entityDataReaderHandler.execute()
-      console.log('geelato-ui-ant > gl-table > top-query > entityDataReaderHandler:', this.entityDataReaderHandler)
     },
     destroyed() {
       for (let i in this.$refs) {

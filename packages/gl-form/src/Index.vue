@@ -1,6 +1,3 @@
-<!--
-  TODO 指定字段创建之后，则不允许修改；checkbox必填，checkbox未设置时报错
--->
 <template>
   <div>
     <a-alert :showIcon="true" message="验证出错" type="error" v-if="Object.keys(errorItems).length>0">
@@ -12,7 +9,7 @@
     <gl-form-item v-if="refresh" ref="magicFormItem" :rows="layout.rows" :properties="properties" :form="form"
                   :controlRefs="controlRefs"
                   :loadedData="loadedData"
-                  @propertyUpdate="onPropertyUpdate" @loadRefData="onLoadRefData"></gl-form-item>
+                  @propertyUpdate="onPropertyUpdate"></gl-form-item>
     <div class="gl-table-toolbar" v-show="toolbar.show" style="text-align: center">
       <template v-for="(action,index) in toolbar.actions" v-if="action.gid=action.gid||$gl.utils.uuid(8)">
         <a-button :ref="action.gid" :type="action.type||'primary'" :icon="action.icon"
@@ -31,6 +28,7 @@
   import mixin from '../../mixin'
   import utils from '../../utils'
   import Action from '../../Action'
+  import EntityDataReaderHandler from "../../EntityDataReaderHandler";
 
   let GEELATO_SCRIPT_PREFIX = 'gs:'
   let REGEXP_FORM = /gs[\s]*:[\s]*\$ctx\.form\.[a-zA-Z]+[a-zA-Z0-9]*/g;
@@ -56,12 +54,12 @@
         fieldPropertyNameMap: {},
         ds: this.opts.ds,
         vars: this.opts.vars,
-        // 数据源被依赖，格式为：被依赖的属性:[依赖的属性,依赖的属性...]
-        dsBeDependentOn: {},
         loadedData: {
           id: utils.uuid(16),
           payload: undefined
         },
+        // 列表等数据源处理
+        entityDataReaderHandler: {},
         // 表单验证出错的信息
         errorItems: {},
         refresh: true,
@@ -79,6 +77,7 @@
       console.log('geelato-ui-ant > gl-form > mounted() > opts:', this.opts)
       console.log('geelato-ui-ant > gl-form > mounted() > query:', this.query)
       this.reset(this.opts)
+
     },
     methods: {
       reset(opts, query) {
@@ -102,7 +101,6 @@
           this.queryFields = options.queryFields || ['id']
           this.ds = options.ds
           this.vars = options.vars
-          this.dsBeDependentOn = {}
           this.init = false
         }
         this.initConvertData(query || this.query)
@@ -154,20 +152,30 @@
           }
         }
         // 3、构建数据源依赖 dsBeDependentOn e.g. {provinceCode: 'gs:$ctx.form.province'}
-        for (let propertyName in this.ds) {
-          let propertyDs = this.ds[propertyName]
-          for (let paramName in propertyDs.params) {
-            let paramValue = propertyDs.params[paramName]
-            if (REGEXP_FORM.test(paramValue)) {
-              paramValue.match(REGEXP_FORM).forEach(function (item) {
-                let dependPropertyName = item.substring(item.lastIndexOf('.') + 1)
-                that.dsBeDependentOn[dependPropertyName] = that.dsBeDependentOn[dependPropertyName] || []
-                that.dsBeDependentOn[dependPropertyName].push(propertyName)
-                // console.log('geelato-ui-ant > dependPropertyName>', dependPropertyName, propertyName, that.dsBeDependentOn)
-              })
-            }
-          }
-        }
+        this.entityDataReaderHandler = new EntityDataReaderHandler({
+          $gl: this.$gl,
+          ds: this.ds,
+          dataMountTargetProperties: this.properties,
+          ctxLoader: this.ctxLoader
+        })
+        // 解析数据源，并初始化加载数据
+        this.entityDataReaderHandler.execute()
+        // XXX---
+        // for (let propertyName in this.ds) {
+        //   let propertyDs = this.ds[propertyName]
+        //   for (let paramName in propertyDs.params) {
+        //     let paramValue = propertyDs.params[paramName]
+        //     if (REGEXP_FORM.test(paramValue)) {
+        //       paramValue.match(REGEXP_FORM).forEach(function (item) {
+        //         let dependPropertyName = item.substring(item.lastIndexOf('.') + 1)
+        //         that.dsBeDependentOn[dependPropertyName] = that.dsBeDependentOn[dependPropertyName] || []
+        //         that.dsBeDependentOn[dependPropertyName].push(propertyName)
+        //         // console.log('geelato-ui-ant > dependPropertyName>', dependPropertyName, propertyName, that.dsBeDependentOn)
+        //       })
+        //     }
+        //   }
+        // }
+        // XXX---
         this.init = true
         console.log('geelato-ui-ant > gl-form > initConvertData() > that.form: ', JSON.stringify(that.form))
       },
@@ -218,71 +226,15 @@
           })
         }
         // 加载属性数据，如下拉列表、字典信息等
-        for (let propertyName in this.properties) {
-          let property = this.properties[propertyName]
-          if (property.ds && this.ds[property.ds].lazy !== true) {
-            this.loadData(propertyName, property, property.ds)
-          }
-        }
-      },
-      /**
-       * 加载数据源
-       * */
-      loadData(propertyName, property, dataSourceName) {
-        let that = this
-        if (!dataSourceName) {
-          return
-        }
-        // =============================
-        // dsConfig 示例格式 为entityDataSource
-        // {
-        //     entity: 'base_data_city',
-        //     lazy: true, // default false
-        //     fields: 'name,id',
-        //     resultMapping: {},
-        //     params: {
-        //         provinceId: 'gs:$ctx.form.province'
-        //     }
+        // XXX---
+        // for (let propertyName in this.properties) {
+        //   let property = this.properties[propertyName]
+        //   if (property.ds && this.ds[property.ds].lazy !== true) {
+        //     this.loadData(propertyName, property, property.ds)
+        //   }
         // }
-        // =============================
-        let dsConfig = this.ds[dataSourceName]
-        if (dsConfig) {
-          let params = {}
-          // 格式如：['name text','id value']
-          if (dsConfig.params) {
-            for (let key in dsConfig.params) {
-              let value = dsConfig.params[key]
-              params[key] = this.rungs(value)
-            }
-          }
-          that.$gl.api.query(dsConfig.entity, dsConfig.fields, params).then(function (res) {
-            let property = that.properties[propertyName]
-            // 依据数据源的配置，处理返回的数据结果
-            that.$gl.api.resultHandler(res, dsConfig.resultMapping)
-            that.$set(property, 'data', res.data)
-            // 触发级联加载数据
-            if (propertyName) {
-              that.onLoadRefData({propertyName})
-            }
-          })
-        } else {
-          console.error('gl-form > loadData() > 未配置数据源', dataSourceName)
-        }
       },
-      /**
-       * 级联加载数据
-       * */
-      onLoadRefData({property, propertyName}) {
-        let that = this
-        // console.log('geelato-ui-ant > gl-form > Index.vue > loadRefData() >', {property, propertyName})
-        let propertyNames = that.dsBeDependentOn[propertyName || (property && property.gid)] || []
-        propertyNames.forEach(function (item) {
-          let triggerProperty = that.getProperty(item)
-          if (triggerProperty) {
-            that.loadData(item, triggerProperty, triggerProperty.ds)
-          }
-        })
-      },
+
       /**
        * 更新状态，强行触发重置表单
        * */
@@ -547,9 +499,18 @@
       onPropertyUpdate({property, val, oval}) {
         this.$set(this.form, property.gid, val)
         this.$emit('propertyUpdate', {property, val, oval})
+        // 该属性值已改变，试着加载级联数据
+        this.entityDataReaderHandler.onLoadRefData({property})
       },
       $_getRefByGid(gid) {
         return this.controlRefs[gid]
+      },
+      ctxLoader() {
+        // let $ctx = {form: this.getValues(), vars: {}}
+        // for (let varName in (that.vars || [])) {
+        //   $ctx.vars[varName] = typeof that.vars[varName] === 'object' ? that.vars[varName].value : that.vars[varName]
+        // }
+        return this.form
       }
 
     }
