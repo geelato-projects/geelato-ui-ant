@@ -7,7 +7,8 @@
       <a-col :md="colSpan" :sm="24" v-for="(property,index) in properties" :key="index"
              :title="property.title+dict[property.cop]">
         <a-form-item v-show="(!advanced&&index<colPerRow-1)||advanced" :label="property.title">
-          <gl-control :ref="property.gid" :property="property" :form="entity" @propertyUpdate="onPropertyUpdate"></gl-control>
+          <gl-control :ref="property.gid" :property="property" :form="entity"
+                      @propertyUpdate="onPropertyUpdate"></gl-control>
         </a-form-item>
       </a-col>
       <a-col :md="colSpan * (colPerRow - properties.length % colPerRow -1)" v-if="advanced">
@@ -123,9 +124,9 @@
 
         this.reset()
       },
-      reset() {
+      reset(data = {}) {
         // 转换初始化数据
-        this.entity = {}
+        this.entity = data
         for (const index in this.properties) {
           const item = this.properties[index]
           // 设置查询表单实体值

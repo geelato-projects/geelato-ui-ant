@@ -3,12 +3,16 @@
     <div style="margin:1em 0;background-color: silver;width: 100%">
       <a-button class="primary" @click="changeDataAndRefreshTable">添加操作列按钮数据并刷新</a-button>
       <a-button class="danger" @click="deleteByEntity">删除所选</a-button>
+      <span class="ant-alert-message">
+      名称字段的值，被类型下拉列表依赖，值更改时，需刷新类型下拉列表
+    </span>
     </div>
+
     <gl-table ref="table" :opts="config" :query="{em:'platform_demo_entity'}"></gl-table>
   </div>
 </template>
 <script>
-  import tableData from './demo.js'
+  import tableData from './demo2.js'
 
   export default {
     components: {},

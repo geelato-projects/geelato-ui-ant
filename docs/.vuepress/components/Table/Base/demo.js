@@ -10,9 +10,17 @@ export default {
     "mix": {
       "properties": [
         {
+          "field": "id",
+          "title": "ID",
+          "cop": "eq",
+          "control": "input",
+          "lop": "and",
+          "gid": "id"
+        },
+        {
           "field": "name",
           "title": "名称",
-          "cop": "eq",
+          "cop": "contains",
           "control": "input",
           "lop": "and",
           "props": {
@@ -21,15 +29,15 @@ export default {
           },
           "gid": "name"
         },
-        {
-          "field": "code",
-          "title": "编码",
-          "cop": "contains",
-          "control": "input",
-          "lop": "and",
-          "props": {"placeholder": ""},
-          "gid": "code"
-        },
+        // {
+        //   "field": "code",
+        //   "title": "编码",
+        //   "cop": "contains",
+        //   "control": "input",
+        //   "lop": "and",
+        //   "props": {"placeholder": ""},
+        //   "gid": "code"
+        // },
         {
           "field": "type",
           "title": "类型",

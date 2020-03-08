@@ -7,7 +7,7 @@
       <top-query ref="query" :controlRefs="controlRefs" :properties="opts.query.mix.properties"
                  :colPerRow="opts.query.mix.layout.fieldPerRow"
                  :gutter="opts.query.mix.layout.gutter||48"
-                 :ds = "opts.query.ds"
+                 :ds="opts.query.ds"
                  @input="onQuery"></top-query>
     </div>
 
@@ -107,6 +107,8 @@
         queryParam: {},
         selectedRowKeys: [],
         selectedRows: [],
+        // 操作列操作的当前行
+        currentRow: {},
         parameter: {},
         // custom table alert & rowSelection
         options: {
@@ -277,6 +279,7 @@
       //   console.log('geelato-ui-ant > gl-table > Index.vue > onToolbarAction() > control:', controlComponent)
       // },
       onRowAction(action, record) {
+        this.currentRow = record
         let controlComponent = this.$_getRefByGid(action.gid)
         console.log('geelato-ui-ant > gl-table > Index.vue > onRowAction() > action:', action)
         console.log('geelato-ui-ant > gl-table > Index.vue > onRowAction() > record:', record)
