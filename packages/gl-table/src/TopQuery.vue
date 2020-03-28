@@ -17,7 +17,7 @@
       <a-col :md="colSpan" :sm="24">
             <span class="table-page-search-submitButtons">
               <a-button type="primary" @click="submit">查询</a-button>
-              <a-button style="margin-left: 8px" @click="reset">重置</a-button>
+              <a-button style="margin-left: 8px" @click="reset(params)">重置</a-button>
               <a @click="toggleAdvanced" style="margin-left: 8px" v-if="isMultiRow">
                 {{ advanced ? '收起' : '展开' }}
                 <a-icon :type="advanced ? 'up' : 'down'"/>
@@ -28,13 +28,21 @@
   </a-form>
 </template>
 <script>
-  /* eslint-disable no-unneeded-ternary */
+
   import EntityDataReaderHandler from '../../EntityDataReaderHandler'
   import utils from '../../utils'
   import selectItem from '../../base/selectItems.js'
 
   export default {
+    name: 'GlTableTopQuery',
     props: {
+      // 其它组件转进来的参数，如打开页面传参
+      params: {
+        type: Object,
+        default() {
+          return {}
+        }
+      },
       controlRefs: {
         type: Object,
         required: true
@@ -70,7 +78,7 @@
         entity: {},
         // 高级搜索 展开/关闭
         advanced: false,
-        defaultValue: {},
+        // defaultValue: {},
         dict: selectItem.copDict,
         gidMap: {},
         entityDataReaderHandler: new EntityDataReaderHandler({
@@ -94,7 +102,8 @@
       for (let i in this.$refs) {
         this.controlRefs[i] = this.$refs[i][0]
       }
-      console.log('geelato-ui-ant > gl-table > top-query > mounted() > $refs,controlRefs: ', this.$refs, this.controlRefs)
+      console.log('geelato-ui-ant > gl-table-top-query > mounted() > params: ', this.params)
+      console.log('geelato-ui-ant > gl-table-top-query > mounted() > $refs,controlRefs: ', this.$refs, this.controlRefs)
       // 解析数据源，并初始化加载数据
       this.entityDataReaderHandler.execute()
     },
@@ -102,7 +111,7 @@
       for (let i in this.$refs) {
         delete this.controlRefs[i]
       }
-      console.log('geelato-ui-ant > gl-table > top-query > destroyed() > $refs,controlRefs: ', this.$refs, this.controlRefs)
+      console.log('geelato-ui-ant > gl-table-top-query > destroyed() > $refs,controlRefs: ', this.$refs, this.controlRefs)
     },
     methods: {
       initData() {
@@ -113,22 +122,29 @@
           // 检查设置控件维一值
           if (!item.gid) {
             if (!this.gidMap[item.field]) {
-              item.gid = item.field
+              item.gid =  this.$gl.utils.uuid(16)
               this.gidMap[item.gid] = item.field
             } else {
-              item.gid = item.field + '_' + this.$gl.utils.uuid(8)
+              item.gid = this.$gl.utils.uuid(16)
               this.gidMap[item.gid] = item.field
             }
           }
         }
-
-        this.reset()
+        this.reset(this.params)
       },
-      reset(data = {}) {
-        // 转换初始化数据
-        this.entity = data
+      reset(data = this.params) {
         for (const index in this.properties) {
           const item = this.properties[index]
+          console.log('geelato-ui-ant > gl-table-top-query > reset > index,property: ', index, item, this.$refs[item.gid][0])
+
+          if (item.gid in this.params) {
+            // item.value = this.params[item.gid]
+            this.$refs[item.gid][0].setValue(this.params[item.gid])
+          } else if (item.field in this.params) {
+            // item.value = this.params[item.field]
+            this.$refs[item.gid][0].setValue(this.params[item.field])
+          }
+
           // 设置查询表单实体值
           // 优先以property.value的值为准，若无则以property.props.defaultValue的值为准，最后以property.props.defaultActiveIndex对应项的值为准
           if (item.value !== undefined) {
@@ -139,6 +155,11 @@
             this.$set(this.entity, item.gid, item.data[item.defaultActiveIndex].value)
           }
         }
+
+        // 转换初始化数据
+        Object.assign(this.entity, data)
+        console.log('geelato-ui-ant > gl-table-top-query > reset > params ', data)
+        console.log('geelato-ui-ant > gl-table-top-query > reset > entity ', this.entity)
       },
       onPropertyUpdate({property, val}) {
         this.$set(this.entity, property.gid, val)
@@ -163,12 +184,12 @@
         }
       },
       submit(e) {
-        console.log('geelato-ui-ant > gl-table > top-query > submit >e, model, properties', e, this.model, this.properties)
+        console.log('geelato-ui-ant > gl-table-top-query > submit >e, model, properties', e, this.model, this.properties)
         this.$emit('input', {value: this.getCondition().value, e: e})
       },
       getCondition() {
         const result = {}
-        console.log('geelato-ui-ant > gl-table > top-query > getCondition() > before, this.properties>', this.properties)
+        console.log('geelato-ui-ant > gl-table-top-query > getCondition() > before, this.properties>', this.properties)
         for (const index in this.properties) {
           const item = this.properties[index]
           if (this.entity[item.gid] === undefined || this.entity[item.gid] === null) {
@@ -189,13 +210,13 @@
                 }
                 result[item.field + '|' + item.cop] = value
               } catch (e) {
-                console.log('geelato-ui-ant >  gl-table > top-query > this.entity[item.gid] > ', item, this.entity[item.gid])
+                console.log('geelato-ui-ant >  gl-table-top-query > this.entity[item.gid] > ', item, this.entity[item.gid])
                 console.log(e)
               }
             }
           }
         }
-        console.log('geelato-ui-ant > gl-table > top-query > gql查询条件为: ', result)
+        console.log('geelato-ui-ant > gl-table-top-query > gql查询条件为: ', result)
         return {value: result}
       },
       ctxLoader() {

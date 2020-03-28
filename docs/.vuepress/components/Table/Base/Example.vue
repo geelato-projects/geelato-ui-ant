@@ -8,11 +8,11 @@
     </span>
     </div>
 
-    <gl-table ref="table" :opts="config" :query="{em:'platform_demo_entity'}"></gl-table>
+    <gl-table ref="table" v-bind="config.bind" :params="config.params"></gl-table>
   </div>
 </template>
 <script>
-  import tableData from './demo2.js'
+  import tableData from './demo3.js'
 
   export default {
     components: {},

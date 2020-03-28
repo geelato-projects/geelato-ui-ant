@@ -78,15 +78,15 @@ export default {
     }
   }),
   watch: {
-    'localPagination.current' (val) {
-      this.pageURI && this.$router.push({
-        ...this.$route,
-        name: this.$route.name,
-        params: Object.assign({}, this.$route.params, {
-          pageNo: val
-        })
-      })
-    },
+    // 'localPagination.current' (val) {
+    //   this.pageURI && this.$router.push({
+    //     ...this.$route,
+    //     name: this.$route.name,
+    //     params: Object.assign({}, this.$route.params, {
+    //       pageNo: val
+    //     })
+    //   })
+    // },
     pageNum (val) {
       Object.assign(this.localPagination, {
         current: val
@@ -104,8 +104,9 @@ export default {
     }
   },
   created () {
-    const { pageNo } = this.$route.params
-    const localPageNum = this.pageURI && (pageNo && parseInt(pageNo)) || this.pageNum
+    // const { pageNo } = this.$route.params
+    // const localPageNum = this.pageURI && (pageNo && parseInt(pageNo)) || this.pageNum
+    const localPageNum = this.pageNum
     this.localPagination = ['auto', true].includes(this.showPagination) && Object.assign({}, this.localPagination, {
       current: localPageNum,
       pageSize: this.pageSize,

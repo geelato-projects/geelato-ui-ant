@@ -2,7 +2,7 @@
   <div class="gl-control">
     <template v-if="property.control==='input'">
       <a-input type="text" :name="getFieldNameByCell(property)" v-model="model" :readOnly="isReadonly(property)"
-               v-bind="property.props" />
+               v-bind="property.props"/>
     </template>
     <template v-else-if="property.control==='date'">
       <a-date-picker @change='loadRefData(property, $event)' :name="getFieldNameByCell(property)" v-model="model"
@@ -141,6 +141,9 @@
     methods: {
       getValue() {
         return this.model
+      },
+      setValue(value) {
+        this.model = value
       },
       getFieldNameByCell(property) {
         return property.field

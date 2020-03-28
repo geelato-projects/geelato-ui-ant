@@ -10,20 +10,25 @@ export default {
     },
     // 组件渲染配置信息
     opts: {
-      type: Object,
-      required: false
+      type: Object
     },
     // 表单的查询信息，如{id:'1345362334482731423'}，{treeNodeId:'1345362334482731423'}
-    query: {
+    // query: {
+    //   type: Object,
+    //   required: false,
+    //   default() {
+    //     return {}
+    //   }
+    // },
+    // 参数，如{id:'1345362334482731423'}，{treeNodeId:'1345362334482731423'}
+    params: {
       type: Object,
-      required: false,
       default() {
         return {}
       }
     },
     entityDataReader: {
       type: Object,
-      required: false,
       default() {
         return new EntityDataReaderInfo()
       }

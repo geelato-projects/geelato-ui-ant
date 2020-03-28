@@ -75,12 +75,12 @@
     },
     mounted() {
       console.log('geelato-ui-ant > gl-form > mounted() > opts:', this.opts)
-      console.log('geelato-ui-ant > gl-form > mounted() > query:', this.query)
+      console.log('geelato-ui-ant > gl-form > mounted() > params:', this.params)
       this.reset(this.opts)
 
     },
     methods: {
-      reset(opts, query) {
+      reset(opts, params) {
         if (opts) {
           let options = opts
           this.properties = options.properties
@@ -88,7 +88,7 @@
           this.toolbar = options.toolbar || {
             show: false,
             actions: [new Action({
-              gid: utils.uuid(8),
+              gid: utils.uuid(16),
               text: '保存',
               type: 'primary',
               fn: 'save',
@@ -103,8 +103,8 @@
           this.vars = options.vars
           this.init = false
         }
-        this.initConvertData(query || this.query)
-        this.loadInitData(query || this.query)
+        this.initConvertData(params || this.params)
+        this.loadInitData(params || this.params)
         this.forceRefresh()
       },
       /**
@@ -112,7 +112,7 @@
        * 2、转换并设置一些默认值
        * 3、分析数据源依赖
        *  */
-      initConvertData(query) {
+      initConvertData(params) {
         let that = this
         for (let propertyName in this.properties) {
           // 设置一些默认值，添加默认配置等
@@ -128,11 +128,11 @@
           // property.name = property.field
           // !!!需采用vm.$set的方式来设置值，确保值变化可被检测 @see https://cn.vuejs.org/v2/guide/reactivity.html#检测变化的注意事项
           // 若query已存在属性值，则以query的值为准
-          if (query && propertyName in query) {
-            that.$set(that.form, propertyName, query[propertyName])
+          if (params && propertyName in params) {
+            that.$set(that.form, propertyName, params[propertyName])
             // 更新属性中的值
-            property.value = query[propertyName]
-            // that.$set(property, 'value', query[propertyName])
+            property.value = params[propertyName]
+            // that.$set(property, 'value', params[propertyName])
           } else {
             that.$set(that.form, propertyName, property.value = property.value || property.props.defaultValue || '')
             // 如果值还为空，则试着以defaultIndex指定的值来进行设置，如select控件
@@ -180,10 +180,10 @@
         console.log('geelato-ui-ant > gl-form > initConvertData() > that.form: ', JSON.stringify(that.form))
       },
       // 加载远程的初始化数据，如字典信息
-      loadInitData(query) {
+      loadInitData(params) {
         // 加载主实体数据
         let that = this
-        // console.log('geelato-ui-ant > gl-form > Index.vue >loadInitData() > query:', query)
+        // console.log('geelato-ui-ant > gl-form > Index.vue >loadInitData() > params:', params)
         // console.log('geelato-ui-ant > gl-form > Index.vue >loadInitData() > queryFields:', that.queryFields)
         // 一般地，若未指定queryFields，则condition 为{id: that.form.id}
         let condition = {}

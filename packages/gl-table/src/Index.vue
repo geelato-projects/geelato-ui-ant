@@ -8,6 +8,7 @@
                  :colPerRow="opts.query.mix.layout.fieldPerRow"
                  :gutter="opts.query.mix.layout.gutter||48"
                  :ds="opts.query.ds"
+                 :params="params"
                  @input="onQuery"></top-query>
     </div>
 
