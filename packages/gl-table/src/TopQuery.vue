@@ -4,7 +4,7 @@
 <template>
   <a-form layout="inline">
     <a-row :gutter="gutter">
-      <a-col :md="colSpan" :sm="24" v-for="(property,index) in properties" :key="index"
+      <a-col :md="colSpan" :sm="24" v-for="(property,index) in visibleProperties" :key="index"
              :title="property.title+dict[property.cop]">
         <a-form-item v-show="(!advanced&&index<colPerRow-1)||advanced" :label="property.title">
           <gl-control :ref="property.gid" :property="property" :form="entity"
@@ -25,6 +25,14 @@
             </span>
       </a-col>
     </a-row>
+    <!--隐藏表单域-->
+    <div style="display: none">
+      <span  v-for="(property,index) in inVisibleProperties" :key="index"
+             :title="property.title+dict[property.cop]">
+          <gl-control :ref="property.gid" :property="property" :form="entity"
+                      @propertyUpdate="onPropertyUpdate"></gl-control>
+      </span>
+    </div>
   </a-form>
 </template>
 <script>
@@ -95,6 +103,18 @@
       },
       isMultiRow() {
         return this.properties.length > this.colPerRow
+      },
+      visibleProperties() {
+        let result = this.properties.filter(property => {
+          return property.show !== false
+        })
+        return result || []
+      },
+      inVisibleProperties() {
+        let result = this.properties.filter(property => {
+          return property.show === false
+        })
+        return result || []
       }
     },
     mounted() {
@@ -122,7 +142,7 @@
           // 检查设置控件维一值
           if (!item.gid) {
             if (!this.gidMap[item.field]) {
-              item.gid =  this.$gl.utils.uuid(16)
+              item.gid = this.$gl.utils.uuid(16)
               this.gidMap[item.gid] = item.field
             } else {
               item.gid = this.$gl.utils.uuid(16)

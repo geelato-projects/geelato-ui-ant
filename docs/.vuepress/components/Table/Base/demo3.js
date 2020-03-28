@@ -4,7 +4,7 @@ export default {
   "bind": {
     "opts": {
       "toolbar": {
-        "css": { "align": "right" },
+        "css": {"align": "right"},
         "actions": [
           {
             "gid": "sefJ8O68",
@@ -32,7 +32,7 @@ export default {
       "query": {
         "show": true,
         "mix": {
-          "layout": { "fieldPerRow": 4, "display": "auto" },
+          "layout": {"fieldPerRow": 4, "display": "auto"},
           "properties": [
             {
               "gid": "id",
@@ -44,7 +44,8 @@ export default {
               "props": {
                 "defaultValue": "",
                 "placeholder": "姓名"
-              }
+              },
+              show: false
             }
           ]
         }
@@ -91,7 +92,7 @@ export default {
           {
             "needTotal": false,
             "gid": "tlJ2yoNo",
-            "scopedSlots": { "customRender": "serial" },
+            "scopedSlots": {"customRender": "serial"},
             "sorter": false,
             "dataIndex": "id",
             "title": "#",
@@ -116,7 +117,7 @@ export default {
           {
             "needTotal": false,
             "gid": "49RK1lCy",
-            "scopedSlots": { "customRender": "action" },
+            "scopedSlots": {"customRender": "action"},
             "sorter": false,
             "dataIndex": "",
             "width": "150px",

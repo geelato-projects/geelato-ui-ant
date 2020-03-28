@@ -3,7 +3,7 @@
 -->
 <template>
   <div class="gl-table gl-table-as-list" v-if="opts">
-    <div class="table-page-search-wrapper" v-show="opts.query.show||opts.query.show===undefined">
+    <div class="table-page-search-wrapper" v-show="opts.query.show!==false">
       <top-query ref="query" :controlRefs="controlRefs" :properties="opts.query.mix.properties"
                  :colPerRow="opts.query.mix.layout.fieldPerRow"
                  :gutter="opts.query.mix.layout.gutter||48"
@@ -12,7 +12,7 @@
                  @input="onQuery"></top-query>
     </div>
 
-    <div class="table-operator" v-show="opts.toolbar.show||opts.toolbar.show===undefined">
+    <div class="table-operator" v-show="opts.toolbar.show!==false">
       <template v-for="(action) in opts.toolbar.actions" v-if="action.gid=action.gid||$gl.utils.uuid(8)">
         <!--@click="onToolbarAction(action,{rowSelection:options.rowSelection,index:index})"-->
         <a-button :ref="action.gid" :type="action.type||'primary'" :icon="action.icon"
