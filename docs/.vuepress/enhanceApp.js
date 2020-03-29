@@ -6,7 +6,7 @@ import AntDesign from 'ant-design-vue'
 import 'ant-design-vue/dist/antd.less'
 // 导入依赖表单验证
 import VeeValidate from 'vee-validate'
-//引入中文包，提示信息可以以中文形式显示
+// 引入中文包，提示信息可以以中文形式显示
 import zh_CN from 'vee-validate/dist/locale/zh_CN'
 import VueI18n from 'vue-i18n'
 // 导入组件库

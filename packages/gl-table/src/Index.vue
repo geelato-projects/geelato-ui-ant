@@ -328,6 +328,12 @@
       },
       $_getRefByGid(gid) {
         return this.controlRefs[gid]
+      },
+      ctxLoader() {
+        return {
+          currentRow: this.currentRow,
+          currentQuery: this.$refs.query.ctxLoader()
+        }
       }
     }
   }

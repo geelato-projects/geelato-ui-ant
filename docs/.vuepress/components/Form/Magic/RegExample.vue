@@ -14,16 +14,14 @@
         {{GQLData}}
       </span>
     </a-alert>
-    <gl-form ref="magicForm" :opts="config" @propertyUpdate="onPropertyUpdate" @doAction="onAction"></gl-form>
+    <gl-form ref="magicForm" v-bind="config.bind" @propertyUpdate="onPropertyUpdate" @doAction="onAction"></gl-form>
     <!--<component :is="xform" :opts="config" @doAction="onAction">-->
     <!--</component>-->
   </div>
 </template>
 
 <script>
-  import RegData from './RegData.js'
-  // import XForm from '../../../../../packages/gl-form/src/Index'
-
+  import RegData from './RegData3.js'
   export default {
     name: "RegExample",
     component: {},

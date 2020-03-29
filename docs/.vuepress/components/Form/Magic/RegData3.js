@@ -1,122 +1,93 @@
 export default {
-  "layout": {
-    "hidden": {},
-    "type": "table",
-    "rows": [
-      {
-        "cols": [
-          {"field": "name", "label": true, "span": 4},
-          {"field": "name", "span": 8},
-          {"field": "code", "label": true, "span": 4},
-          {"field": "code", "span": 8}
-        ]
+  "bind": {
+    "opts": {
+      "type": "object",
+      "defaultEntity": "platform_role_r_user",
+      "state": "save",
+      "properties": {
+        "id": {
+          "gid": "id",
+          "props": {},
+          "entity": "platform_role_r_user",
+          "field": "id",
+          "value": ""
+        },
+        "name": {
+          "control": "input",
+          "title": "用户ID",
+          "gid": "name",
+          "props": {},
+          "entity": "platform_role_r_user",
+          "field": "userId",
+          "value": "",
+          "rules": {},
+          "isServerSaveIgnore": false,
+          "ds": ""
+        },
+        "type": {
+          "control": "select",
+          "title": "角色",
+          "data": [
+            {"text": "默认", "value": "0"},
+            {"text": "类型一", "value": "1"},
+            {"text": "类型二", "value": "2"}
+          ],
+          "props": {},
+          "gid": "type",
+          "entity": "platform_role_r_user",
+          "field": "roleId",
+          "value": "",
+          "rules": {},
+          "isServerSaveIgnore": false,
+          "dsName": "uAamWjDG"
+        }
       },
-      {
-        "cols": [
-          {"field": "type", "label": true, "span": 4},
-          {"field": "type", "span": 20}
-        ]
+      "layout": {
+        "type": "table",
+        "rows": [
+          {
+            "cols": [
+              {"span": 4, "label": true, "field": "name"},
+              {"span": 20, "field": "name"}
+            ]
+          },
+          {
+            "cols": [
+              {"span": 4, "label": true, "field": "type"},
+              {"span": 20, "field": "type"}
+            ]
+          }
+        ],
+        "hidden": {}
       },
-      {
-        "cols": [
-          {"field": "content", "label": true, "span": 4},
-          {"field": "description", "span": 20}
-        ]
-      }
-    ]
-  },
-  "toolbar": {
-    "gid": "56vRcp4H",
-    "show": true,
-    "actions": [
-      {
-        "gid": "sgWqHy1W",
-        "ctx": "self",
-        "fn": "save",
-        "show": "true",
-        "icon": "",
-        "text": "保存",
-        "type": "primary"
-      }
-    ]
-  },
-  "watch": {},
-  "defaultEntity": "platform_demo_entity",
-  "state": "save",
-  "vars": {},
-  "type": "object",
-  "properties": {
-    "code": {
-      "gid": "code",
-      "field": "code",
-      "isServerSaveIgnore": false,
-      "control": "input",
-      "rules": {"required": true},
-      "title": "编码",
-      "value": "",
-      "entity": "platform_demo_entity",
-      "props": {},
-      "ds": ""
-    },
-    "name": {
-      "gid": "name",
-      "field": "name",
-      "control": "input",
-      "title": "名称",
-      "value": "",
-      "entity": "platform_demo_entity",
-      "props": {}
-    },
-    "description": {
-      "gid": "description",
-      "field": "description",
-      "control": "textarea",
-      "title": "描述",
-      "value": "",
-      "entity": "platform_demo_entity",
-      "props": {}
-    },
-    "id": {
-      "gid": "id",
-      "field": "id",
-      "value": "",
-      "entity": "platform_demo_entity",
-      "props": {}
-    },
-    "type": {
-      "gid": "type",
-      "data": [],
-      "field": "type",
-      "isServerSaveIgnore": false,
-      "control": "select",
-      "rules": {},
-      "title": "类型",
-      "value": "",
-      "entity": "platform_demo_entity",
-      "props": {},
-      "ds": "4XCmcCSc"
-    }
-  },
-  "ds": {
-    "4XCmcCScx": {
-      "lazy": false,
-      "resultMapping": {"text": "name", "value": "id"},
-      "description": "这是一个下拉列表数据源，带参数",
-      "fields": "name,id",
-      "params": {},
-      "entity": "platform_demo_entity"
-    },
-    '4XCmcCSc': {
-      entity: 'platform_demo_entity',
-      // default false
-      lazy: false,
-      // 支持字段重命名
-      fields: 'name,code',
-      resultMapping: {
-        text: 'name',
-        value: 'code'
+      "toolbar": {
+        "show": true,
+        "actions": [
+          {
+            "text": "保存",
+            "type": "primary",
+            "fn": "save",
+            "show": "true",
+            "icon": "",
+            "ctx": "self",
+            "gid": "HI2IdlaQ"
+          }
+        ],
+        "gid": "RZ1OCSHs"
       },
-      description: '这是一个下拉列表数据源'
+      "ds": {
+        "uAamWjDG": {
+          "entity": "platform_role",
+          "lazy": false,
+          "fields": "name,id",
+          "resultMapping": {"text": "name", "value": "id"},
+          "params": {},
+          "description": "这是一个下拉列表数据源，带参数"
+        }
+      },
+      "vars": {},
+      "watch": {}
     },
+    "params": {}
   }
 }
