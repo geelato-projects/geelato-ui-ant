@@ -1,0 +1,52 @@
+<template>
+  <table style="width: 98%">
+    <tr>
+      <th style="width: 30%">控件</th>
+      <th style="width: 70%">示例</th>
+      <!--<th style="width: 10%">值</th>-->
+    </tr>
+    <tr v-for="property in config.properties">
+      <td>{{property.control}} ({{property.title}})</td>
+      <td>
+        <gl-control :form="form" :property="property" @propertyUpdate="onPropertyUpdate"
+                    @loadRefData="onLoadRefData"></gl-control>
+      </td>
+      <!--<td>{{form[property.gid]}}</td>-->
+    </tr>
+    <tr>
+      <td>slider</td>
+      <td>
+        <my-slider></my-slider>
+      </td>
+    </tr>
+  </table>
+</template>
+<script>
+  import MySlider from './Slider'
+  import data from './data.js'
+
+  export default {
+    components: {MySlider},
+    data() {
+      return {
+        form: {},
+        config: data
+      }
+    },
+    computed: {},
+    created() {
+    },
+    mounted() {
+
+    },
+    methods: {
+      onPropertyUpdate() {
+
+      },
+      onLoadRefData() {
+      }
+    }
+  }
+</script>
+<style>
+</style>

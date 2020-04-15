@@ -127,7 +127,7 @@
           that.fieldPropertyNameMap[property.field] = propertyName
           // property.name = property.field
           // !!!需采用vm.$set的方式来设置值，确保值变化可被检测 @see https://cn.vuejs.org/v2/guide/reactivity.html#检测变化的注意事项
-          // 若query已存在属性值，则以query的值为准
+          // 若params已存在属性值，则以params的值为准
           if (params && propertyName in params) {
             that.$set(that.form, propertyName, params[propertyName])
             // 更新属性中的值
@@ -136,9 +136,8 @@
           } else {
             that.$set(that.form, propertyName, property.value = property.value || property.props.defaultValue || '')
             // 如果值还为空，则试着以defaultIndex指定的值来进行设置，如select控件
-            if (!that.form[propertyName] && property.data && property.data.length > 0) {
-              let dataIndex = property.props.defaultActiveIndex || 0
-              that.$set(that.form, propertyName, property.data[dataIndex].value)
+            if (!that.form[propertyName] && property.data && property.data.length > 0 && property.props.defaultActiveIndex !== undefined) {
+              that.$set(that.form, propertyName, property.data[property.props.defaultActiveIndex].value)
             }
           }
           // this.form[key] = property.value === undefined ? '' : property.value
@@ -297,6 +296,7 @@
                   [confirmedProperty.title]: that.form[confirmedName]
                 } : {}
               }
+              console.log('property:', property, value, rules, verifyOptions)
               resultPromiseAry.push(that.$validator.verify(value, rules, verifyOptions))
               verifyPropertyAry.push(property)
             }

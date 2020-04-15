@@ -1,5 +1,6 @@
 <template>
   <div>
+
     <a-button type="primary" @click="reset">重置表单</a-button>
     <a-button type="primary" @click="validate">校验表单</a-button>
     <a-button type="primary" @click="getValues">{{showFormValue?'隐藏表单值':'获取表单值'}}</a-button>
@@ -21,7 +22,7 @@
 </template>
 
 <script>
-  import RegData from './RegData3.js'
+  import RegData from './RegData4.js'
   export default {
     name: "RegExample",
     component: {},

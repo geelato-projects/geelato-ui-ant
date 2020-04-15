@@ -1,50 +1,71 @@
 <template>
   <div class="gl-control">
-    <template v-if="property.control==='input'">
+    <template v-if="property.control==='input' || property.control==='Input'">
       <a-input type="text" :name="getFieldNameByCell(property)" v-model="model" :readOnly="isReadonly(property)"
                v-bind="property.props"/>
     </template>
-    <template v-else-if="property.control==='date'">
+    <template v-else-if="property.control==='InputNumber'">
+      <a-input-number type="text" :name="getFieldNameByCell(property)" v-model="model" :readOnly="isReadonly(property)"
+                      v-bind="property.props"/>
+    </template>
+    <template v-else-if="property.control==='Switch'">
+      <a-switch type="text" :name="getFieldNameByCell(property)" v-model="model" :readOnly="isReadonly(property)"
+                v-bind="property.props"/>
+    </template>
+    <template v-else-if="property.control==='date' || property.control==='DatePicker'">
       <a-date-picker @change='loadRefData(property, $event)' :name="getFieldNameByCell(property)" v-model="model"
                      :readOnly="isReadonly(property)"
                      v-bind="property.props"/>
     </template>
-    <template v-else-if="property.control==='time'">
+    <template v-else-if="property.control==='time' || property.control==='TimePicker'">
       <a-time-picker use12Hours format="h:mm:ss A"
                      :name="getFieldNameByCell(property)"
                      v-model="model" :readOnly="isReadonly(property)"
                      v-bind="property.props"
                      @change='loadRefData(property, $event)'/>
     </template>
-    <template v-else-if="property.control==='textarea'">
+    <template v-else-if="property.control==='textarea' || property.control==='Textarea'">
       <a-textarea rows="5" :name="getFieldNameByCell(property)"
                   v-model="model" :readOnly="isReadonly(property)"
                   v-bind="property.props"
                   @change='loadRefData(property, $event)'></a-textarea>
     </template>
-    <template v-else-if="property.control==='checkbox'">
+    <template v-else-if="property.control==='checkbox' || property.control==='Checkbox'">
       <a-checkbox :name="getFieldNameByCell(property)" :defaultChecked="model?true:false"
-                  @change="(e)=>{model = e.target.checked;loadRefData(property, $event)}"
+                  @change="($event)=>{model = $event.target.checked;loadRefData(property, $event)}"
                   :readOnly="isReadonly(property)"
                   v-bind="property.props">{{property.placeholder}}
       </a-checkbox>
     </template>
-    <template v-else-if="property.control==='radio'">
-      <a-radio-group :defaultValue="property.value" v-model="model" @change='loadRefData(property, $event)'>
-        <a-radio v-for="(radioItem,radioItemKey) in property.data" :key="radioItemKey"
-                 :value="radioItem.value">{{radioItem.text}}
+    <template v-else-if="property.control==='CheckboxGroup'">
+      <a-checkbox-group
+          :options="property.data"
+          v-model="model"
+          @change="loadRefData(property, $event)"
+      >
+        <span slot="label" slot-scope="{ text }">{{ text }}</span>
+      </a-checkbox-group>
+    </template>
+    <template v-else-if="property.control==='RadioButton'">
+      <a-radio-group v-model="model" @change='loadRefData(property, $event)'
+                     :ref="getFieldNameByCell(property)"
+                     :readOnly="isReadonly(property)" v-bind="property.props">
+        <a-radio-button v-for="(selectOption,selectOptionKey) in property.data" :key="selectOptionKey"
+                        :value="selectOption.value" :disabled="selectOption.disabled">{{selectOption.text}}
+        </a-radio-button>
+      </a-radio-group>
+    </template>
+    <template v-else-if="property.control==='radio' || property.control==='Radio'">
+      <a-radio-group v-model="model" @change='loadRefData(property, $event)'
+                     :ref="getFieldNameByCell(property)"
+                     :readOnly="isReadonly(property)" v-bind="property.props">
+        <a-radio v-for="(selectOption,selectOptionKey) in property.data" :key="selectOptionKey"
+                 :value="selectOption.value" :disabled="selectOption.disabled">{{selectOption.text}}
         </a-radio>
       </a-radio-group>
       {{property.placeholder}}
-      <!--<template v-for="radioItem in property.data">-->
-      <!--<sui-checkbox radio :label="radioItem.text" :name="getFieldNameByCell(property)"-->
-      <!--v-model="model"-->
-      <!--:value="radioItem.value"-->
-      <!--:readOnly="isReadonly(property)"-->
-      <!--v-bind="property.props"></sui-checkbox>&nbsp;&nbsp;&nbsp;&nbsp;-->
-      <!--</template>-->
     </template>
-    <template v-else-if="property.control==='select'">
+    <template v-else-if="property.control==='select' || property.control==='Select'">
       <a-select v-model="model" style="min-width: 6em" @change='loadRefData(property, $event)'
                 :ref="getFieldNameByCell(property)"
                 :readOnly="isReadonly(property)" v-bind="property.props">
@@ -79,7 +100,7 @@
         <a-icon slot="prefix" type="mail"/>
       </a-input>
     </template>
-    <template v-else-if="property.control==='password'">
+    <template v-else-if="property.control==='password' || property.control==='Password'">
       <a-input :name="getFieldNameByCell(property)"
                v-model="model" :readOnly="isReadonly(property)"
                v-bind="property.props" type="password"
@@ -90,6 +111,10 @@
     </template>
     <template v-else-if="property.control==='button'">
       <a-button v-bind="property.props" :readOnly="isReadonly(property)">{{property.title}}</a-button>
+    </template>
+    <template v-else-if="property.control==='Rate'">
+      <a-rate type="text" :name="getFieldNameByCell(property)" v-model="model" :readOnly="isReadonly(property)"
+              v-bind="property.props"/>
     </template>
     <template v-else>
       {{form[getFieldNameByCell(property)]}}
@@ -102,6 +127,9 @@
 
   let GEELATO_SCRIPT_PREFIX = 'gs:'
 
+  let controlMeta = {
+    CheckboxGroup: {defaultValue: [], type: Array}
+  }
   export default {
     name: "GlControl",
     props: {
@@ -115,8 +143,7 @@
     },
     data() {
       return {
-        model: this.property.value !== undefined ? this.property.value : (this.property.props ? this.property.props.defaultValue : undefined),
-        boolValue: false
+        model: this.getDefaultValueOfControl(this.property.control)
       }
     },
     watch: {
@@ -135,6 +162,17 @@
       }
     },
     mounted() {
+      // 先取属性值
+      let value = this.property.value !== undefined ? this.property.value : undefined
+      // 再取默认值
+      if (value === undefined || value === '') {
+        value = this.property.props && this.property.props.defaultValue !== undefined ? this.property.props.defaultValue : undefined
+      }
+      // 再以索引取默认值
+      if ((value === undefined || value === '') && !this.isValueTypeOfArray(this.property.control)) {
+        value = this.property.data && this.property.data.length > 0 && this.property.props.defaultActiveIndex !== undefined ? this.property.data[this.property.props.defaultActiveIndex].value : undefined
+      }
+      this.model = value || this.getDefaultValueOfControl(this.property.control)
     },
     updated() {
     },
@@ -196,6 +234,13 @@
           let dataIndex = that.property.props.defaultActiveIndex || 0
           that.model = that.property.data[dataIndex].value
         }
+      },
+      getDefaultValueOfControl(controlName) {
+        let value = controlMeta[controlName] && controlMeta[controlName].defaultValue
+        return value !== undefined ? value : undefined
+      },
+      isValueTypeOfArray(controlName) {
+        return controlMeta[controlName] && controlMeta[controlName].type === Array
       }
     }
   }

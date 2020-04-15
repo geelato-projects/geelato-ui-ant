@@ -14,6 +14,8 @@
                       @propertyUpdate="onPropertyUpdate" @loadRefData="onLoadRefData"></gl-control>
         </template>
       </gl-cell>
+      <!-- 当cell的width百分比加起来不到100%时，通过冗余该div，将占余下的空间-->
+      <div></div>
     </gl-row>
   </div>
 </template>

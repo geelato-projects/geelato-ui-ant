@@ -1,5 +1,5 @@
 <template>
-  <div class="gl-table-cell" :class="clazz">
+  <div class="gl-table-cell" :class="clazz" :style="style">
     <slot></slot>
   </div>
 </template>
@@ -35,13 +35,16 @@
     computed: {
       clazz() {
         let clazz = {}
-        clazz['gl-col-' + this.span] = true
+        // clazz['gl-col-' + this.span] = true
         clazz['label'] = this.label ? true : false
         clazz['gl-table-container'] = this.isTableContainer
         if (this.type) {
           clazz[this.type] = true
         }
         return clazz
+      },
+      style() {
+        return this.span === 0 ? {display: 'none'} : {width: this.span / 24 * 100 + '%'}
       }
     },
     methods: {
