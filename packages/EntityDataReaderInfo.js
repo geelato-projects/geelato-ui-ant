@@ -8,7 +8,7 @@ export default class EntityDataReaderInfo {
    * @param resultMapping 查询返回结果字段的转换映射
    * @param description
    */
-  constructor({entity, fields, params = {}, lazy = true, withMeta = false, pageNo, pageSize, order, resultMapping = {}, description} = {}) {
+  constructor({entity, fields, params = [], lazy = true, withMeta = false, pageNo, pageSize, order, resultMapping = {}, description} = {}) {
     // 实体数据源
     this.clazz = 'EntityDataReaderInfo'
     // 实体编码

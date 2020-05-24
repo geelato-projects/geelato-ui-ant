@@ -58,7 +58,7 @@ function queryByEntityDataReader(entityDataReader) {
  * 更复杂、高级的查询@see queryByGql
  * @param entityName e.g. platform_dev_project
  * @param fieldNames 查询的列字段 e.g. id,name
- * @param keyValues 查询要件键值对 e.g. {id:123456,name:'张三'}
+ * @param keyValues 查询要件键值对 e.g. {id:123456,name:'张三'} or {'@order':'name|+'}
  */
 function query(entityName, fieldNames, keyValues, withMeta) {
   if (!fieldNames) {

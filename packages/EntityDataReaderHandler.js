@@ -10,10 +10,11 @@ const CONST_GQL_PARENT = '$parent'
 export default class EntityDataReaderHandler {
 
   /**
+   * 如果只是加载一个实体的数据，可以不用传dataMountTarget，实例化之后，调用loadData({property,callback})
    * @param $gl geelato-ui-ant的引用
    * @param ds entityDataReaderInfo Map
-   * @param dataMountTarget 加载后的数据，绑定的目标属性properties 对象格式或数组格式
-   * @param ctxLoader 一个函数，用于每次执行时动态加载当前上下文信息值的，返回结果为一个对象{}
+   * @param dataMountTarget 加载后的数据，绑定的目标属性properties 对象格式或数组格式，property至少需包括两个字段：{gid:xxx,dsName:yyy}
+   * @param ctxLoader 一个函数，用于每次执行时动态加载当前上下文信息值的，该函数返回结果为一个上下文对象{}
    */
   constructor({$gl, ds, dataMountTargetProperties, ctxLoader}) {
     this.$gl = $gl
@@ -23,11 +24,8 @@ export default class EntityDataReaderHandler {
     }
     this.properties = dataMountTargetProperties
     this.dsBeDependentOn = {}
-    if (!ds || !dataMountTargetProperties) {
-      console.error('geelato-ui-ant > EntityDataReaderHandler.js > constructor() > {ds, dataMountTargetProperties} 不允许为空！', {
-        ds,
-        dataMountTargetProperties
-      })
+    if (!ds) {
+      console.error('geelato-ui-ant > EntityDataReaderHandler.js > constructor() > {ds} 不允许为空！', {ds})
     }
     this.parseDependent()
   }
@@ -75,15 +73,18 @@ export default class EntityDataReaderHandler {
    * 加载数据源
    *  @param property 加载数据之后
    * */
-  loadData({property}) {
+  loadData({property, callback, ctx}) {
     let that = this
     let dsName = property.dsName
     if (!dsName) {
+      if (typeof callback === 'function') {
+        callback(property, property.data)
+      }
       return
     }
     let entityDataReaderInfo = this.ds[dsName]
     if (entityDataReaderInfo) {
-      let params = {}
+      let kvs = {}
       // 格式如：[{name:'code',cop:'contains',value:'IUEJHD'}]
       // 解析、求解最终参数值
       if (entityDataReaderInfo.params && entityDataReaderInfo.params.length > 0) {
@@ -91,10 +92,13 @@ export default class EntityDataReaderHandler {
           let param = entityDataReaderInfo.params[paramIndex]
           // let property = this.getPropertyByName(param.name)
           // console.log('geelato-ui-ant > EntityDataReaderHandler.js > loadData() > property:', property, ', param:', param)
-          params[param.name + '|' + param.cop || 'eq'] = this.rungs(param.value)
+          kvs[param.name + '|' + (param.cop || 'eq')] = this.rungs(param.value, ctx)
         }
       }
-      that.$gl.api.query(entityDataReaderInfo.entity, entityDataReaderInfo.fields, params).then(function (res) {
+      if (entityDataReaderInfo.order) {
+        Object.assign(kvs, {'@order': entityDataReaderInfo.order})
+      }
+      that.$gl.api.query(entityDataReaderInfo.entity, entityDataReaderInfo.fields, kvs).then(function (res) {
         // 依据数据源的配置，处理返回的数据结果
         that.$gl.api.resultHandler(res, entityDataReaderInfo.resultMapping)
         that.$gl.globalVue.set(property, 'data', res.data)
@@ -102,6 +106,9 @@ export default class EntityDataReaderHandler {
         // 触发级联加载数据
         if (dsName) {
           that.onLoadRefData({property})
+        }
+        if (typeof callback === 'function') {
+          callback(property, res.data)
         }
       })
     } else {
@@ -134,19 +141,19 @@ export default class EntityDataReaderHandler {
    * @param gs gs:$ctx.form.province
    * @param $ctx e.g. {form: that.getValues(), vars: {}}
    */
-  rungs(str) {
-    if (str.indexOf(GEELATO_SCRIPT_PREFIX) === 0) {
-      let ctx = this.ctxLoader()
-      console.log('geelato-ui-ant > EntityDataReaderHandler.js > rungs() > ctx:', ctx)
-      return this.$gl.utils.eval(str.substring(3), ctx)
-    } else {
-      return str
-    }
+  rungs(str, ctx = this.ctxLoader()) {
+    // if (str.indexOf(GEELATO_SCRIPT_PREFIX) === 0) {
+    //   // let ctx = this.ctxLoader()
+    //   console.log('geelato-ui-ant > EntityDataReaderHandler.js > rungs() > ctx:', ctx)
+    //   return this.$gl.utils.eval(str.substring(3), ctx)
+    // } else {
+    //   return str
+    // }
+    return this.$gl.utils.eval(str, ctx)
   }
 
   getPropertyByName(name) {
     // console.log('geelato-ui-ant > EntityDataReaderHandler.js > getPropertyByName() > name:', name, ' in properties:', this.properties)
-
     const defaultProperty = {control: 'null', title: ' '}
     if (!this.properties || typeof  this.properties !== 'object' || !name) {
       return defaultProperty

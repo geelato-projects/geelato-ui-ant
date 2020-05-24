@@ -1,6 +1,6 @@
 <template>
   <div>
-    <gl-tree v-bind="config"></gl-tree>
+    <gl-tree ref="tree" v-bind="config.bind"></gl-tree>
   </div>
 </template>
 <script>
@@ -18,7 +18,6 @@
     created() {
     },
     mounted() {
-
     },
     methods: {}
   }

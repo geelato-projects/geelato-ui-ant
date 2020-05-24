@@ -1,6 +1,6 @@
 {
   "name": "geelato-ui-ant",
-  "version": "0.1.89",
+  "version": "0.1.92",
   "main": "lib/geelato-ui-ant.umd.min.js",
   "keyword": "geelato",
   "author": "www.geelato.org",

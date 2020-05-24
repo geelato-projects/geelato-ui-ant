@@ -1,11 +1,12 @@
 <template>
-  <div class="gl-tree">
+  <div class="gl-tree" v-if="opts">
     <a-tree ref="glTree"
-            :treeData="gData"
-            :checkable="checkable"
-            :showIcon="showIcon"
-            :draggable="draggable"
-            :showLine="showLine"
+            :treeData="treeData"
+            :loadData="onLoadData"
+            :checkable="opts.checkable"
+            :showIcon="opts.showIcon"
+            :draggable="opts.draggable"
+            :showLine="opts.showLine"
             @dragenter="onDragEnter"
             @drop="onDrop"
             @select="onSelect"
@@ -18,113 +19,53 @@
         <a-icon :type="selected ? 'frown':'frown-o'"/>
       </template>
     </a-tree>
-
     <gl-context-menu ref="contextMenu" class="gl-context-menu"
-                     :target="contextMenuTarget"
-                     @update:show="(show) => contextMenuVisible = show">
-      <a-menu mode="vertical" v-if="contextMenuVisible">
-        <template v-for="(menuItem,index) in menuItems">
-          <a-menu-item v-if="!menuItem.children" @click="onContextMenuItemClick(menuItem,index)" :key="index"
+                     :target="contextMenuTarget" @update:show="(show) => contextMenuVisible = show">
+      <a-menu mode="vertical" v-show="contextMenuVisible">
+        <template v-for="(action,index) in opts.menuAction.actions">
+          <a-menu-item :ref="action.gid" v-show="!action.children" @click="onContextMenuItemClick(action,index)"
+                       :key="action.gid"
                        class="gl-context-menu-item">
-            <a-icon :type="menuItem.icon"/>
-            {{menuItem.label}}
+            <a-icon :type="action.icon"/>
+            {{action.title}}
           </a-menu-item>
-          <a-sub-menu v-else :key="index">
+          <a-sub-menu v-show="action.children" :key="action.gid+'_'+index">
             <span slot="title" class="gl-context-menu-item"><a-icon
-                :type="menuItem.icon"/><span>{{menuItem.label}}</span></span>
+                :type="action.icon"/><span>{{action.title}}</span></span>
             <!-- TODO onContextMenuItemClick不生效？-->
-            <a-menu-item v-for="(subMenuItem,subIndex) in menuItem.children"
-                         @click="onContextMenuItemClick(subMenuItem,subIndex)" :key="subIndex"
+            <a-menu-item v-for="(subMenuItem,subIndex) in action.children"
+                         @click="onContextMenuItemClick(subMenuItem,subIndex)" :key="subMenuItem.gid"
                          class="gl-context-menu-item">
               <a-icon :type="subMenuItem.icon"/>
-              {{subMenuItem.label}}
+              {{subMenuItem.title}}
             </a-menu-item>
           </a-sub-menu>
         </template>
       </a-menu>
     </gl-context-menu>
-
-    <!--<gl-context-menu ref="contextMenu">-->
-
-    <!--</gl-context-menu>-->
+    <!--这里增加一个隐藏状态的按钮用于代理节点的事件-->
+    <div class="tree-node-operator" v-show="false">
+      <template v-for="action in opts.nodeAction.actions">
+        <a-button type="link" :key="action.gid" :ref="action.gid">{{action.title||action.text}}</a-button>
+      </template>
+    </div>
   </div>
 </template>
 
 <script>
+  import mixin from '../../mixin'
+  import EntityDataReaderHandler from "../../EntityDataReaderHandler";
 
   export default {
     name: 'GlTree',
+    mixins: [mixin],
     components: {},
     props: {
-      draggable: {
-        type: Boolean,
-        default() {
-          return true
-        }
-      },
       dropDisableTo: {
         type: Array,
         default() {
           return ['file']
         }
-      },
-      showLine: {
-        type: Boolean,
-        default() {
-          return false
-        }
-      },
-      checkable: {
-        type: Boolean,
-        default() {
-          return false
-        }
-      },
-      showIcon: {
-        type: Boolean,
-        default() {
-          return true
-        }
-      },
-      treeData: [Array],
-      loadData: Function,
-      /**
-       * 整棵树对应业务实体名称
-       */
-      treeEntityName: {
-        type: String,
-        required: true
-      },
-      /**
-       * 整棵树对应业务实体主健字段名，默认为id
-       */
-      treeEntityPkField: {
-        type: String,
-        required: false,
-        default() {
-          return 'id'
-        }
-      },
-      /**
-       * 整棵树对应业务实体名称字段名，默认为name
-       */
-      treeEntityNameField: {
-        type: String,
-        required: true,
-        default() {
-          return 'name'
-        }
-      },
-      /**
-       * 树对应业务实体某条记录的id，例如，对于项目文件树，该treeId的值为项目id，这样就可以通过项目id获取整个项目文件树。
-       */
-      treeId: {
-        type: [Number, String],
-        required: true
-      },
-      treeName: {
-        type: [Number, String],
-        required: true
       },
       /**
        *
@@ -142,53 +83,158 @@
           }
         }
       },
-      /**
-       * 节点对应业务实体名称
-       */
-      nodeEntityName: {
-        type: String,
-        required: true
-      },
-      /**
-       * 节点对应业务实体主健字段名，默认为id
-       */
-      nodeEntityPkField: {
-        type: String,
-        required: false,
-        default() {
-          return 'id'
-        }
-      },
-      /**
-       * 节点对应业务实体名称字段名，默认为name
-       */
-      nodeEntityNameField: {
-        type: String,
-        required: true,
-        default() {
-          return 'name'
-        }
-      },
-      menuItems: {
-        type: Array,
-        default() {
-          return []
-        }
-      }
     },
     data() {
       return {
+        currentSelectNode: {},
+        currentRightClickNode: {},
+        currentAction: {},
         contextMenuVisible: false,
         contextMenuTarget: null,
-        gData: this.treeData
+        treeData: [],
+        treeConfig: this.opts,
+        childrenDsNameDict: {},
+        controlRefs: {}
       }
     },
-    mounted(){
-
+    mounted() {
+      this.loadFirstLevel()
+      this.generateControlRef()
     },
     methods: {
+      parseDsNameDict(tree) {
+        let that = this
+        tree.forEach(treeNodeDs => {
+          if (treeNodeDs.gid && treeNodeDs.children) {
+            this.childrenDsNameDict[treeNodeDs.gid] = treeNodeDs.children
+            this.parseDsNameDict(treeNodeDs.children)
+          } else {
+            this.childrenDsNameDict[treeNodeDs.gid] = {}
+          }
+        })
+      },
+      /**
+       *  初始加载第一层节点
+       */
+      loadFirstLevel() {
+        let that = this
+        this.parseDsNameDict(this.treeConfig.tree)
+        let tree = JSON.parse(JSON.stringify(this.treeConfig.tree))
+        // 未加载数据
+        this.entityDataReaderHandler = new EntityDataReaderHandler({
+          $gl: this.$gl,
+          ds: this.treeConfig.ds
+        })
+        tree.forEach(treeNodeData => {
+          // 解析数据源，并初始化加载数据
+          this.entityDataReaderHandler.loadData({
+            property: treeNodeData,
+            callback: function (property, data) {
+              data.forEach(item => {
+                that.treeData.push({
+                  title: item.title,
+                  key: item.key,
+                  isLeaf: treeNodeData.isLeaf,
+                  glMeta: {
+                    dsName: treeNodeData.dsName,
+                    gid: treeNodeData.gid
+                  }
+                })
+              })
+              console.log('loadFirstLevel() > that.treeData:', that.treeData, property, data)
+            }
+          })
+        })
+      },
+      onLoadData(treeNode) {
+        let that = this
+        console.log('geelato-ui-ant > gl-tree > onLoadData > treeNode:', treeNode)
+        return new Promise(resolve => {
+          // 存在子节点，已加载数据
+          if (treeNode.dataRef.children) {
+            resolve();
+            return;
+          }
+          // 未加载数据
+          this.entityDataReaderHandler = new EntityDataReaderHandler({
+            $gl: this.$gl,
+            ds: this.treeConfig.ds
+          })
+          console.log('geelato-ui-ant > gl-tree > onLoadData > childrenDsNameDict:', this.childrenDsNameDict, 'dsName:', treeNode.$vnode.data.props.glMeta.dsName)
+          let children = this.childrenDsNameDict[treeNode.$vnode.data.props.glMeta.gid]
+          children.forEach(item => {
+              console.log('children', item)
+              let dsName = item.dsName
+              if (dsName) {
+                // 解析数据源，并初始化加载数据
+                this.entityDataReaderHandler.loadData({
+                  property: {dsName: dsName},
+                  ctx: treeNode,
+                  callback: function (property, data) {
+                    treeNode.dataRef.children = treeNode.dataRef.children || []
+                    data.forEach(dataItem => {
+                      treeNode.dataRef.children.push({
+                        title: dataItem.title,
+                        key: dataItem.key,
+                        isLeaf: item.isLeaf,
+                        // icon: '【项目】',
+                        glMeta: {
+                          gid: item.gid,
+                          dsName: item.dsName
+                        }
+                      })
+                    })
+                    that.treeData = [...that.treeData]
+                    console.log('onLoadData() > treeNode.dataRef.children:', treeNode, data)
+                    resolve()
+                  }
+                })
+              } else if (item.data) {
+                treeNode.dataRef.children = treeNode.dataRef.children || []
+                item.data.forEach(dataItem => {
+                  treeNode.dataRef.children.push({
+                    title: dataItem.title,
+                    key: dataItem.key,
+                    isLeaf: item.isLeaf,
+                    glMeta: {
+                      gid: item.gid,
+                      dsName: undefined
+                    }
+                  })
+                })
+                that.treeData = [...that.treeData]
+                resolve()
+              } else {
+                resolve()
+              }
+            }
+          )
+        });
+      },
       onSelect(selectedKeys, info) {
-        console.log('geelato-ui-ant > gl-tree > selected: ', selectedKeys, info)
+        let action = this.opts.nodeAction.actions[0]
+        this.currentAction = action
+        if (selectedKeys.length === 1) {
+          this.currentSelectNode = this.getCurrentNode(info)
+        }
+        let controlComponent = this.$_getRefByGid(action.gid)
+        console.log('geelato-ui-ant > gl-tree > Index.vue > onSelect() > info:', info)
+        console.log('geelato-ui-ant > gl-tree > Index.vue > onSelect() > action:', action)
+        console.log('geelato-ui-ant > gl-tree > Index.vue > onSelect() > selectedKeys:', selectedKeys)
+        console.log('geelato-ui-ant > gl-tree > Index.vue > onSelect() > currentSelectNode:', this.currentSelectNode)
+        console.log('geelato-ui-ant > gl-tree > Index.vue > onSelect() > control:', controlComponent)
+        controlComponent.$emit('click', this, this.currentSelectNode)
+      },
+      getCurrentNode(info) {
+        let node = info.node.$vnode.data.props
+        return {
+          key: node.dataRef.key,
+          title: node.title,
+          isLeaf: node.isLeaf,
+          icon: node.icon,
+          glMeta: node.glMeta,
+          _event: info
+        }
       },
       onCheck(checkedKeys, info) {
         console.log('geelato-ui-ant > gl-tree > onCheck: ', checkedKeys, info)
@@ -220,7 +266,7 @@
             }
           })
         }
-        const data = [...this.gData]
+        const data = [...this.treeData]
 
         function droppable(dataRef) {
           if (!that.dropDisableTo)
@@ -269,15 +315,22 @@
             ar.splice(i + 1, 0, dragObj);
           }
         }
-        this.gData = data
+        this.treeData = data
       },
       onRightClick(info) {
         console.log('geelato-ui-ant > gl-tree > onRightClick: ', info)
+        this.currentRightClickNode = this.getCurrentNode(info)
         this.contextMenuTarget = this.$refs.glTree.$el
         this.$refs.contextMenu.open()
       },
-      onContextMenuItemClick(e) {
-        console.log('geelato-ui-ant > gl-tree > onContextMenuItemClick > e: ', e)
+      onContextMenuItemClick(action, index) {
+        this.currentAction = action
+        // console.log('geelato-ui-ant > gl-tree > onContextMenuItemClick > action,index: ', action, index)
+        // let controlComponent = this.$_getRefByGid(action.gid)
+        // console.log('geelato-ui-ant > gl-tree > Index.vue > onSelect() > action:', action)
+        // console.log('geelato-ui-ant > gl-tree > Index.vue > onSelect() > currentRightClickNode:', this.currentRightClickNode)
+        // console.log('geelato-ui-ant > gl-tree > Index.vue > onSelect() > control:', controlComponent)
+        // controlComponent.$emit('click', this, {action: action, currentRightClickNode: this.currentRightClickNode})
       }
     },
   }

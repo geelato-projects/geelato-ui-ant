@@ -502,9 +502,9 @@
         // 该属性值已改变，试着加载级联数据
         this.entityDataReaderHandler.onLoadRefData({property})
       },
-      $_getRefByGid(gid) {
-        return this.controlRefs[gid]
-      },
+      // $_getRefByGid(gid) {
+      //   return this.controlRefs[gid]
+      // },
       ctxLoader() {
         // let $ctx = {form: this.getValues(), vars: {}}
         // for (let varName in (that.vars || [])) {

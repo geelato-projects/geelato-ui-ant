@@ -45,9 +45,14 @@ export default {
           // title: 'name',
           // content: 'code',
           // description: 'description'
-        }
+        },
+        // 用于绑定事件的控件
+        controlRefs: {}
       }
     }
+  },
+  destroyed() {
+    this.clearControlRef()
   },
   methods: {
     $_doAction(action, data, callback) {
@@ -142,6 +147,21 @@ export default {
       }
       Object.assign(params.body.props, data)
       this.$gl.ui.openModal(this, params)
+    },
+    generateControlRef() {
+      for (let i in this.$refs) {
+        this.controlRefs[i] = this.$refs[i].length !== undefined ? this.$refs[i][0] : this.$refs[i]
+      }
+      console.log('geelato-ui-ant > mixin > generateControlRef() > $refs,controlRefs: ', this.$refs, this.controlRefs)
+    },
+    clearControlRef() {
+      for (let i in this.$refs) {
+        delete this.controlRefs[i]
+      }
+      console.log('geelato-ui-ant > mixin > clearControlRef() > $refs,controlRefs: ', this.$refs, this.controlRefs)
+    },
+    $_getRefByGid(gid) {
+      return this.controlRefs[gid]
     }
     // loadData(params, dataHandler) {
     //   let entityDataReader = this.entityDataReader

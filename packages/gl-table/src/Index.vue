@@ -16,7 +16,8 @@
       <template v-for="(action) in opts.toolbar.actions" v-if="action.gid=action.gid||$gl.utils.uuid(8)">
         <!--@click="onToolbarAction(action,{rowSelection:options.rowSelection,index:index})"-->
         <a-button :ref="action.gid" :type="action.type||'primary'" :icon="action.icon"
-                  :key="action.gid" v-if="action.show===undefined||rungs(action.show)" style="margin-right:0.5em">
+                  :key="action.gid" v-if="action.show===undefined||rungs(action.show)" style="margin-right:0.5em"
+                  @click="currentAction = action">
           {{action.title||action.text}}
         </a-button>&nbsp;
       </template>
@@ -47,13 +48,13 @@
         <template
             v-if="opts.table.rowAction.actions.length <=(opts.table.rowAction.maxShow || 2)">
           <template v-for="(action,actionIndex) in opts.table.rowAction.actions">
-            <a @click="onRowAction(action,record)" :key="action.gid">{{action.title||action.text}}</a>
+            <a @click="onRowClick(action,record)" :key="action.gid">{{action.title||action.text}}</a>
             <a-divider type="vertical" :key="actionIndex" v-if="opts.table.rowAction.actions.length>1"/>
           </template>
         </template>
         <template v-else>
           <template>
-            <a @click="onRowAction(opts.table.rowAction.actions[0],record)">{{opts.table.rowAction.actions[0].title||opts.table.rowAction.actions[0].text}}</a>
+            <a @click="onRowClick(opts.table.rowAction.actions[0],record)">{{opts.table.rowAction.actions[0].title||opts.table.rowAction.actions[0].text}}</a>
             <a-divider type="vertical"/>
           </template>
          <a-dropdown>
@@ -63,7 +64,7 @@
             <a-menu slot="overlay">
               <a-menu-item v-for="(action,actionIndex) in opts.table.rowAction.actions" v-if="actionIndex>0"
                            :key="action.gid">
-                <a @click="onRowAction(action,record)">{{action.title||action.text}}</a>
+                <a @click="onRowClick(action,record)">{{action.title||action.text}}</a>
               </a-menu-item>
             </a-menu>
           </a-dropdown>
@@ -110,6 +111,7 @@
         selectedRows: [],
         // 操作列操作的当前行
         currentRow: {},
+        currentAction: {},
         parameter: {},
         // custom table alert & rowSelection
         options: {
@@ -157,9 +159,9 @@
       this.refresh()
       this.generateControlRef()
     },
-    destroyed() {
-      this.clearControlRef()
-    },
+    // destroyed() {
+    //   this.clearControlRef()
+    // },
     methods: {
       // query组件的查询回调，获取查询条件信息，并调用loadData查询数据，并以数据驱动刷新页面
       onQuery(data) {
@@ -226,6 +228,7 @@
             }
           }
           root['@fs'] = fsAry.join(',')
+          // TODO desc改为-，asc改为+?
           root['@order'] = parameter.field ? parameter.field + '|' + (parameter.sortOrder === 'descend' ? 'desc' : 'asc') : thisVue.opts.table.order
           root['@p'] = parameter.pageNo + ',' + parameter.pageSize
           const gql = {}
@@ -279,12 +282,13 @@
       //   console.log('geelato-ui-ant > gl-table > Index.vue > onToolbarAction() > rowSelection:', rowSelection)
       //   console.log('geelato-ui-ant > gl-table > Index.vue > onToolbarAction() > control:', controlComponent)
       // },
-      onRowAction(action, record) {
+      onRowClick(action, record) {
         this.currentRow = record
+        this.currentAction = action
         let controlComponent = this.$_getRefByGid(action.gid)
-        console.log('geelato-ui-ant > gl-table > Index.vue > onRowAction() > action:', action)
-        console.log('geelato-ui-ant > gl-table > Index.vue > onRowAction() > record:', record)
-        console.log('geelato-ui-ant > gl-table > Index.vue > onRowAction() > control:', controlComponent)
+        console.log('geelato-ui-ant > gl-table > Index.vue > onRowClick() > action:', action)
+        console.log('geelato-ui-ant > gl-table > Index.vue > onRowClick() > record:', record)
+        console.log('geelato-ui-ant > gl-table > Index.vue > onRowClick() > control:', controlComponent)
         // this.$_doAction(action, record)
         controlComponent.$emit('click', this, record)
       },
@@ -314,21 +318,21 @@
           return str
         }
       },
-      generateControlRef() {
-        for (let i in this.$refs) {
-          this.controlRefs[i] = this.$refs[i][0]
-        }
-        console.log('geelato-ui-ant > gl-table > generateControlRef() > $refs,controlRefs: ', this.$refs, this.controlRefs)
-      },
-      clearControlRef() {
-        for (let i in this.$refs) {
-          delete this.controlRefs[i]
-        }
-        console.log('geelato-ui-ant > gl-table > clearControlRef() > $refs,controlRefs: ', this.$refs, this.controlRefs)
-      },
-      $_getRefByGid(gid) {
-        return this.controlRefs[gid]
-      },
+      // generateControlRef() {
+      //   for (let i in this.$refs) {
+      //     this.controlRefs[i] = this.$refs[i][0]
+      //   }
+      //   console.log('geelato-ui-ant > gl-table > generateControlRef() > $refs,controlRefs: ', this.$refs, this.controlRefs)
+      // },
+      // clearControlRef() {
+      //   for (let i in this.$refs) {
+      //     delete this.controlRefs[i]
+      //   }
+      //   console.log('geelato-ui-ant > gl-table > clearControlRef() > $refs,controlRefs: ', this.$refs, this.controlRefs)
+      // },
+      // $_getRefByGid(gid) {
+      //   return this.controlRefs[gid]
+      // },
       ctxLoader() {
         return {
           currentRow: this.currentRow,
