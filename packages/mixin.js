@@ -47,7 +47,8 @@ export default {
           // description: 'description'
         },
         // 用于绑定事件的控件
-        controlRefs: {}
+        controlRefs: {},
+        _isShow: true
       }
     }
   },
@@ -162,6 +163,27 @@ export default {
     },
     $_getRefByGid(gid) {
       return this.controlRefs[gid]
+    },
+    /**
+     * 触发显示组件事件
+     */
+    $_show() {
+      this._isShow = true
+      this.$emit('display', {action: 'show', isShow: this._isShow})
+    },
+    /**
+     * 触发隐藏组件事件
+     */
+    $_hide() {
+      this._isShow = false
+      this.$emit('display', {action: 'hide', isShow: this._isShow})
+    },
+    /**
+     * 触发切换显示、隐藏组件事件
+     */
+    $_toggle() {
+      this._isShow = !this._isShow
+      this.$emit('display', {action: 'toggle', isShow: this._isShow})
     }
     // loadData(params, dataHandler) {
     //   let entityDataReader = this.entityDataReader
