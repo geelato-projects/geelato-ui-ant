@@ -331,6 +331,9 @@
         // console.log('geelato-ui-ant > gl-tree > Index.vue > onSelect() > currentRightClickNode:', this.currentRightClickNode)
         // console.log('geelato-ui-ant > gl-tree > Index.vue > onSelect() > control:', controlComponent)
         // controlComponent.$emit('click', this, {action: action, currentRightClickNode: this.currentRightClickNode})
+      },
+      ctxLoader() {
+        return this
       }
     },
   }

@@ -38,7 +38,7 @@
     },
     methods: {
       reset() {
-        this.$refs.magicForm.reset(RegData)
+        this.$refs.magicForm.reset(RegData.bind)
       },
       getGql() {
         this.showGQL = !this.showGQL

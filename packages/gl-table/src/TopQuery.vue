@@ -27,8 +27,8 @@
     </a-row>
     <!--隐藏表单域-->
     <div style="display: none">
-      <span  v-for="(property,index) in inVisibleProperties" :key="index"
-             :title="property.title+dict[property.cop]">
+      <span v-for="(property,index) in inVisibleProperties" :key="index"
+            :title="property.title+dict[property.cop]">
           <gl-control :ref="property.gid" :property="property" :form="entity"
                       @propertyUpdate="onPropertyUpdate"></gl-control>
       </span>
@@ -150,9 +150,9 @@
             }
           }
         }
-        this.reset(this.params)
+        this.reset({params: this.params})
       },
-      reset(data = this.params) {
+      reset({params = this.params}) {
         for (const index in this.properties) {
           const item = this.properties[index]
           console.log('geelato-ui-ant > gl-table-top-query > reset > index,property: ', index, item, this.$refs[item.gid][0])
@@ -177,8 +177,8 @@
         }
 
         // 转换初始化数据
-        Object.assign(this.entity, data)
-        console.log('geelato-ui-ant > gl-table-top-query > reset > params ', data)
+        Object.assign(this.entity, params)
+        console.log('geelato-ui-ant > gl-table-top-query > reset > params ', params)
         console.log('geelato-ui-ant > gl-table-top-query > reset > entity ', this.entity)
       },
       onPropertyUpdate({property, val}) {

@@ -76,11 +76,11 @@
     mounted() {
       console.log('geelato-ui-ant > gl-form > mounted() > opts:', this.opts)
       console.log('geelato-ui-ant > gl-form > mounted() > params:', this.params)
-      this.reset(this.opts)
+      this.reset({opts: this.opts})
 
     },
     methods: {
-      reset(opts, params) {
+      reset({opts, params = this.params}) {
         if (opts) {
           let options = opts
           this.properties = options.properties
@@ -103,8 +103,8 @@
           this.vars = options.vars
           this.init = false
         }
-        this.initConvertData(params || this.params)
-        this.loadInitData(params || this.params)
+        this.initConvertData(params)
+        this.loadInitData(params)
         this.forceRefresh()
       },
       /**
@@ -510,7 +510,7 @@
         // for (let varName in (that.vars || [])) {
         //   $ctx.vars[varName] = typeof that.vars[varName] === 'object' ? that.vars[varName].value : that.vars[varName]
         // }
-        return this.form
+        return {form: this.form}
       }
 
     }
