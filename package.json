@@ -1,6 +1,6 @@
 {
   "name": "geelato-ui-ant",
-  "version": "0.1.95",
+  "version": "0.1.96",
   "main": "lib/geelato-ui-ant.umd.min.js",
   "keyword": "geelato",
   "author": "www.geelato.org",
@@ -20,7 +20,7 @@
     "core-js": "^3.6.4",
     "lodash.get": "^4.4.2",
     "lodash.pick": "^4.4.0",
-    "vee-validate": "^2.2.9",
+    "vee-validate": "^3.4.1",
     "vue": "^2.6.11",
     "vue-i18n": "^8.11.2"
   },

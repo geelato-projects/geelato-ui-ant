@@ -24,6 +24,7 @@
 </template>
 
 <script>
+  import {validate} from 'vee-validate';
   import GlFormItem from './GlFormItem'
   import mixin from '../../mixin'
   import utils from '../../utils'
@@ -268,9 +269,6 @@
       validate() {
         let that = this
         // 清空错误信息
-        // for (let key in that.errorItems) {
-        //   delete that.errorItems[key]
-        // }
         that.errorItems = {}
         let resultPromiseAry = []
         let verifyPropertyAry = []
@@ -296,8 +294,8 @@
                   [confirmedProperty.title]: that.form[confirmedName]
                 } : {}
               }
-              console.log('property:', property, value, rules, verifyOptions)
-              resultPromiseAry.push(that.$validator.verify(value, rules, verifyOptions))
+              console.log('gl-form > validate() > property:', property, value, rules, verifyOptions)
+              resultPromiseAry.push(validate(value, rules, verifyOptions))
               verifyPropertyAry.push(property)
             }
           } else {
