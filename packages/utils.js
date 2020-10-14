@@ -141,7 +141,6 @@ utils.uuid = function (len, radix) {
       }
     }
   }
-
   return uuid.join('')
 }
 
@@ -206,6 +205,9 @@ utils.compileString = function (expression, $ctx) {
 utils.eval = function (expression, $ctx, ctxName = '$ctx') {
   // console.log('geelato-ui-ant > utils > expression: ', expression)
   // console.log('geelato-ui-ant > utils > $ctx: ', $ctx)
+  if (expression.indexOf(ctxName) === -1) {
+    return expression
+  }
   let $utils = utils
   let utilsName = '$utils'
   let Fn = Function
@@ -223,6 +225,37 @@ utils.eval = function (expression, $ctx, ctxName = '$ctx') {
   }
 }
 
+/**
+ *  遍历对象各层的键值，并进行变量替换
+ */
+utils.deepConvertValue = function (obj, ctxLoader) {
+  const ctx = typeof ctxLoader === 'function' ? ctxLoader() : ctxLoader
+
+  function replace(toReplaceObj) {
+    let newObj
+    if (toReplaceObj instanceof Array) {
+      newObj = []
+      for (const key in toReplaceObj) {
+        newObj.push(replace(toReplaceObj[key]))
+      }
+    } else if (toReplaceObj instanceof Object) {
+      newObj = {}
+      for (const key in toReplaceObj) {
+        newObj[key] = replace(toReplaceObj[key])
+      }
+    } else if (typeof toReplaceObj === 'string') {
+      console.log('String >', toReplaceObj)
+      newObj = utils.eval(toReplaceObj, ctx)
+    } else {
+      newObj = toReplaceObj
+    }
+    console.log('toReplaceObj >', toReplaceObj instanceof Array, typeof toReplaceObj, '>>', toReplaceObj, newObj, ctx)
+
+    return newObj
+  }
+
+  return replace(obj)
+}
 utils.isEmpty = function (str) {
   return str === undefined || str === null || str.replace(/\s/g, '') === ''
 }

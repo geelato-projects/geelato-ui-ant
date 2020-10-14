@@ -11,13 +11,31 @@ export default {
         id: {},
         name: {
           control: 'input',
-          title: '姓名'
+          title: '姓名',
+          rules: {
+            required: true,
+            unique: true
+          }
         },
         loginName: {
           control: 'input',
           title: '登录名',
           rules: {
             required: true,
+            unique: {
+              entityReader: {
+                entity: 'platform_user',
+                // default false
+                lazy: false,
+                // 支持字段重命名
+                fields: 'loginName',
+                params: [{
+                  name: 'loginName',
+                  cop: 'eq',
+                  value: '$ctx.loginName'
+                }],
+              }
+            }
           }
         },
         password: {
@@ -204,7 +222,7 @@ export default {
             // 该信息会自动加入计算属性中，当province的值变动时，该数据源会重新加载计算
             name: 'provinceCode',
             cop: 'eq',
-            value: 'gs:$ctx.province'
+            value: '$ctx.province'
           }],
           description: '这是一个下拉列表数据源，带参数'
         }

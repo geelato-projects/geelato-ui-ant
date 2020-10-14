@@ -25,6 +25,7 @@
 
 <script>
   import {validate} from 'vee-validate';
+  import validateExtend from './ValidateExtend'
   import GlFormItem from './GlFormItem'
   import mixin from '../../mixin'
   import utils from '../../utils'
@@ -279,13 +280,11 @@
             if (property.rules) {
               let rules = {}
               Object.assign(rules, property.rules)
-
               let verifyOptions = {
                 bails: true,
                 name: property.title,
                 values: {}
               }
-
               if (property.rules.confirmed) {
                 let confirmedName = property.rules.confirmed
                 let confirmedProperty = that.properties[confirmedName]
@@ -294,6 +293,12 @@
                   [confirmedProperty.title]: that.form[confirmedName]
                 } : {}
               }
+              // 扩展的规则参数（property.rules[ruleName]）值处理
+              for (let ruleName in property.rules) {
+                property.rules[ruleName] = validateExtend.parseArg(ruleName, property.rules[ruleName], property)
+              }
+              // 规则值变量待换
+              rules = that.$gl.utils.deepConvertValue(rules, that.form)
               console.log('gl-form > validate() > property:', property, value, rules, verifyOptions)
               resultPromiseAry.push(validate(value, rules, verifyOptions))
               verifyPropertyAry.push(property)

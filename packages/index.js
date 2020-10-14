@@ -60,7 +60,6 @@ const install = function (Vue, options) {
   Vue.prototype.$gl.bus = Vue.prototype.$gl.bus || new Vue()
   Vue.prototype.$gl.utils = Vue.prototype.$gl.utils || utils
   Vue.prototype.$gl.globalVue = Vue
-
   // window is not defined
   // if (!window.$gl) {
   //   window.$gl = Vue.prototype.$gl

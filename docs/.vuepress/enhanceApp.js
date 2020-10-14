@@ -5,16 +5,14 @@ import AntDesign from 'ant-design-vue'
 // 对于导入antd.less，注意需config.js中less的javascriptEnabled: true才可正常执行
 import 'ant-design-vue/dist/antd.less'
 // 导入依赖表单验证
-import { extend } from 'vee-validate'
-import { localize } from 'vee-validate';
+import {extend} from 'vee-validate'
+import {localize} from 'vee-validate';
 // 引入中文包，提示信息可以以中文形式显示
 import zhCN from 'vee-validate/dist/locale/zh_CN'
+import * as rules from 'vee-validate/dist/rules'
 // 导入组件库
 import geelatoAui from './../../packages/index'
-
 import ApiSettings from './ApiSettings'
-
-import * as rules from 'vee-validate/dist/rules'
 
 export default ({
                   Vue, // VuePress 正在使用的 Vue 构造函数
@@ -31,35 +29,11 @@ export default ({
     })
   }
 
-  // 注册组件库
-  // Vue.use(VueI18n)
-  // Vue.use(VeeValidate, {
-  //   i18n: new VueI18n({
-  //     locale: 'zh_CN',
-  //   }),
-  //   i18nRootKey: 'validations',
-  //   dictionary: {
-  //     zh_CN
-  //   },
-  //   // fixed：The computed property "fields" is already defined in data.
-  //   errorBagName: 'errorBags',
-  //   fieldsBagName: 'fieldBags'
-  // })
-
   // Install and Activate the zh_CN locale.
   localize('zh_CN', zhCN);
-
   Object.keys(rules).forEach(rule => {
     extend(rule, rules[rule])
   })
-
-  // 扩展验证功能
-  extend('unique', {
-    validate(value, args) {
-      return true
-    }
-    // params: ['length']
-  });
 
   Vue.use(geelatoAui, auiOptions)
   Vue.use(AntDesign)

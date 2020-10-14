@@ -1,5 +1,6 @@
 const path = require('path')
 const webpack = require('webpack')
+
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 
 function resolve(dir) {
@@ -42,7 +43,7 @@ module.exports = {
   configureWebpack: {
     plugins: [
       // Ignore all locale files of moment.js
-      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/, /moment$/),
       // 依赖大小分析工具
       // new BundleAnalyzerPlugin(),
     ],
@@ -53,7 +54,7 @@ module.exports = {
       'vue-router': 'VueRouter',
       'axios': 'axios',
       'ant-design-vue': 'Antd',
-      'vee-validate': 'VeeValidate',
+      'vee-validate': 'vee-validate',
       'vue-i18n': 'VueI18n',
       'moment': 'moment'
     }

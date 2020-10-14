@@ -49,7 +49,15 @@ function queryByEntityDataReader(entityDataReader) {
   if (entityDataReader.pageSize) {
     gql[entityDataReader.entity] [entityDataReader.pageSize] = entityDataReader.pageSize
   }
-  Object.assign(gql[entityDataReader.entity], entityDataReader.params || {})
+  //params
+  let params = {}
+  if (entityDataReader.params && typeof entityDataReader.params === 'object' && entityDataReader.params.length > 0) {
+    for (let i in entityDataReader.params) {
+      let param = entityDataReader.params[i]
+      params[param.name + '|' + param.cop] = param.value
+    }
+  }
+  Object.assign(gql[entityDataReader.entity], params)
   return queryByGql(gql, entityDataReader.withMeta)
 }
 
