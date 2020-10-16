@@ -249,8 +249,7 @@ utils.deepConvertValue = function (obj, ctxLoader) {
     } else {
       newObj = toReplaceObj
     }
-    console.log('toReplaceObj >', toReplaceObj instanceof Array, typeof toReplaceObj, '>>', toReplaceObj, newObj, ctx)
-
+    // console.log('toReplaceObj >', toReplaceObj instanceof Array, typeof toReplaceObj, '>>', toReplaceObj, newObj, ctx)
     return newObj
   }
 

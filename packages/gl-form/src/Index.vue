@@ -179,6 +179,7 @@
         // XXX---
         this.init = true
         console.log('geelato-ui-ant > gl-form > initConvertData() > that.form: ', JSON.stringify(that.form))
+        console.log('geelato-ui-ant > gl-form > initConvertData() > that.properties: ', this.properties)
       },
       // 加载远程的初始化数据，如字典信息
       loadInitData(params) {
@@ -295,7 +296,8 @@
               }
               // 扩展的规则参数（property.rules[ruleName]）值处理
               for (let ruleName in property.rules) {
-                property.rules[ruleName] = validateExtend.parseArg(ruleName, property.rules[ruleName], property)
+                console.log('gl-form > validate() > convert rule value:', ruleName, property.rules[ruleName], property)
+                rules[ruleName] = validateExtend.parseArg(ruleName, property.rules[ruleName], property, that.form.id)
               }
               // 规则值变量待换
               rules = that.$gl.utils.deepConvertValue(rules, that.form)
