@@ -106,7 +106,7 @@
       return {
         mdl: {},
         // 查询参数
-        queryParam: {},
+        // queryParam: {},
         selectedRowKeys: [],
         selectedRows: [],
         // 操作列操作的当前行
@@ -175,11 +175,13 @@
           // this.resetPagination()
         }
         this.$refs.table.refresh(true)
-        // this.loadData(this.parameter)
         this.selectedRowKeys = []
         this.selectedRows = []
       },
-      refresh() {
+      refresh({params = {}} = {}) {
+        if (params && typeof params === 'object') {
+          this.$refs.query.reset({params: params})
+        }
         this.onQuery(this.$refs.query.getCondition())
       },
       /**
@@ -299,12 +301,6 @@
       onSelectChange(selectedRowKeys, selectedRows) {
         this.selectedRowKeys = selectedRowKeys
         this.selectedRows = selectedRows
-      },
-
-      resetSearchForm() {
-        this.queryParam = {
-          date: moment(new Date())
-        }
       },
       /**
        * gs(geelato script)执行表达式，若非gs表达式则直接返回

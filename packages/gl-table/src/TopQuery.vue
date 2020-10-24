@@ -152,17 +152,20 @@
         }
         this.reset({params: this.params})
       },
-      reset({params = this.params}) {
+      reset({params = this.params} = {}) {
+        if (!params) {
+          return
+        }
         for (const index in this.properties) {
           const item = this.properties[index]
           console.log('geelato-ui-ant > gl-table-top-query > reset > index,property: ', index, item, this.$refs[item.gid][0])
 
-          if (item.gid in this.params) {
-            // item.value = this.params[item.gid]
-            this.$refs[item.gid][0].setValue(this.params[item.gid])
-          } else if (item.field in this.params) {
-            // item.value = this.params[item.field]
-            this.$refs[item.gid][0].setValue(this.params[item.field])
+          if (item.gid in params) {
+            // item.value = params[item.gid]
+            this.$refs[item.gid][0].setValue(params[item.gid])
+          } else if (item.field in params) {
+            // item.value = params[item.field]
+            this.$refs[item.gid][0].setValue(params[item.field])
           }
 
           // 设置查询表单实体值

@@ -82,7 +82,7 @@
 
     },
     methods: {
-      reset({opts, params = this.params}) {
+      reset({opts = this.opts, params = this.params} = {}) {
         if (opts) {
           let options = opts
           this.properties = options.properties
