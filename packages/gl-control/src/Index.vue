@@ -109,6 +109,12 @@
         <!--<a-icon v-if="userName" slot="suffix" type="close-circle" @click="emitEmpty" />-->
       </a-input>
     </template>
+    <template v-if="property.control==='title' || property.control==='Title'">
+      {{property.title}}
+    </template>
+    <template v-if="property.control==='link' || property.control==='link'">
+      <a>{{property.title}}</a>
+    </template>
     <template v-else-if="property.control==='button'">
       <a-button v-bind="property.props" :readOnly="isReadonly(property)">{{property.title}}</a-button>
     </template>

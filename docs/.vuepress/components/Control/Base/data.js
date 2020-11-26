@@ -6,6 +6,8 @@ export default {
     {control: 'Password', title: '确认密码'},
     {control: 'Switch', title: '确认密码'},
     {control: 'Checkbox', title: '复选框（单个）'},
+    {control: 'button', title: '按钮', icon: 'right', iconFirst: false},
+    {control: 'link', title: '链接', icon: 'link', iconFirst: true},
     {
       control: 'CheckboxGroup',
       title: '复选框（多个）',
