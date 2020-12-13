@@ -12,7 +12,7 @@
   </div>
 </template>
 <script>
-  import tableData from './demo3.js'
+  import tableData from './demo4.js'
 
   export default {
     components: {},
@@ -34,7 +34,7 @@
           "text": this.$gl.utils.uuid(8),
           "icon": "plus",
           "type": "primary",
-          "fn": "openModal",
+          "fn": "$_openModal",
           "ctx": "this",
           params: {},
           dataMapping: {}

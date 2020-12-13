@@ -1,9 +1,9 @@
 <template>
   <div>
-    <gl-row type="" v-for="(row,rowIndex) in rows" :key="rowIndex">
+    <gl-row v-for="(row,rowIndex) in rows" :key="rowIndex">
       <gl-cell v-bind="cell" v-for="(cell,cellIndex) in row.cols" :key="cellIndex">
         <template v-if="cell.rows">
-          <gl-form-item :rows="cell.rows" :properties="properties" :form="form" :controlRefs="controlRefs"
+          <gl-form-item :rows="cell.rows" :properties="properties" :form="form" :glRefControls="glRefControls"
                         @propertyUpdate="onPropertyUpdate"
                         @loadRefData="onLoadRefData"></gl-form-item>
         </template>
@@ -45,7 +45,7 @@
           return {}
         }
       },
-      controlRefs: {
+      glRefControls: {
         type: Object,
         required: true
       }
@@ -60,17 +60,10 @@
       // }
     },
     mounted() {
-      for (let i in this.$refs) {
-        // TODO this.$refs[i]是否存在多个值的情况？
-        this.controlRefs[i] = this.$refs[i][0]
-      }
-      console.log('geelato-ui-ant > gl-form-item > mounted() > $refs,controlRefs: ', this.$refs, this.controlRefs)
+      this.$_generateRefControl()
     },
     destroyed() {
-      for (let i in this.$refs) {
-        delete this.controlRefs[i]
-      }
-      console.log('geelato-ui-ant > gl-form-item > destroyed() > $refs,controlRefs: ', this.$refs, this.controlRefs)
+      this.$_clearRefControl()
     },
     updated() {
     },
@@ -101,6 +94,26 @@
       onLoadRefData({property}) {
         console.log('geelato-ui-ant > formItem > loadRefData', {property})
         this.$emit('loadRefData', {property})
+      },
+      $_generateRefControl(componentName) {
+        for (let i in this.$refs) {
+          this.glRefControls[i] = this.$refs[i].length !== undefined ? this.$refs[i][0] : this.$refs[i]
+        }
+        console.log(`geelato-ui-ant > gl-form-item > $_generateRefControl() > [${componentName}] $refs,glRefControls: `, this.$refs, this.glRefControls)
+        return this.glRefControls
+      },
+      $_clearRefControl() {
+        for (let i in this.$refs) {
+          delete this.glRefControls[i]
+        }
+        console.log('geelato-ui-ant > gl-form-item > $_clearRefControl() > $refs,glRefControls: ', this.$refs, this.glRefControls)
+      },
+      $_getRefControlByGid(gid) {
+        if (!this.glRefControls && !this.glRefControls[gid] && Object.keys(this.glRefControls).length === 0) {
+          // 未初始化，则先进行初始化
+          this.$_generateRefControl()
+        }
+        return this.glRefControls[gid]
       }
     }
   }

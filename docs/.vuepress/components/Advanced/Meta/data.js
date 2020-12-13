@@ -66,7 +66,7 @@ export default {
       text: '添加数据库连接',
       icon: 'plus',
       type: 'primary',
-      fn: 'openModal',
+      fn: '$_openModal',
       // opener、content、modal、handler，默认为handler
       ctx: 'this',
       params: {
@@ -118,7 +118,7 @@ export default {
         text: '添加实体',
         icon: 'plus',
         type: 'primary',
-        fn: 'openModal',
+        fn: '$_openModal',
         // opener、content、modal、handler，默认为handler
         ctx: 'this',
         params: {
@@ -160,7 +160,7 @@ export default {
         text: '编辑数据库连接',
         icon: 'plus',
         type: 'primary',
-        fn: 'openModal',
+        fn: '$_openModal',
         // opener、content、modal、handler，默认为handler
         ctx: 'this',
         params: {
@@ -219,7 +219,7 @@ export default {
         text: '修改实体',
         icon: 'plus',
         type: 'primary',
-        fn: 'openModal',
+        fn: '$_openModal',
         // opener、content、modal、handler，默认为handler
         ctx: 'this',
         params: {

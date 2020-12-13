@@ -4,12 +4,13 @@
 <template>
   <div class="gl-table gl-table-as-list" v-if="opts">
     <div class="table-page-search-wrapper" v-show="opts.query.show!==false">
-      <top-query ref="query" :controlRefs="controlRefs" :properties="opts.query.mix.properties"
+      <top-query ref="query" :glRefControls="glRefControls" :properties="opts.query.mix.properties"
                  :colPerRow="opts.query.mix.layout.fieldPerRow"
                  :gutter="opts.query.mix.layout.gutter||48"
                  :ds="opts.query.ds"
                  :params="params"
-                 @input="onQuery"></top-query>
+                 @input="onQuery"
+      ></top-query>
     </div>
 
     <div class="table-operator" v-show="opts.toolbar.show!==false">
@@ -76,7 +77,7 @@
 
 <script>
   import mixin from '../../mixin'
-  import moment from 'moment'
+  // import moment from 'moment'
   import TopQuery from './TopQuery'
   import utils from '../../utils'
   // import ActionHandler from '../../ActionHandler'
@@ -126,14 +127,14 @@
             onChange: this.onSelectChange
           }
         },
-        optionAlertShow: true,
-        controlRefs: {}
+        optionAlertShow: true
+        // refControls: {}
       }
     },
     updated() {
       console.log('geelato-ui-ant > gl-table > updated() ')
-      this.clearControlRef()
-      this.generateControlRef()
+      this.$_clearRefControl()
+      this.$_generateRefControl('gl-table')
     },
     computed: {
       columns() {
@@ -156,11 +157,25 @@
       this.tableOption()
     },
     mounted() {
+      let that = this
+      console.log('geelato-ui-ant > gl-table > mounted()')
+      console.log('geelato-ui-ant > gl-table > onQueryRefsMounted()')
+      this.$_generateRefControl('gl-table')
       this.refresh()
-      this.generateControlRef()
+      // while (Object.keys(this.$refs).length === 0 && this.properties && this.properties.length > 0) {
+      //   (async function () {
+      //     Object.assign(that.tableControlRefs, that.$_generateRefControl('top-query'))
+      //     console.log('Do some thing, ' + new Date());
+      //     await that.$_sleep(1000);
+      //     console.log('Do other things, ' + new Date());
+      //   })()
+      // }
+      // that.$_sleep(3000).then(function () {
+      //
+      // });
     },
     // destroyed() {
-    //   this.clearControlRef()
+    //   this.$_clearRefControl()
     // },
     methods: {
       // query组件的查询回调，获取查询条件信息，并调用loadData查询数据，并以数据驱动刷新页面
@@ -279,7 +294,7 @@
 
       },
       // onToolbarAction(action, rowSelection) {
-      //   let controlComponent = this.$_getRefByGid(action.gid)
+      //   let controlComponent = this.$_getRefControlByGid(action.gid)
       //   console.log('geelato-ui-ant > gl-table > Index.vue > onToolbarAction() > action:', action)
       //   console.log('geelato-ui-ant > gl-table > Index.vue > onToolbarAction() > rowSelection:', rowSelection)
       //   console.log('geelato-ui-ant > gl-table > Index.vue > onToolbarAction() > control:', controlComponent)
@@ -287,7 +302,7 @@
       onRowClick(action, record) {
         this.currentRow = record
         this.currentAction = action
-        let controlComponent = this.$_getRefByGid(action.gid)
+        let controlComponent = this.$_getRefControlByGid(action.gid)
         console.log('geelato-ui-ant > gl-table > Index.vue > onRowClick() > action:', action)
         console.log('geelato-ui-ant > gl-table > Index.vue > onRowClick() > record:', record)
         console.log('geelato-ui-ant > gl-table > Index.vue > onRowClick() > control:', controlComponent)
@@ -314,20 +329,20 @@
           return str
         }
       },
-      // generateControlRef() {
+      // $_generateRefControl() {
       //   for (let i in this.$refs) {
-      //     this.controlRefs[i] = this.$refs[i][0]
+      //     this.refControls[i] = this.$refs[i][0]
       //   }
-      //   console.log('geelato-ui-ant > gl-table > generateControlRef() > $refs,controlRefs: ', this.$refs, this.controlRefs)
+      //   console.log('geelato-ui-ant > gl-table > $_generateRefControl() > $refs,refControls: ', this.$refs, this.refControls)
       // },
-      // clearControlRef() {
+      // $_clearRefControl() {
       //   for (let i in this.$refs) {
-      //     delete this.controlRefs[i]
+      //     delete this.refControls[i]
       //   }
-      //   console.log('geelato-ui-ant > gl-table > clearControlRef() > $refs,controlRefs: ', this.$refs, this.controlRefs)
+      //   console.log('geelato-ui-ant > gl-table > $_clearRefControl() > $refs,refControls: ', this.$refs, this.refControls)
       // },
-      // $_getRefByGid(gid) {
-      //   return this.controlRefs[gid]
+      // $_getRefControlByGid(gid) {
+      //   return this.refControls[gid]
       // },
       ctxLoader() {
         return {

@@ -7,7 +7,7 @@
     </a-alert>
     <div class="gl-table-header"></div>
     <gl-form-item v-if="refresh" ref="magicFormItem" :rows="layout.rows" :properties="properties" :form="form"
-                  :controlRefs="controlRefs"
+                  :glRefControls="glRefControls"
                   :loadedData="loadedData"
                   @propertyUpdate="onPropertyUpdate"></gl-form-item>
     <div class="gl-table-toolbar" v-show="toolbar.show" style="text-align: center">
@@ -67,9 +67,9 @@
         refresh: true,
         validatingCount: 0,
         // 工具条
-        toolbar: {},
+        toolbar: {}
         // 在表单中直接引用控件
-        controlRefs: {}
+        // refControls: {}
       }
     },
     created() {
@@ -507,8 +507,8 @@
         // 该属性值已改变，试着加载级联数据
         this.entityDataReaderHandler.onLoadRefData({property})
       },
-      // $_getRefByGid(gid) {
-      //   return this.controlRefs[gid]
+      // $_getRefControlByGid(gid) {
+      //   return this.refControls[gid]
       // },
       ctxLoader() {
         // let $ctx = {form: this.getValues(), vars: {}}

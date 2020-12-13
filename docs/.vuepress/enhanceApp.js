@@ -1,6 +1,7 @@
 /**
  * 扩展 VuePress 应用
  */
+// import Storage from 'vue-ls';
 import AntDesign from 'ant-design-vue'
 // 对于导入antd.less，注意需config.js中less的javascriptEnabled: true才可正常执行
 import 'ant-design-vue/dist/antd.less'
@@ -37,5 +38,11 @@ export default ({
 
   Vue.use(geelatoAui, auiOptions)
   Vue.use(AntDesign)
+
+  // Vue.use(Storage, {
+  //   namespace: 'geelato__', // key键前缀
+  //   name: 'ls', // 命名Vue变量.[ls]或this.[$ls],
+  //   storage: 'local', // 存储名称: session, local, memory
+  // });
 }
 

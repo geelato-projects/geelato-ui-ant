@@ -109,10 +109,10 @@
         <!--<a-icon v-if="userName" slot="suffix" type="close-circle" @click="emitEmpty" />-->
       </a-input>
     </template>
-    <template v-if="property.control==='title' || property.control==='Title'">
+    <template v-else-if="property.control==='title' || property.control==='Title'">
       {{property.title}}
     </template>
-    <template v-if="property.control==='link' || property.control==='link'">
+    <template v-else-if="property.control==='link' || property.control==='link'">
       <a>{{property.title}}</a>
     </template>
     <template v-else-if="property.control==='button'">
@@ -162,6 +162,14 @@
           // 多次watch
           console.log('geelato-ui-ant > gl-control > watch > property.data: ', this.$el, val, oval)
           this.resetDefaultValue()
+        },
+        // immediate: true,
+        // deep: true
+      },
+      'property.value': {
+        handler(val, oval) {
+          console.log('geelato-ui-ant > gl-control > watch > property.value: ', this.$el, val, oval)
+          this.setValue(val)
         },
         // immediate: true,
         // deep: true

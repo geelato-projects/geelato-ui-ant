@@ -93,13 +93,12 @@
         contextMenuTarget: null,
         treeData: [],
         treeConfig: this.opts,
-        childrenDsNameDict: {},
-        controlRefs: {}
+        childrenDsNameDict: {}
       }
     },
     mounted() {
       this.loadFirstLevel()
-      this.generateControlRef()
+      this.$_generateRefControl()
     },
     methods: {
       parseDsNameDict(tree) {
@@ -217,7 +216,7 @@
         if (selectedKeys.length === 1) {
           this.currentSelectNode = this.getCurrentNode(info)
         }
-        let controlComponent = this.$_getRefByGid(action.gid)
+        let controlComponent = this.$_getRefControlByGid(action.gid)
         console.log('geelato-ui-ant > gl-tree > Index.vue > onSelect() > info:', info)
         console.log('geelato-ui-ant > gl-tree > Index.vue > onSelect() > action:', action)
         console.log('geelato-ui-ant > gl-tree > Index.vue > onSelect() > selectedKeys:', selectedKeys)
@@ -326,7 +325,7 @@
       onContextMenuItemClick(action, index) {
         this.currentAction = action
         // console.log('geelato-ui-ant > gl-tree > onContextMenuItemClick > action,index: ', action, index)
-        // let controlComponent = this.$_getRefByGid(action.gid)
+        // let controlComponent = this.$_getRefControlByGid(action.gid)
         // console.log('geelato-ui-ant > gl-tree > Index.vue > onSelect() > action:', action)
         // console.log('geelato-ui-ant > gl-tree > Index.vue > onSelect() > currentRightClickNode:', this.currentRightClickNode)
         // console.log('geelato-ui-ant > gl-tree > Index.vue > onSelect() > control:', controlComponent)

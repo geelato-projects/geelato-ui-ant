@@ -16,7 +16,7 @@ export default class ApiSettings {
         console.log('.vuepress > apiHelper.js > interceptors() > error.response: ', error.response)
         error.response.data = builder('', error.response.data, error.response.status)
         const data = error.response.data
-        const token = Vue.ls.get(ACCESS_TOKEN)
+        // const token = Vue.ls.get(ACCESS_TOKEN)
         if (error.response.status === 403) {
           notification.error({
             message: 'Forbidden',
@@ -28,13 +28,13 @@ export default class ApiSettings {
             message: 'Unauthorized',
             description: 'Authorization verification failed'
           })
-          if (token) {
-            store.dispatch('Logout').then(() => {
-              setTimeout(() => {
-                window.location.reload()
-              }, 1500)
-            })
-          }
+          // if (token) {
+          //   store.dispatch('Logout').then(() => {
+          //     setTimeout(() => {
+          //       window.location.reload()
+          //     }, 1500)
+          //   })
+          // }
         }
       }
       return Promise.reject(error)

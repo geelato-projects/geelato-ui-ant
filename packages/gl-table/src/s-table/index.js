@@ -3,7 +3,7 @@ import get from 'lodash.get'
 
 export default {
   name: 's-table',
-  data () {
+  data() {
     return {
       needTotalList: [],
 
@@ -87,23 +87,23 @@ export default {
     //     })
     //   })
     // },
-    pageNum (val) {
+    pageNum(val) {
       Object.assign(this.localPagination, {
         current: val
       })
     },
-    pageSize (val) {
+    pageSize(val) {
       Object.assign(this.localPagination, {
         pageSize: val
       })
     },
-    showSizeChanger (val) {
+    showSizeChanger(val) {
       Object.assign(this.localPagination, {
         showSizeChanger: val
       })
     }
   },
-  created () {
+  created() {
     // const { pageNo } = this.$route.params
     // const localPageNum = this.pageURI && (pageNo && parseInt(pageNo)) || this.pageNum
     const localPageNum = this.pageNum
@@ -112,7 +112,7 @@ export default {
       pageSize: this.pageSize,
       showSizeChanger: this.showSizeChanger
     }) || false
-    console.log('geelato-ui-ant > this.localPagination', this.localPagination)
+    console.log('geelato-ui-ant > gl-table > s-table > created() > localPagination:', this.localPagination)
     this.needTotalList = this.initTotalList(this.columns)
     this.loadData()
   },
@@ -122,7 +122,7 @@ export default {
      * 如果参数为 true, 则强制刷新到第一页
      * @param Boolean bool
      */
-    refresh (bool = false) {
+    refresh(bool = false) {
       bool && (this.localPagination = Object.assign({}, {
         current: 1, pageSize: this.pageSize
       }))
@@ -134,7 +134,7 @@ export default {
      * @param {Object} filters 过滤条件
      * @param {Object} sorter 排序条件
      */
-    loadData (pagination, filters, sorter) {
+    loadData(pagination, filters, sorter) {
       this.localLoading = true
       const parameter = Object.assign({
           pageNo: (pagination && pagination.current) ||
@@ -151,7 +151,7 @@ export default {
           ...filters
         }
       )
-      console.log('geelato-ui-ant > gl-table > parameter', parameter)
+      console.log('geelato-ui-ant > gl-table > s-table > loadData() > parameter:', parameter)
       const result = this.data(parameter)
       // 对接自己的通用数据接口需要修改下方代码中的 r.pageNo, r.totalCount, r.data
       // eslint-disable-next-line
@@ -180,13 +180,13 @@ export default {
           } catch (e) {
             this.localPagination = false
           }
-          console.log('geelato-ui-ant > loadData -> this.localPagination', this.localPagination)
+          console.log('geelato-ui-ant > gl-table > s-table > loadData() > localPagination:', this.localPagination)
           this.localDataSource = r.data // 返回结果中的数组数据
           this.localLoading = false
         })
       }
     },
-    initTotalList (columns) {
+    initTotalList(columns) {
       const totalList = []
       columns && columns instanceof Array && columns.forEach(column => {
         if (column.needTotal) {
@@ -203,7 +203,7 @@ export default {
      * @param selectedRowKeys
      * @param selectedRows
      */
-    updateSelect (selectedRowKeys, selectedRows) {
+    updateSelect(selectedRowKeys, selectedRows) {
       this.selectedRows = selectedRows
       this.selectedRowKeys = selectedRowKeys
       const list = this.needTotalList
@@ -220,7 +220,7 @@ export default {
     /**
      * 清空 table 已选中项
      */
-    clearSelected () {
+    clearSelected() {
       if (this.rowSelection) {
         this.rowSelection.onChange([], [])
         this.updateSelect([], [])
@@ -231,7 +231,7 @@ export default {
      * @param callback
      * @returns {*}
      */
-    renderClear (callback) {
+    renderClear(callback) {
       if (this.selectedRowKeys.length <= 0) return null
       return (
         <a style="margin-left: 24px" onClick={() => {
@@ -240,11 +240,12 @@ export default {
         }}>清空</a>
       )
     },
-    renderAlert () {
+    renderAlert() {
       // 绘制统计列数据
       const needTotalItems = this.needTotalList.map((item) => {
         return (<span style="margin-right: 12px">
-          {item.title}总计 <a style="font-weight: 600">{!item.customRender ? item.total : item.customRender(item.total)}</a>
+          {item.title}总计 <a
+          style="font-weight: 600">{!item.customRender ? item.total : item.customRender(item.total)}</a>
         </span>)
       })
 
@@ -268,7 +269,7 @@ export default {
     }
   },
 
-  render () {
+  render() {
     const props = {}
     const localKeys = Object.keys(this.$data)
     const showAlert = (typeof this.alert === 'object' && this.alert !== null && this.alert.show) && typeof this.rowSelection.selectedRowKeys !== 'undefined' || this.alert
@@ -282,7 +283,7 @@ export default {
       if (k === 'rowSelection') {
         if (showAlert && this.rowSelection) {
           // 如果需要使用alert，则重新绑定 rowSelection 事件
-          console.log('geelato-ui-ant > this.rowSelection', this.rowSelection)
+          console.log('geelato-ui-ant > gl-table > s-table > render() > rowSelection:', this.rowSelection)
           props[k] = {
             ...this.rowSelection,
             selectedRows: this.selectedRows,
@@ -303,15 +304,15 @@ export default {
       return props[k]
     })
     const table = (
-      <a-table {...{ props, scopedSlots: { ...this.$scopedSlots } }} onChange={this.loadData}>
-        { Object.keys(this.$slots).map(name => (<template slot={name}>{this.$slots[name]}</template>)) }
+      <a-table {...{props, scopedSlots: {...this.$scopedSlots}}} onChange={this.loadData}>
+        {Object.keys(this.$slots).map(name => (<template slot={name}>{this.$slots[name]}</template>))}
       </a-table>
     )
-
+    console.log('geelato-ui-ant > gl-table > s-table > render() > props:', props)
     return (
       <div class="table-wrapper">
-        { showAlert ? this.renderAlert() : null }
-        { table }
+        {showAlert ? this.renderAlert() : null}
+        {table}
       </div>
     )
   }

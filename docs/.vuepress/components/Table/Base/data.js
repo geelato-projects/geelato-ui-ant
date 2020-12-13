@@ -55,7 +55,7 @@ export default {
       text: '创建',
       icon: 'plus',
       type: 'primary',
-      fn: 'openModal',
+      fn: '$_openModal',
       // opener、content、modal、handler，默认为handler
       ctx: 'this',
       params: {
@@ -101,7 +101,7 @@ export default {
         text: '修改',
         icon: 'plus',
         type: 'primary',
-        fn: 'openModal',
+        fn: '$_openModal',
         // opener、content、modal、handler，默认为handler
         ctx: 'this',
         params: {

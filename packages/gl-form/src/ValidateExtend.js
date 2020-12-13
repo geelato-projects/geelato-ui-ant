@@ -3,15 +3,15 @@ import utils from '../../utils.js'
 
 export default {
   install: function (Vue) {
-    console.log('Vue.$gl', Vue.prototype.$gl)
+    // console.log('Vue.$gl', Vue.prototype.$gl)
     // 扩展验证功能
     extend('unique', {
       async validate(value, args) {
-        console.log('validate unique > value：', value, 'args:', args)
+        console.log('geelato-ant-ui > ValidateExtend > install() > validate unique > value：', value, 'args:', args)
         let found = false
         await Vue.prototype.$gl.api.queryByEntityDataReader(args.entityReader).then(function (result) {
           found = result.totalCount
-          console.log('validate unique > validate result：', result)
+          console.log('geelato-ant-ui > ValidateExtend > install() > validate unique > validate result：', result)
         })
         return found ? false : true
       },

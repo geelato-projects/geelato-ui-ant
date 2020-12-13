@@ -7,7 +7,7 @@
       <a-col :md="colSpan" :sm="24" v-for="(property,index) in visibleProperties" :key="index"
              :title="property.title+dict[property.cop]">
         <a-form-item v-show="(!advanced&&index<colPerRow-1)||advanced" :label="property.title">
-          <gl-control :ref="property.gid" :property="property" :form="entity"
+          <gl-control v-if="refsMounted=true" :ref="property.gid" :property="property" :form="entity"
                       @propertyUpdate="onPropertyUpdate"></gl-control>
         </a-form-item>
       </a-col>
@@ -51,7 +51,7 @@
           return {}
         }
       },
-      controlRefs: {
+      glRefControls: {
         type: Object,
         required: true
       },
@@ -94,9 +94,12 @@
           ds: this.ds,
           dataMountTargetProperties: this.properties,
           ctxLoader: this.ctxLoader
-        })
+        }),
+        refsMounted: 0,
+        refsMounted2: false
       }
     },
+    watch: {},
     computed: {
       colSpan() {
         return 24 / this.colPerRow
@@ -105,12 +108,14 @@
         return this.properties.length > this.colPerRow
       },
       visibleProperties() {
+        console.log('computed() > visibleProperties')
         let result = this.properties.filter(property => {
           return property.show !== false
         })
         return result || []
       },
       inVisibleProperties() {
+        console.log('computed() > inVisibleProperties')
         let result = this.properties.filter(property => {
           return property.show === false
         })
@@ -118,20 +123,16 @@
       }
     },
     mounted() {
-      this.initData()
-      for (let i in this.$refs) {
-        this.controlRefs[i] = this.$refs[i][0]
-      }
-      console.log('geelato-ui-ant > gl-table-top-query > mounted() > params: ', this.params)
-      console.log('geelato-ui-ant > gl-table-top-query > mounted() > $refs,controlRefs: ', this.$refs, this.controlRefs)
+      let that = this
+      that.initData()
+      console.log('geelato-ui-ant > gl-table-top-query > mounted() ')
+      that.$_generateRefControl('top-query')
+      // that.reset({params: this.params})
       // 解析数据源，并初始化加载数据
-      this.entityDataReaderHandler.execute()
+      that.entityDataReaderHandler.execute()
     },
     destroyed() {
-      for (let i in this.$refs) {
-        delete this.controlRefs[i]
-      }
-      console.log('geelato-ui-ant > gl-table-top-query > destroyed() > $refs,controlRefs: ', this.$refs, this.controlRefs)
+      this.$_clearRefControl()
     },
     methods: {
       initData() {
@@ -150,24 +151,36 @@
             }
           }
         }
-        this.reset({params: this.params})
       },
       reset({params = this.params} = {}) {
+        const that = this
         if (!params) {
           return
         }
+
         for (const index in this.properties) {
           const item = this.properties[index]
-          console.log('geelato-ui-ant > gl-table-top-query > reset > index,property: ', index, item, this.$refs[item.gid][0])
+          // while (Object.keys(this.$refs).length === 0 && this.properties && this.properties.length > 0) {
+          //   (async function () {
+          //     Object.assign(that.tableControlRefs, that.$_generateRefControl('top-query'))
+          //     console.log('Do some thing, ' + new Date());
+          //     await that.$_sleep(1000);
+          //     console.log('Do other things, ' + new Date());
+          //   })()
+          // }
 
+          // if (Object.keys(this.$refs).length === 0 && this.properties && this.properties.length > 0) {
+          //   console.error(`$refs对象还未生成，跳过为查询字段“${item.title}”值设置。`, Object.keys(this.$refs).length)
+          // } else {
+          //
+          // }
           if (item.gid in params) {
-            // item.value = params[item.gid]
-            this.$refs[item.gid][0].setValue(params[item.gid])
+            item.value = params[item.gid]
+            // this.$refs[item.gid][0].setValue(params[item.gid])
           } else if (item.field in params) {
-            // item.value = params[item.field]
-            this.$refs[item.gid][0].setValue(params[item.field])
+            item.value = params[item.field]
+            // this.$refs[item.gid][0].setValue(params[item.field])
           }
-
           // 设置查询表单实体值
           // 优先以property.value的值为准，若无则以property.props.defaultValue的值为准，最后以property.props.defaultActiveIndex对应项的值为准
           if (item.value !== undefined) {
@@ -248,6 +261,26 @@
         //   $ctx.vars[varName] = typeof that.vars[varName] === 'object' ? that.vars[varName].value : that.vars[varName]
         // }
         return this.entity
+      },
+      $_generateRefControl(componentName) {
+        for (let i in this.$refs) {
+          this.glRefControls[i] = this.$refs[i].length !== undefined ? this.$refs[i][0] : this.$refs[i]
+        }
+        console.log(`geelato-ui-ant > gl-table-top-query > $_generateRefControl() > [${componentName}] $refs,glRefControls: `, this.$refs, this.glRefControls)
+        return this.glRefControls
+      },
+      $_clearRefControl() {
+        for (let i in this.$refs) {
+          delete this.glRefControls[i]
+        }
+        console.log('geelato-ui-ant > gl-table-top-query > $_clearRefControl() > $refs,glRefControls: ', this.$refs, this.glRefControls)
+      },
+      $_getRefControlByGid(gid) {
+        if (!this.glRefControls && !this.glRefControls[gid] && Object.keys(this.glRefControls).length === 0) {
+          // 未初始化，则先进行初始化
+          this.$_generateRefControl()
+        }
+        return this.glRefControls[gid]
       }
     }
   }

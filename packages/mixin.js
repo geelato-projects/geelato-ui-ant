@@ -46,14 +46,16 @@ export default {
           // content: 'code',
           // description: 'description'
         },
-        // 用于绑定事件的控件
-        controlRefs: {},
-        _isShow: true
-      }
+        _isShow: true,
+      },
+      // 用于绑定事件的控件
+      glRefControls: {},
+      // 用于定义组件变量
+      glVars: {}
     }
   },
   destroyed() {
-    this.clearControlRef()
+    this.$_clearRefControl()
   },
   methods: {
     $_doAction(action, data, callback) {
@@ -142,28 +144,71 @@ export default {
         }
       })
     },
-    openModal(params, data) {
+    $_openModal(params, data) {
       if (!params.body.props) {
         params.body.props = {}
       }
       Object.assign(params.body.props, data)
       this.$gl.ui.openModal(this, params)
     },
-    generateControlRef() {
+
+    $_generateRefControl(componentName) {
       for (let i in this.$refs) {
-        this.controlRefs[i] = this.$refs[i].length !== undefined ? this.$refs[i][0] : this.$refs[i]
+        this.glRefControls[i] = this.$refs[i].length !== undefined ? this.$refs[i][0] : this.$refs[i]
+        // 子组件中存在mounted时，未生成refs情况，尝试获取
+        if (this.glRefControls[i] && typeof this.glRefControls[i].$_generateRefControl === 'function') {
+          this.glRefControls[i].$_generateRefControl('子组件初始化refs')
+        }
       }
-      console.log('geelato-ui-ant > mixin > generateControlRef() > $refs,controlRefs: ', this.$refs, this.controlRefs)
+      console.log(`geelato-ui-ant > mixin > $_generateRefControl() > [${componentName}] $refs,glRefControls: `, this.$refs, this.glRefControls)
+      return this.glRefControls
     },
-    clearControlRef() {
+    $_clearRefControl() {
       for (let i in this.$refs) {
-        delete this.controlRefs[i]
+        delete this.glRefControls[i]
       }
-      console.log('geelato-ui-ant > mixin > clearControlRef() > $refs,controlRefs: ', this.$refs, this.controlRefs)
+      console.log('geelato-ui-ant > mixin > $_clearRefControl() > $refs,glRefControls: ', this.$refs, this.glRefControls)
     },
-    $_getRefByGid(gid) {
-      return this.controlRefs[gid]
+    $_getRefControlByGid(gid) {
+      if (!this.glRefControls[gid]) {
+        // 未初始化，则先进行初始化
+        this.$_generateRefControl('获取不到，先进行初始化refs')
+      }
+      // if (!this.glRefControls && Object.keys(this.glRefControls).length === 0) {
+      //   // 未初始化，则先进行初始化
+      //   this.$_generateRefControl('获取不到，先进行初始化refs')
+      // }
+      return this.glRefControls[gid]
     },
+    $_showRefControlByGid(gid) {
+      const control = this.$_getRefControlByGid(gid)
+      if (control) {
+        if (!('_defaultStyleDisplay' in control.$data)) {
+          control.$data['_defaultStyleDisplay'] = control.$el.style.display
+        }
+        control.$el.style.display = control.$data['_defaultStyleDisplay']
+      } else {
+        console.warn(`geelato-ui-ant > mixin > $_showRefControlByGid() > control not found by Gid:`, gid)
+      }
+    },
+    $_hideRefControlByGid(gid) {
+      const control = this.$_getRefControlByGid(gid)
+      if (control) {
+        if (!('_defaultStyleDisplay' in control.$data)) {
+          control.$data['_defaultStyleDisplay'] = control.$el.style.display
+        }
+        control.$el.style.display = 'none'
+      } else {
+        console.warn(`geelato-ui-ant > mixin > $_hideRefControlByGid() > control not found by Gid:`, gid)
+      }
+    },
+    // $_getControlRef(gid) {
+    //   if (this.glRefControls && Object.keys(this.glRefControls).length === 0) {
+    //     // 未初始化，则先进行初始化
+    //     this.$_generateRefControl()
+    //   }
+    //   return this.glRefControls[gid]
+    // },
     /**
      * 触发显示组件事件
      */
@@ -184,53 +229,9 @@ export default {
     $_toggle() {
       this._isShow = !this._isShow
       this.$emit('display', {action: 'toggle', isShow: this._isShow})
-    }
-    // loadData(params, dataHandler) {
-    //   let entityDataReader = this.entityDataReader
-    //   this.resultSet.resultMapping = {}
-    //   Object.assign(this.resultSet.resultMapping, this.entityDataReader.resultMapping)
-    //   let gql = {}
-    //   gql[entityDataReader.entity] = {
-    //     '@fs': entityDataReader.fields || '*'
-    //   }
-    //   Object.assign(gql[entityDataReader.entity], params || {})
-    //   this.$gl.api.queryByGql(gql, entityDataReader.withMeta).then(res => {
-    //     // 返回结果预处理
-    //     // 获取返回结果的列名
-    //     let resultNames = {}
-    //     for (let i in res.data.data) {
-    //       let item = res.data.data[i]
-    //       let resultFieldNameAry = Object.keys(item)
-    //       for (let j in resultFieldNameAry) {
-    //         resultNames[resultFieldNameAry[j]] = resultFieldNameAry[j]
-    //       }
-    //       break
-    //     }
-    //     // 先找出需处理的列mapping，e.g. [{avatar:'https://xxxxx/xx/xx.jpg'}]
-    //     let toParseMappingItems = []
-    //     // console.log('geelato-ui-ant > toParseMappingItems>', toParseMappingItems)
-    //     for (let key in entityDataReader.resultMapping) {
-    //       let field = entityDataReader.resultMapping[key]
-    //       let resultName = resultNames[field]
-    //       if (!resultName) {
-    //         toParseMappingItems.push({key: key, value: field})
-    //         this.resultSet.resultMapping[key] = key
-    //       }
-    //     }
-    //     // 如增加静态的列，列值格式化、列值组合等
-    //     for (let i in res.data.data) {
-    //       let dataItem = res.data.data[i]
-    //       for (let j in toParseMappingItems) {
-    //         let mappingItem = toParseMappingItems[j]
-    //         dataItem[mappingItem.key] = utils.eval(mappingItem.value, dataItem)
-    //       }
-    //     }
-    //     // console.log('geelato-ui-ant > res>', res)
-    //     if (typeof dataHandler === 'function') {
-    //       dataHandler(res)
-    //     }
-    //
-    //   })
-    // }
+    },
+    $_sleep(time) {
+      return new Promise((resolve) => setTimeout(resolve, time));
+    },
   }
 }

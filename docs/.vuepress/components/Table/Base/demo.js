@@ -106,7 +106,7 @@ export default {
           "text": "修改",
           "icon": "plus",
           "type": "primary",
-          "fn": "openModal",
+          "fn": "$_openModal",
           "ctx": "this",
           "params": {
             "title": "编辑DEMO实体",
@@ -229,7 +229,7 @@ export default {
           "text": "查看",
           "icon": "plus",
           "type": "primary",
-          "fn": "openModal",
+          "fn": "$_openModal",
           "ctx": "this",
           params: {},
           dataMapping: {}
@@ -239,7 +239,7 @@ export default {
           "text": "设置密码",
           "icon": "plus",
           "type": "primary",
-          "fn": "openModal",
+          "fn": "$_openModal",
           "ctx": "this",
           params: {},
           dataMapping: {}
