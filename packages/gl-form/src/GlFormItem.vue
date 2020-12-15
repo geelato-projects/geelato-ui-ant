@@ -97,7 +97,9 @@
       },
       $_generateRefControl(componentName) {
         for (let i in this.$refs) {
-          this.glRefControls[i] = this.$refs[i].length !== undefined ? this.$refs[i][0] : this.$refs[i]
+          if (this.$refs[i]) {
+            this.glRefControls[i] = this.$refs[i].length !== undefined ? this.$refs[i][0] : this.$refs[i]
+          }
         }
         console.log(`geelato-ui-ant > gl-form-item > $_generateRefControl() > [${componentName}] $refs,glRefControls: `, this.$refs, this.glRefControls)
         return this.glRefControls

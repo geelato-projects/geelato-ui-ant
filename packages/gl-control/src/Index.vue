@@ -201,10 +201,10 @@
         return property.field
       },
       isReadonly(property) {
-        if (property.readonly === true) {
+        if (property.readOnly === true) {
           return true
-        } else if (typeof property.readonly === 'string') {
-          // return this.rungs(property.readonly)
+        } else if (typeof property.readOnly === 'string') {
+          // return this.rungs(property.readOnly)
         }
         return false
       },

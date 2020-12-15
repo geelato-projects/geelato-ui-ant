@@ -5,6 +5,7 @@
     <a-button type="primary" @click="validate">校验表单</a-button>
     <a-button type="primary" @click="getValues">{{showFormValue?'隐藏表单值':'获取表单值'}}</a-button>
     <a-button type="primary" @click="getGql">{{showGQL?'隐藏保存GQL':'获取保存GQL'}}</a-button>
+    <a-button type="primary" @click="genRefs">创建表单内的控件引用</a-button>
     <a-alert v-if="showFormValue&&formData&&Object.keys(formData).length>0" style="margin-bottom: 4px">
       <span slot="description">
         {{formData}}
@@ -22,7 +23,8 @@
 </template>
 
 <script>
-  import RegData from './RegData4.js'
+  import RegData from './RegData3.js'
+
   export default {
     name: "RegExample",
     component: {},
@@ -39,6 +41,9 @@
     methods: {
       reset() {
         this.$refs.magicForm.reset(RegData.bind)
+      },
+      genRefs() {
+        console.log(this.$refs.magicForm.$_getRefControlByGid('name'))
       },
       getGql() {
         this.showGQL = !this.showGQL

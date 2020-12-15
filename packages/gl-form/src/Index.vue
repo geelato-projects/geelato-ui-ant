@@ -6,7 +6,7 @@
       </p>
     </a-alert>
     <div class="gl-table-header"></div>
-    <gl-form-item v-if="refresh" ref="magicFormItem" :rows="layout.rows" :properties="properties" :form="form"
+    <gl-form-item v-if="refresh" :rows="layout.rows" :properties="properties" :form="form"
                   :glRefControls="glRefControls"
                   :loadedData="loadedData"
                   @propertyUpdate="onPropertyUpdate"></gl-form-item>
