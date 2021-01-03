@@ -1,135 +1,8 @@
-<template>
-  <div class="gl-control">
-    <template v-if="property.control==='input' || property.control==='Input'">
-      <a-input type="text" :name="getFieldNameByCell(property)" v-model="model" :readOnly="isReadonly(property)"
-               v-bind="property.props"/>
-    </template>
-    <template v-else-if="property.control==='InputNumber'">
-      <a-input-number type="text" :name="getFieldNameByCell(property)" v-model="model" :readOnly="isReadonly(property)"
-                      v-bind="property.props"/>
-    </template>
-    <template v-else-if="property.control==='Switch'">
-      <a-switch type="text" :name="getFieldNameByCell(property)" v-model="model" :readOnly="isReadonly(property)"
-                v-bind="property.props"/>
-    </template>
-    <template v-else-if="property.control==='date' || property.control==='DatePicker'">
-      <a-date-picker @change='loadRefData(property, $event)' :name="getFieldNameByCell(property)" v-model="model"
-                     :readOnly="isReadonly(property)"
-                     v-bind="property.props"/>
-    </template>
-    <template v-else-if="property.control==='time' || property.control==='TimePicker'">
-      <a-time-picker use12Hours format="h:mm:ss A"
-                     :name="getFieldNameByCell(property)"
-                     v-model="model" :readOnly="isReadonly(property)"
-                     v-bind="property.props"
-                     @change='loadRefData(property, $event)'/>
-    </template>
-    <template v-else-if="property.control==='textarea' || property.control==='Textarea'">
-      <a-textarea rows="5" :name="getFieldNameByCell(property)"
-                  v-model="model" :readOnly="isReadonly(property)"
-                  v-bind="property.props"
-                  @change='loadRefData(property, $event)'></a-textarea>
-    </template>
-    <template v-else-if="property.control==='checkbox' || property.control==='Checkbox'">
-      <a-checkbox :name="getFieldNameByCell(property)" :defaultChecked="model?true:false"
-                  @change="($event)=>{model = $event.target.checked;loadRefData(property, $event)}"
-                  :readOnly="isReadonly(property)"
-                  v-bind="property.props">{{property.placeholder}}
-      </a-checkbox>
-    </template>
-    <template v-else-if="property.control==='CheckboxGroup'">
-      <a-checkbox-group
-          :options="property.data"
-          v-model="model"
-          @change="loadRefData(property, $event)"
-      >
-        <span slot="label" slot-scope="{ text }">{{ text }}</span>
-      </a-checkbox-group>
-    </template>
-    <template v-else-if="property.control==='RadioButton'">
-      <a-radio-group v-model="model" @change='loadRefData(property, $event)'
-                     :ref="getFieldNameByCell(property)"
-                     :readOnly="isReadonly(property)" v-bind="property.props">
-        <a-radio-button v-for="(selectOption,selectOptionKey) in property.data" :key="selectOptionKey"
-                        :value="selectOption.value" :disabled="selectOption.disabled">{{selectOption.text}}
-        </a-radio-button>
-      </a-radio-group>
-    </template>
-    <template v-else-if="property.control==='radio' || property.control==='Radio'">
-      <a-radio-group v-model="model" @change='loadRefData(property, $event)'
-                     :ref="getFieldNameByCell(property)"
-                     :readOnly="isReadonly(property)" v-bind="property.props">
-        <a-radio v-for="(selectOption,selectOptionKey) in property.data" :key="selectOptionKey"
-                 :value="selectOption.value" :disabled="selectOption.disabled">{{selectOption.text}}
-        </a-radio>
-      </a-radio-group>
-      {{property.placeholder}}
-    </template>
-    <template v-else-if="property.control==='select' || property.control==='Select'">
-      <a-select v-model="model" style="min-width: 6em" @change='loadRefData(property, $event)'
-                :ref="getFieldNameByCell(property)"
-                :readOnly="isReadonly(property)" v-bind="property.props">
-        <a-select-option value="" v-if="property.props&&property.props.AddPreOptionText">
-          {{property.props.AddPreOptionText}}
-        </a-select-option>
-        <a-select-option v-for="(selectOption,selectOptionKey) in property.data" :key="selectOptionKey"
-                         :value="selectOption.value" :disabled="selectOption.disabled">{{selectOption.text}}
-        </a-select-option>
-      </a-select>
-    </template>
-    <template v-else-if="property.control==='image'">
-      <div class="ui fluid  image">
-        <a class="ui red right corner label">
-          <i class="upload icon"></i>
-        </a>
-        <!--<img class="ui small rounded image" style=""-->
-        <!--src="../../assets/images/avatar/large/jenny.jpg">-->
-      </div>
-      <!--<div class="ui placeholder">-->
-      <!--<a class="ui red right corner label" @click="uploadImage">-->
-      <!--<i class="upload icon"></i>-->
-      <!--</a>-->
-      <!--<div class="rectangular image"></div>-->
-      <!--</div>-->
-    </template>
-    <template v-else-if="property.control==='email'">
-      <a-input type="email" :name="getFieldNameByCell(property)"
-               v-model="model" :readOnly="isReadonly(property)"
-               v-bind="property.props"
-               @change='loadRefData(property, $event)'>
-        <a-icon slot="prefix" type="mail"/>
-      </a-input>
-    </template>
-    <template v-else-if="property.control==='password' || property.control==='Password'">
-      <a-input :name="getFieldNameByCell(property)"
-               v-model="model" :readOnly="isReadonly(property)"
-               v-bind="property.props" type="password"
-               @change='loadRefData(property, $event)'>
-        <a-icon slot="prefix" type="lock"/>
-        <!--<a-icon v-if="userName" slot="suffix" type="close-circle" @click="emitEmpty" />-->
-      </a-input>
-    </template>
-    <template v-else-if="property.control==='title' || property.control==='Title'">
-      {{property.title}}
-    </template>
-    <template v-else-if="property.control==='link' || property.control==='link'">
-      <a>{{property.title}}</a>
-    </template>
-    <template v-else-if="property.control==='button'">
-      <a-button v-bind="property.props" :readOnly="isReadonly(property)">{{property.title}}</a-button>
-    </template>
-    <template v-else-if="property.control==='Rate'">
-      <a-rate type="text" :name="getFieldNameByCell(property)" v-model="model" :readOnly="isReadonly(property)"
-              v-bind="property.props"/>
-    </template>
-    <template v-else>
-      {{form[getFieldNameByCell(property)]}}
-    </template>
-  </div>
-</template>
-
+<!--
+  基础控件，组件中的一种。
+-->
 <script>
-  import utils from '../../utils'
+  import utils from '../../utils/utils'
 
   let GEELATO_SCRIPT_PREFIX = 'gs:'
 
@@ -143,50 +16,71 @@
         type: Object,
         required: true
       },
+      /**
+       *  简单表单对象，用于其它属性的值引用及值设置
+       *  如果不是用于表单，可以不传入该对象
+       */
       form: {
-        type: Object
+        type: Object,
+        default() {
+          return {}
+        }
+      },
+      vars: {
+        type: Object,
+        default() {
+          return {}
+        }
       }
     },
     data() {
       return {
+        values: [],
         model: this.getDefaultValueOfControl(this.property.control)
       }
     },
     watch: {
       model: function (val, oval) {
-        // console.log('geelato-ui-ant > gl-control > watch > model: ', val, oval)
+        console.log('geelato-ui-ant > gl-control > watch > model, val:', val, ',oval:', oval)
         this.$emit('propertyUpdate', {property: this.property, val: val, oval: oval})
       },
       'property.data': {
         handler(val, oval) {
           // 多次watch
           console.log('geelato-ui-ant > gl-control > watch > property.data: ', this.$el, val, oval)
-          this.resetDefaultValue()
+          this.resetArrayDefaultValue()
         },
         // immediate: true,
         // deep: true
       },
       'property.value': {
         handler(val, oval) {
-          console.log('geelato-ui-ant > gl-control > watch > property.value: ', this.$el, val, oval)
+          console.log('geelato-ui-ant > gl-control > watch > property.value, val:', val, ',oval:', oval)
           this.setValue(val)
         },
         // immediate: true,
         // deep: true
       }
     },
+    computed: {
+      fieldName() {
+        return this.property.field
+      },
+      isReadonly() {
+        if (this.property.readOnly === true || this.property.readonly === true) {
+          return true
+        } else if (typeof this.property.readOnly === 'string' || typeof this.property.readonly === 'string') {
+          // 变量计算
+          return this.$gl.utils.runJs(this.property.readOnly || this.property.readonly, this.$_ctxLoader())
+        }
+        return false
+      },
+    },
+    created() {
+      this.initDefaultValue()
+    },
     mounted() {
-      // 先取属性值
-      let value = this.property.value !== undefined ? this.property.value : undefined
-      // 再取默认值
-      if (value === undefined || value === '') {
-        value = this.property.props && this.property.props.defaultValue !== undefined ? this.property.props.defaultValue : undefined
-      }
-      // 再以索引取默认值
-      if ((value === undefined || value === '') && !this.isValueTypeOfArray(this.property.control)) {
-        value = this.property.data && this.property.data.length > 0 && this.property.props.defaultActiveIndex !== undefined ? this.property.data[this.property.props.defaultActiveIndex].value : undefined
-      }
-      this.model = value || this.getDefaultValueOfControl(this.property.control)
+      console.log('geelato-ant-ui > gl-control > mounted()')
     },
     updated() {
     },
@@ -195,36 +89,46 @@
         return this.model
       },
       setValue(value) {
+        console.log('geelato-ant-ui > gl-control > setValue() > model:', value)
         this.model = value
-      },
-      getFieldNameByCell(property) {
-        return property.field
-      },
-      isReadonly(property) {
-        if (property.readOnly === true) {
-          return true
-        } else if (typeof property.readOnly === 'string') {
-          // return this.rungs(property.readOnly)
-        }
-        return false
+        this.property.value = value
       },
       /**
        * 级联加载数据
        * */
-      loadRefData(property, value) {
-        this.$set(this.form, property.gid, value);
-        // console.log('geelato-ui-ant > GLControl.vue > loadRefData() > property,value:', this.property, value)
-        this.$emit('loadRefData', {property: this.property})
+      loadRefData(value) {
+        // console.log('loadRefData...', value)
+        const valueType = typeof value
+        let v
+        if (valueType === "boolean") {
+          v = value
+        } else if (valueType === 'number') {
+          v = value
+        } else if (valueType === 'string') {
+          v = value
+        } else if (value && value.srcElement) {
+          v = value.srcElement.value
+        } else if (value && value.target && value.target.checked !== undefined) {
+          v = value.target.checked
+        } else if (value === null || value === undefined) {
+          v = ''
+        } else {
+          console.warn('geelato-ant-ui > gl-control > loadRefData() > unset value:', value)
+        }
+        this.setValue(v)
+        // this.$set(this.form, this.property.gid, v);
+        // this.$emit('loadRefData', {property: this.property})
+        // this.$emit('change', {property: this.property})
       },
       /**
        * gs(geelato script)执行表达式，若非gs表达式则直接返回
        * @param gs gs:$ctx.form.province
        */
       rungs(str) {
-        let thisVue = this
-        let $ctx = {form: thisVue.getValues(), vars: {}}
-        for (let varName in (thisVue.vars || [])) {
-          $ctx.vars[varName] = typeof thisVue.vars[varName] === 'object' ? thisVue.vars[varName].value : thisVue.vars[varName]
+        let that = this
+        let $ctx = {form: that.getValues(), vars: {}}
+        for (let varName in (that.vars || [])) {
+          $ctx.vars[varName] = typeof that.vars[varName] === 'object' ? that.vars[varName].value : that.vars[varName]
         }
         if (str.indexOf(GEELATO_SCRIPT_PREFIX) === 0) {
           return utils.eval(str.substring(3), $ctx)
@@ -232,22 +136,42 @@
           return str
         }
       },
-      resetDefaultValue() {
+      /**
+       *  设置默认值
+       *  默认值有几个属性可以配置，取值的优先顺序是 value > props.defaultValue > props.defaultActiveIndex，按顺序，取到值为止
+       */
+      initDefaultValue() {
         let that = this
         if (that.property.value) {
+          this.model = that.property.value
           return
         }
-        // 设置默认值，如select控件
-        // if (this.property.props && this.property.props.defaultActiveIndex !== undefined && this.property.data && this.property.data.length > 0) {
-        //   this.model = this.property.data[this.property.props.defaultActiveIndex].value
-        // } else if (this.property.props && this.property.props.defaultActiveIndex === undefined && this.property.data && this.property.data.length > 0) {
-        //   this.model = this.property.data[0].value
-        // }
-
-        if (that.property.props && that.property.data && that.property.data.length > 0) {
-          let dataIndex = that.property.props.defaultActiveIndex || 0
-          that.model = that.property.data[dataIndex].value
+        if (!that.property.style) {
+          that.$set(that.property, 'style', {})
         }
+
+        // 先取属性值
+        let value = this.property.value !== undefined ? this.property.value : undefined
+        // 若未设置，再取默认值
+        if (value === undefined || value === '') {
+          value = this.property.props && (this.property.props.defaultValue !== undefined ? this.property.props.defaultValue : undefined)
+        }
+        // 若未设置，再以索引取默认值
+        if ((value === undefined || value === '') && !this.isValueTypeOfArray(this.property.control)) {
+          let dataIndex = this.property.props && this.property.props.defaultActiveIndex || 0
+          value = this.property.data && this.property.data.length > 0 && this.property.data[dataIndex].value
+        }
+        // console.log('geelato-ant-ui > gl-control > initDefaultValue()', this.property, this.property.title, value)
+        that.setValue(value)
+      },
+      resetArrayDefaultValue() {
+        let that = this
+        let value = undefined
+        if (!this.isValueTypeOfArray(this.property.control)) {
+          let dataIndex = this.property.props && this.property.props.defaultActiveIndex || 0
+          value = this.property.data && this.property.data.length > 0 && this.property.data[dataIndex].value
+        }
+        that.setValue(value)
       },
       getDefaultValueOfControl(controlName) {
         let value = controlMeta[controlName] && controlMeta[controlName].defaultValue
@@ -255,7 +179,138 @@
       },
       isValueTypeOfArray(controlName) {
         return controlMeta[controlName] && controlMeta[controlName].type === Array
+      },
+      $_ctxLoader() {
+        return {form: this.form, vars: this.vars}
       }
+    },
+    render() {
+      let controlDom
+      //  转成首字母大写
+      let control = ((str) => {
+        return str.slice(0, 1).toUpperCase() + str.slice(1)
+      })(this.property.control)
+      let props = {
+        name: this.property.field,
+        ref: this.property.gid,
+        title: this.property.title,
+        placeholder: this.property.placeholder,
+        readOnly: this.isReadonly
+      }
+      let propertyData = this.property.data || []
+      let fns = {}
+      console.log('geelato-ui-ant > gl-control > render() > props:', props, this.property)
+      switch (control) {
+        case 'Input':
+          controlDom = <a-input type="text" {...{props}} onChange={this.loadRefData}/>
+          break;
+        case 'Button':
+          controlDom = <a-button {...{props}} onChange={this.loadRefData}>{this.property.title}</a-button>
+          break
+        case 'InputNumber':
+          controlDom = <a-input-number type="text" {...{props}} onChange={this.loadRefData}/>
+          break;
+        case 'Switch':
+          controlDom = <a-switch {...{props}} onChange={this.loadRefData}/>
+          break;
+        case 'DatePicker':
+          controlDom = <a-date-picker {...{props}} onChange={this.loadRefData}/>
+          break;
+        case 'TimePicker':
+          controlDom = <a-time-picker {...{props}} onChange={this.loadRefData} use12Hours format="h:mm:ss A"/>
+          break;
+        case 'Textarea':
+          controlDom = <a-textarea {...{props}} onChange={this.loadRefData} row="5"/>
+          break;
+        case 'Checkbox':
+          controlDom = <a-checkbox {...{props}} onChange={this.loadRefData}><span
+            style={this.property.style}>{this.property.title}</span></a-checkbox>
+          break;
+        case 'CheckboxGroup':
+          controlDom =
+            <a-checkbox-group>
+              {
+                propertyData.map(item => {
+                  return <a-checkbox value={item.value} disabled={item.disabled}>
+                    <span style={item.style}>{item.text}</span>
+                  </a-checkbox>
+                })
+              }
+            </a-checkbox-group>
+          break;
+        case 'RadioButton':
+          controlDom = <a-radio-group {...{props}}>
+            {
+              propertyData.map((selectOption, selectOptionKey) => {
+                return <a-radio-button key={selectOptionKey} value={selectOption.value}
+                                       disabled={selectOption.disabled}>{selectOption.text}</a-radio-button>
+              })
+            }
+          </a-radio-group>
+          break;
+        case 'Radio':
+          controlDom = <a-radio-group {...{props}}>
+            {
+              propertyData.map((selectOption, selectOptionKey) => {
+                return <a-radio key={selectOptionKey} value={selectOption.value}
+                                disabled={selectOption.disabled}>{selectOption.text}</a-radio>
+              })
+            }
+          </a-radio-group>
+        {
+          this.property.placeholder
+        }
+          break;
+        case 'Select':
+          controlDom =
+            <a-select v-model={this.model} style="min-width: 6em" {...{props}} onChange={this.loadRefData}>
+              {
+                this.property.props && this.property.props.AddPreOptionText ?
+                  <a-select-option value="">{this.property.props.AddPreOptionText}</a-select-option> : ''
+              }
+              {
+                propertyData.map((selectOption, selectOptionKey) => {
+                  return <a-select-option key={selectOptionKey} value={selectOption.value}
+                                          disabled={selectOption.disabled}>{selectOption.text}</a-select-option>
+                })
+              }
+            </a-select>
+          break
+        case 'Email':
+          controlDom = <a-input type="email" {...{props}} onChange={this.loadRefData}>
+            <a-icon slot="prefix" type="mail"/>
+          </a-input>
+          break
+        case 'Password':
+          controlDom = <a-input type="password" {...{props}} onChange={this.loadRefData}>
+            <a-icon slot='prefix' type='lock'/>
+          </a-input>
+          break
+        case 'Link':
+          controlDom = <a>{this.property.title}</a>
+          break;
+        case 'Title':
+          controlDom = <span>{this.property.title}</span>
+          break;
+        case 'Image':
+          controlDom = <div className="ui fluid  image">
+            <a className="ui red right corner label">
+              <i className="upload icon"></i>
+            </a>
+          </div>
+          break
+        case 'Rate':
+          controlDom = <a-rate v-model={this.model}/>
+          break;
+        default:
+          controlDom = <a-switch {...{props}} onChange={this.loadRefData}/>
+      }
+
+      return (
+        <div className="gl-control">
+          {controlDom}
+        </div>
+      )
     }
   }
 </script>

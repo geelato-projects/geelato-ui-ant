@@ -1,5 +1,5 @@
 <!--
-
+  列表
 -->
 <template>
   <div class="gl-table gl-table-as-list" v-if="opts">
@@ -17,7 +17,7 @@
       <template v-for="(action) in opts.toolbar.actions" v-if="action.gid=action.gid||$gl.utils.uuid(8)">
         <!--@click="onToolbarAction(action,{rowSelection:options.rowSelection,index:index})"-->
         <a-button :ref="action.gid" :type="action.type||'primary'" :icon="action.icon"
-                  :key="action.gid" v-if="action.show===undefined||rungs(action.show)" style="margin-right:0.5em"
+                  :key="action.gid" v-if="action.show===undefined||$_runJs(action.show)" style="margin-right:0.5em"
                   @click="currentAction = action">
           {{action.title||action.text}}
         </a-button>&nbsp;
@@ -76,17 +76,9 @@
 </template>
 
 <script>
-  import mixin from '../../mixin'
-  // import moment from 'moment'
+  import mixin from '../../mixin/componentMixin'
   import TopQuery from './TopQuery'
-  import utils from '../../utils'
-  // import ActionHandler from '../../ActionHandler'
 
-  let GEELATO_SCRIPT_PREFIX = 'gs:'
-  // let REGEXP_FORM = /gs[\s]*:[\s]*\$ctx\.form\.[a-zA-Z]+[a-zA-Z0-9]*/g;
-  // let REGEXP_CTX = /\$ctx/g
-  // let REGEXP_DEPEND_PROPERTY = /\$ctx\.[a-zA-Z]+/g
-  // let CONST_GQL_PARENT = '$parent'
   export default {
     name: 'GlTable',
     components: {
@@ -144,7 +136,7 @@
           // column.customRenderString = (column.customRenderString === undefined ? '' : column.customRenderString)
           if (column && column.customRenderString) {
             try {
-              column.customRender = eval(column.customRenderString)
+              column.customRender = this.$gl.utils.eval(column.customRenderString)
             } catch (e) {
               console.error('geelato-ui-ant > gl-table > The format of column.customRenderString is incorrect:', column.customRenderString + '.', e)
             }
@@ -317,18 +309,6 @@
         this.selectedRowKeys = selectedRowKeys
         this.selectedRows = selectedRows
       },
-      /**
-       * gs(geelato script)执行表达式，若非gs表达式则直接返回
-       * @param str e.g. "gs:$ctx.table.selectedRowKeys.length > 0"
-       */
-      rungs(str) {
-        let $ctx = this
-        if (typeof str === 'string' && str.indexOf(GEELATO_SCRIPT_PREFIX) === 0) {
-          return utils.eval(str.substring(3), $ctx)
-        } else {
-          return str
-        }
-      },
       // $_generateRefControl() {
       //   for (let i in this.$refs) {
       //     this.refControls[i] = this.$refs[i][0]
@@ -344,10 +324,13 @@
       // $_getRefControlByGid(gid) {
       //   return this.refControls[gid]
       // },
-      ctxLoader() {
+      $_ctxLoader() {
         return {
-          currentRow: this.currentRow,
-          currentQuery: this.$refs.query.ctxLoader()
+          table: {
+            currentRow: this.currentRow,
+            currentQuery: this.$refs.query.$_ctxLoader(),
+          },
+          vars: this.glVars
         }
       }
     }

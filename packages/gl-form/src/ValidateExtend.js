@@ -1,5 +1,9 @@
+/**
+ *  扩展vee-validate的验证功能
+ *  增加服务端唯一验证unique
+ */
 import {extend} from "vee-validate";
-import utils from '../../utils.js'
+import utils from '../../utils/utils.js'
 
 export default {
   install: function (Vue) {

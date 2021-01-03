@@ -1,4 +1,4 @@
-import utils from './utils.js'
+import utils from './utils/utils.js'
 
 export default class Action {
   constructor({gid, text, fn, params, ctx, then, dataMapping, type, show, icon}) {

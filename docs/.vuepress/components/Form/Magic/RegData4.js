@@ -10,15 +10,32 @@ export default {
         // 设置该id:{}，便于子实体中依赖该id
         id: {},
         name: {
-          control: 'input',
+          control: 'Input',
           title: '姓名',
           rules: {
             required: true,
             unique: true
+          },
+          readOnly: true,
+          value: '',
+          valueExpression: 'js:ctx.form.firstName'
+        },
+        firstName: {
+          control: 'Input',
+          title: '名',
+          rules: {
+            required: true
+          }
+        },
+        lastName: {
+          control: 'Input',
+          title: '姓',
+          rules: {
+            required: true
           }
         },
         loginName: {
-          control: 'input',
+          control: 'Input',
           title: '登录名',
           rules: {
             required: true,
@@ -32,14 +49,14 @@ export default {
                 params: [{
                   name: 'loginName',
                   cop: 'eq',
-                  value: '$ctx.loginName'
+                  value: 'js:ctx.form.loginName'
                 }],
               }
             }
           }
         },
         password: {
-          control: 'password',
+          control: 'Password',
           title: '密码',
           tips: '至少6位',
           rules: {
@@ -68,7 +85,7 @@ export default {
           }
         },
         age: {
-          control: 'input',
+          control: 'Input',
           title: '年龄',
           // 值
           value: '20',
@@ -77,12 +94,12 @@ export default {
           }
         },
         avatar: {
-          control: 'image',
+          control: 'Image',
           title: '头像',
           value: 'elliot',
         },
         sex: {
-          control: 'select',
+          control: 'Select',
           title: '性别',
           // 若数据是动态生产成，可配置ds，基于ds加载的数据最终会设置到data中
           data: [
@@ -98,7 +115,7 @@ export default {
           }
         },
         tel: {
-          control: 'input',
+          control: 'Input',
           title: '电话',
           // 如果实体的字段名称与tel不一样，或因多实体都存在tel字段，可通过field指定，field未设置时，field:'tel'
           field: 'telephone',
@@ -116,30 +133,30 @@ export default {
           }
         },
         province: {
-          control: 'select',
+          control: 'Select',
           title: '省份',
           dsName: 'province',
           // 广东省
           value: '440000'
         },
         city: {
-          control: 'select',
+          control: 'Select',
           title: '城市',
           // 基于数据源，数源名称可自取，如cityDS，不一定需等于本属性名
           dsName: 'city',
-          js: "gs:$ctx.city=$ctx.province",
+          // js: "js:ctx.form.city=ctx.form.province",
           props: {
             // 当为data设置了数组项之后，默认激活项的索引
             defaultActiveIndex: 0
           }
         },
         enable: {
-          control: 'checkbox',
+          control: 'Checkbox',
           title: '启用',
           value: true
         },
         description: {
-          control: 'textarea',
+          control: 'Textarea',
           title: '描述'
         }
       },
@@ -152,6 +169,10 @@ export default {
             {
               span: 12,
               rows: [{
+                cols: [{span: 8, label: true, field: 'lastName'}, {span: 16, field: 'lastName'}]
+              }, {
+                cols: [{span: 8, label: true, field: 'firstName'}, {span: 16, field: 'firstName'}]
+              }, {
                 cols: [{span: 8, label: true, field: 'name'}, {span: 16, field: 'name'}]
               }, {
                 cols: [{span: 8, label: true, field: 'sex'}, {span: 16, field: 'sex'}]
@@ -187,9 +208,9 @@ export default {
         hidden: {
           // 各表单状态，需隐藏的内容
           common: {
-            typeA: 'gs:$ctx.form.type!=="typeA"',
-            typeB: 'gs:$ctx.form.type!=="typeB"',
-            typeC: 'gs:$ctx.form.type!=="typeC"'
+            typeA: 'js:ctx.form.type!=="typeA"',
+            typeB: 'js:ctx.form.type!=="typeB"',
+            typeC: 'js:ctx.form.type!=="typeC"'
           },
           update: {password: 1, confirmPassword: 2},
           create: {},
@@ -207,7 +228,7 @@ export default {
             text: 'name',
             value: 'code'
           },
-          description: '这是一个下拉列表数据源'
+          description: 'js:`这是一个下拉列表数据源${ctx}`'
         },
         city: {
           entity: 'platform_city',
@@ -222,7 +243,7 @@ export default {
             // 该信息会自动加入计算属性中，当province的值变动时，该数据源会重新加载计算
             name: 'provinceCode',
             cop: 'eq',
-            value: '$ctx.province'
+            value: 'js:ctx.form.province'
           }],
           description: '这是一个下拉列表数据源，带参数'
         }

@@ -23,7 +23,7 @@
 </template>
 
 <script>
-  import RegData from './RegData3.js'
+  import RegData from './RegData4.js'
 
   export default {
     name: "RegExample",
@@ -63,10 +63,10 @@
         })
       },
       onPropertyUpdate({property, val, oval}) {
-        console.log('onPropertyUpdate>', property, val, oval)
+        console.log('Example > onPropertyUpdate() >property, val, oval:', property, val, oval)
       },
       onAction(data) {
-        console.log('onAction data>', data)
+        console.log('Example > onAction() > data:>', data)
       }
     }
   }

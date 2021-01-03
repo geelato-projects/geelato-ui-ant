@@ -1,9 +1,12 @@
-import selectItems from './base/selectItems.js'
-
-const GEELATO_SCRIPT_PREFIX = 'gs:'
+const GEELATO_SCRIPT_PREFIX = 'js:'
 // const REGEXP_FORM = /gs[\s]*:[\s]*\$ctx\.form\.[a-zA-Z]+[a-zA-Z0-9]*/g;
-const REGEXP_FORM = /gs[\s]*:[\s]*\$ctx\.[a-zA-Z0-9]*/g;
+// const REGEXP_FORM = /gs[\s]*:[\s]*\$ctx\.[a-zA-Z0-9]*/g;
+const REGEXP_FORM = /[\s]*\$ctx\.[a-zA-Z0-9]*/g;
 const REGEXP_CTX = /\$ctx/g
+// 前后可有空格，如" ${app.appName} "
+// const REGEXP_VAR_G = /^[\s]*\$[\s]*\{[\s]*(component|page|platform|app|ctx)\.[a-zA-Z0-9]*[\s]*\}[\s]*$/g
+const REGEXP_VAR_G = /ctx\.[a-zA-Z0-9]+\.[a-zA-Z]+/g
+
 const REGEXP_DEPEND_PROPERTY = /\$ctx\.[a-zA-Z]+/g
 const CONST_GQL_PARENT = '$parent'
 
@@ -35,16 +38,17 @@ export default class EntityDataReaderHandler {
    */
   parseDependent() {
     let that = this
-    // 构建数据源依赖 dsBeDependentOn e.g. {provinceCode: 'gs:$ctx.form.province'}
+    // 构建数据源依赖 dsBeDependentOn e.g. {provinceCode: 'js:ctx.form.province'}
     // dsName与 propertyName 一致
     for (let dsName in that.ds) {
       let propertyDs = that.ds[dsName]
       for (let paramIndex in propertyDs.params) {
         let param = propertyDs.params[paramIndex]
         console.log('geelato-ui-ant > EntityDataReaderHandler.js > parseDependent() > parsing dependent of dsName "', dsName, '" by param:', param.value)
-        if (REGEXP_FORM.test(param.value)) {
-          param.value.match(REGEXP_FORM).forEach(function (item) {
-            let dependPropertyName = item.substring(item.lastIndexOf('.') + 1)
+        // param.value中可能存在多个变量
+        if (REGEXP_VAR_G.test(param.value)) {
+          param.value.match(REGEXP_VAR_G).forEach(function (item) {
+            let dependPropertyName = item.substring(item.lastIndexOf('.') + 1, item.length)
             let beBeDependentProperty = that.getPropertyByDsName(dsName)
             console.log('geelato-ui-ant > EntityDataReaderHandler.js > parseDependent() > parsed dependent of dsName "', dsName, '" beBeDependentProperty:', JSON.parse(JSON.stringify(beBeDependentProperty)), beBeDependentProperty.gid, that.dsBeDependentOn[dependPropertyName])
             that.dsBeDependentOn[dependPropertyName] = that.dsBeDependentOn[dependPropertyName] || []
@@ -73,7 +77,7 @@ export default class EntityDataReaderHandler {
    * 加载数据源
    *  @param property 加载数据之后
    * */
-  loadData({property, callback, ctx}) {
+  loadData({property, callback, ctx = this.ctxLoader()}) {
     let that = this
     let dsName = property.dsName
     if (!dsName) {
@@ -92,17 +96,18 @@ export default class EntityDataReaderHandler {
           let param = entityDataReaderInfo.params[paramIndex]
           // let property = this.getPropertyByName(param.name)
           // console.log('geelato-ui-ant > EntityDataReaderHandler.js > loadData() > property:', property, ', param:', param)
-          kvs[param.name + '|' + (param.cop || 'eq')] = this.rungs(param.value, ctx)
+          kvs[param.name + '|' + (param.cop || 'eq')] = this.$gl.utils.runJs(param.value, ctx)
         }
       }
       if (entityDataReaderInfo.order) {
         Object.assign(kvs, {'@order': entityDataReaderInfo.order})
       }
+      console.log('geelato-ui-ant > EntityDataReaderHandler.js > loadData() > query params:', kvs)
       that.$gl.api.query(entityDataReaderInfo.entity, entityDataReaderInfo.fields, kvs).then(function (res) {
         // 依据数据源的配置，处理返回的数据结果
         that.$gl.api.resultHandler(res, entityDataReaderInfo.resultMapping)
         that.$gl.globalVue.set(property, 'data', res.data)
-        console.log('geelato-ui-ant > EntityDataReaderHandler.js > loadData() > set property.data=', res.data)
+        // console.log('geelato-ui-ant > EntityDataReaderHandler.js > loadData() > set property.data=', res.data)
         // 触发级联加载数据
         if (dsName) {
           that.onLoadRefData({property})
@@ -120,36 +125,20 @@ export default class EntityDataReaderHandler {
    * 级联加载数据
    * */
   onLoadRefData({property}) {
-    console.log('geelato-ui-ant > EntityDataReaderHandler.js > onLoadRefData() > parsing triggeringDsNameDsNames of property:', property)
+    let that = this
+    console.log('geelato-ui-ant > EntityDataReaderHandler.js > onLoadRefData() > find triggeringDsNameDsNames by property:', property, ',current dsBeDependentOn:', that.dsBeDependentOn)
     if (!property) {
       return
     }
-    let that = this
     let triggeringDsNameDsNames = that.dsBeDependentOn[property.gid] || []
-    console.log('geelato-ui-ant > EntityDataReaderHandler.js > onLoadRefData() > parsed triggeringDsNameDsNames:', triggeringDsNameDsNames)
+    console.log('geelato-ui-ant > EntityDataReaderHandler.js > onLoadRefData() > found triggeringDsNameDsNames:', triggeringDsNameDsNames, ', and ', triggeringDsNameDsNames.length > 0 ? 'trigger' : 'do not trigger')
     triggeringDsNameDsNames.forEach(function (triggeringDsName) {
       let triggeringProperty = that.getPropertyByName(triggeringDsName)
-      console.log('geelato-ui-ant > EntityDataReaderHandler.js > onLoadRefData() > after parse, try to load data by triggeringProperty:', triggeringProperty)
+      console.log('geelato-ui-ant > EntityDataReaderHandler.js > onLoadRefData() > found triggeringDsNameDsNames, try to load data by triggeringProperty:', triggeringProperty)
       if (triggeringProperty) {
         that.loadData({property: triggeringProperty})
       }
     })
-  }
-
-  /**
-   * gs(geelato script)执行表达式，若非gs表达式则直接返回
-   * @param gs gs:$ctx.form.province
-   * @param $ctx e.g. {form: that.getValues(), vars: {}}
-   */
-  rungs(str, ctx = this.ctxLoader()) {
-    // if (str.indexOf(GEELATO_SCRIPT_PREFIX) === 0) {
-    //   // let ctx = this.ctxLoader()
-    //   console.log('geelato-ui-ant > EntityDataReaderHandler.js > rungs() > ctx:', ctx)
-    //   return this.$gl.utils.eval(str.substring(3), ctx)
-    // } else {
-    //   return str
-    // }
-    return this.$gl.utils.eval(str, ctx)
   }
 
   getPropertyByName(name) {

@@ -1,6 +1,6 @@
 // import CryptoJS from 'crypto-js'
-
 let utils = {}
+let REG_JS_EXPRESSION = /^\s*js\s*:/
 /**
  * param({k1: {k2: {k3: 'value'}}}), output: k1.k2.k3=value
  * param({k1: 'value'}, 'p')), output:p.k1=value
@@ -196,13 +196,26 @@ utils.compileString = function (expression, $ctx) {
 }
 
 /**
- * 直接执行eval，代码检查工具eslintrc，提示有误，改该此方法
+ *
+ * @param jsExpression 格式：js:xxx
+ * @param ctx 上下文信息
+ * @param ctxName 默认为 'ctx'
+ * @return 符合格式要求的时，将js:xxx，中的xxx为作脚本执行；不符合时，直接返回当前jsExpression
+ */
+utils.runJs = function (jsExpression, ctx, ctxName = 'ctx') {
+  if (REG_JS_EXPRESSION.test(jsExpression)) {
+    return utils.eval(jsExpression.replace(REG_JS_EXPRESSION, ''), ctx, 'ctx')
+  }
+  return jsExpression
+}
+/**
+ * 直接执行eval
  * @param expression
  * @param $ctx 用于expression的上下文参数
  * @param ctxName 指定上下文的参数名，默认为$ctx
  * @returns {*}
  */
-utils.eval = function (expression, $ctx, ctxName = '$ctx') {
+utils.eval = function (expression, ctx, ctxName = '$ctx') {
   // console.log('geelato-ui-ant > utils > expression: ', expression)
   // console.log('geelato-ui-ant > utils > $ctx: ', $ctx)
   if (expression.indexOf(ctxName) === -1) {
@@ -215,21 +228,21 @@ utils.eval = function (expression, $ctx, ctxName = '$ctx') {
   let index = str.indexOf(';')
   if (index === -1 || index === str.length - 1) {
     // 单语句
-    return new Fn(ctxName, utilsName, 'return ' + expression)($ctx, $utils)
+    return new Fn(ctxName, utilsName, 'return ' + expression)(ctx, $utils)
   } else {
     // 多语句
     let strAry = str.split(';')
     let lastStr = strAry.pop();
     let preStr = strAry.join(';')
-    return new Fn(ctxName, utilsName, preStr + '; return ' + lastStr)($ctx, $utils)
+    return new Fn(ctxName, utilsName, preStr + '; return ' + lastStr)(ctx, $utils)
   }
 }
 
 /**
  *  遍历对象各层的键值，并进行变量替换
  */
-utils.deepConvertValue = function (obj, ctxLoader) {
-  const ctx = typeof ctxLoader === 'function' ? ctxLoader() : ctxLoader
+utils.deepConvertValue = function (obj, $_ctxLoader) {
+  const ctx = typeof $_ctxLoader === 'function' ? $_ctxLoader() : $_ctxLoader
 
   function replace(toReplaceObj) {
     let newObj
@@ -455,6 +468,42 @@ utils.dateFormat = function (d, formatString) {
     }
   }
   return fmt
+}
+
+/**
+ * 查找当前组件所在的页面组件
+ * @param component 组件实例
+ * @return 查找到当前组件所处的页面，若找不到则返回undefined
+ */
+utils.findCurrentPage = function (component) {
+  if (!component.$parent.$vnode) {
+    // 到了根节点，还找不到，可能是在设计器中执行该方案，设计器的舞台中不存在GlPage
+    return undefined
+  }
+  console.log('geelato-ui-ant > CtxHandler.js > findCurrentPage() > component.$parent):', component.$parent)
+  if (component.$parent.glType === 'page') {
+    return component.$parent
+  } else {
+    return this.findCurrentPage(component.$parent)
+  }
+}
+
+/**
+ * 查找当前控件（基础组件）所在的组件（高级组件）
+ * @param control 组件实例
+ * @return 查找到当前组件所处的页面，若找不到则返回undefined
+ */
+utils.findCurrentComponent = function (component) {
+  if (!component.$parent.$vnode) {
+    // 到了根节点，还找不到，可能是在设计器中执行该方案，设计器的舞台中不存在GlPage
+    return undefined
+  }
+  console.log('geelato-ui-ant > CtxHandler.js > findCurrentPage() > component.$parent):', component.$parent)
+  if (component.$parent.glType === 'component') {
+    return component.$parent
+  } else {
+    return this.findCurrentComponent(component.$parent)
+  }
 }
 
 // utils.CryptoJS = CryptoJS

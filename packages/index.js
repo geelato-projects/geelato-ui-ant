@@ -10,14 +10,13 @@ import GlListPlus from './gl-list-plus'
 import GlTree from './gl-tree'
 import GlForm from './gl-form'
 import GlTable from './gl-table'
-import GlTabs from './gl-tabs'
 import GlCard from './gl-card'
 import GlCardLayout from './gl-card-layout'
 import STable from './gl-table/src/s-table'
 import UIManager from './UIManager'
 import Api from './Api'
-import utils from './utils'
-import mixin from './mixin'
+import utils from './utils/utils'
+import mixin from './mixin/componentMixin'
 // import GlContextMenu from '@xunlei/vue-context-menu'
 import './style.css'
 import packageJson from '../package.json'
@@ -37,7 +36,6 @@ const components = [
   GlForm,
   GlTable,
   GlCard,
-  GlTabs,
   // GlItem,
   GlCardLayout,
   STable
@@ -59,6 +57,12 @@ const install = function (Vue, options) {
   Vue.prototype.$gl.ui = Vue.prototype.$gl.ui || new UIManager(Vue)
   Vue.prototype.$gl.bus = Vue.prototype.$gl.bus || new Vue()
   Vue.prototype.$gl.utils = Vue.prototype.$gl.utils || utils
+  Vue.prototype.$gl.vars = Vue.prototype.$gl.vars || {
+    platform: {$data: {glVars: {}}},
+    app: {$data: {glVars: {}}},
+    page: {$data: {glVars: {}}},
+    component: {$data: {glVars: {}}}
+  }
   Vue.prototype.$gl.globalVue = Vue
   // window is not defined
   // if (!window.$gl) {
@@ -95,7 +99,6 @@ export default {
   GlTree,
   GlTable,
   GlCard,
-  GlTabs,
   GlCardLayout,
   //
   utils,

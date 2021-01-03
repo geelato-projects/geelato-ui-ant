@@ -3,7 +3,7 @@
     <tr>
       <th style="width: 30%">控件</th>
       <th style="width: 70%">示例</th>
-      <!--<th style="width: 10%">值</th>-->
+      <th style="min-width: 10em">值</th>
     </tr>
     <tr v-for="property in config.properties">
       <td>{{property.control}} ({{property.title}})</td>
@@ -11,7 +11,7 @@
         <gl-control :form="form" :property="property" @propertyUpdate="onPropertyUpdate"
                     @loadRefData="onLoadRefData"></gl-control>
       </td>
-      <!--<td>{{form[property.gid]}}</td>-->
+      <td>{{form[property.gid]}}</td>
     </tr>
     <tr>
       <td>slider</td>

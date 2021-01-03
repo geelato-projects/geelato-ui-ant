@@ -9,6 +9,12 @@
 
 <<< @/docs/.vuepress/components/Control/Base/Example.vue
 
-### 配置 data.js
+### 配置
 
+#### 定义 DataFormat.js
+<<< @/docs/.vuepress/components/Control/DataFormat.js
+
+#### 示例 data.js
 <<< @/docs/.vuepress/components/Control/Base/data.js
+
+

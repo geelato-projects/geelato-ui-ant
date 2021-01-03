@@ -150,7 +150,6 @@ function genSidebarConfig(title) {
         'ui-gl-list',
         'ui-gl-list-plus',
         'ui-gl-tree',
-        'ui-gl-tabs',
         'ui-gl-card',
         'ui-gl-card-layout',
         'ui-gl-modal'

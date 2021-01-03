@@ -8,12 +8,13 @@
     <div class="gl-table-header"></div>
     <gl-form-item v-if="refresh" :rows="layout.rows" :properties="properties" :form="form"
                   :glRefControls="glRefControls"
+                  :glVars="glVars"
                   :loadedData="loadedData"
                   @propertyUpdate="onPropertyUpdate"></gl-form-item>
     <div class="gl-table-toolbar" v-show="toolbar.show" style="text-align: center">
       <template v-for="(action,index) in toolbar.actions" v-if="action.gid=action.gid||$gl.utils.uuid(8)">
         <a-button :ref="action.gid" :type="action.type||'primary'" :icon="action.icon"
-                  :key="index" v-if="action.show===undefined||action.show===''||rungs(action.show)"
+                  :key="index" v-if="action.show===undefined||action.show===''||$_runJs(action.show)"
                   @click="$_doAction(action)"
         >
           {{action.text||action.title}}
@@ -27,13 +28,13 @@
   import {validate} from 'vee-validate';
   import validateExtend from './ValidateExtend'
   import GlFormItem from './GlFormItem'
-  import mixin from '../../mixin'
-  import utils from '../../utils'
+  import mixin from '../../mixin/componentMixin'
+  import utils from '../../utils/utils'
   import Action from '../../Action'
   import EntityDataReaderHandler from "../../EntityDataReaderHandler";
 
-  let GEELATO_SCRIPT_PREFIX = 'gs:'
-  let REGEXP_FORM = /gs[\s]*:[\s]*\$ctx\.form\.[a-zA-Z]+[a-zA-Z0-9]*/g;
+  // let GEELATO_SCRIPT_PREFIX = 'gs:'
+  // let REGEXP_FORM = /gs[\s]*:[\s]*\$ctx\.form\.[a-zA-Z]+[a-zA-Z0-9]*/g;
   let REGEXP_CTX = /\$ctx/g
   let REGEXP_DEPEND_PROPERTY = /\$ctx\.[a-zA-Z]+/g
   let CONST_GQL_PARENT = '$parent'
@@ -55,7 +56,7 @@
         // key为field，value为propertyName，包括了field与propertyName一致、不一致的情况
         fieldPropertyNameMap: {},
         ds: this.opts.ds,
-        vars: this.opts.vars,
+        glVars: this.opts.vars,
         loadedData: {
           id: utils.uuid(16),
           payload: undefined
@@ -102,7 +103,7 @@
           this.defaultEntity = options.defaultEntity
           this.queryFields = options.queryFields || ['id']
           this.ds = options.ds
-          this.vars = options.vars
+          this.glVars = options.vars
           this.init = false
         }
         this.initConvertData(params)
@@ -136,11 +137,19 @@
             property.value = params[propertyName]
             // that.$set(property, 'value', params[propertyName])
           } else {
-            that.$set(that.form, propertyName, property.value = property.value || property.props.defaultValue || '')
+            let formPropertyValue = property.value = property.value || property.props.defaultValue || ''
+            // that.$set(that.form, propertyName, property.value = property.value || property.props.defaultValue || '')
             // 如果值还为空，则试着以defaultIndex指定的值来进行设置，如select控件
-            if (!that.form[propertyName] && property.data && property.data.length > 0 && property.props.defaultActiveIndex !== undefined) {
-              that.$set(that.form, propertyName, property.data[property.props.defaultActiveIndex].value)
+            if (!formPropertyValue && property.data && property.data.length > 0) {
+              let dataIndex = property.props.defaultActiveIndex || 0
+              formPropertyValue = property.data[dataIndex].value
             }
+            that.$set(that.form, propertyName, formPropertyValue)
+            // 如果值还为空，则试着以defaultIndex指定的值来进行设置，如select控件
+            // if (!that.form[propertyName] && property.data && property.data.length > 0) {
+            //   let dataIndex = property.props.defaultActiveIndex || 0
+            //   that.$set(that.form, propertyName, property.data[dataIndex].value)
+            // }
           }
           // this.form[key] = property.value === undefined ? '' : property.value
           // 依据字段类型，自动构建字段验证规则信息，兼容semantic ui form validate
@@ -157,7 +166,7 @@
           $gl: this.$gl,
           ds: this.ds,
           dataMountTargetProperties: this.properties,
-          ctxLoader: this.ctxLoader
+          ctxLoader: this.$_ctxLoader
         })
         // 解析数据源，并初始化加载数据
         this.entityDataReaderHandler.execute()
@@ -250,18 +259,19 @@
        * gs(geelato script)执行表达式，若非gs表达式则直接返回
        * @param gs gs:$ctx.form.province
        */
-      rungs(str) {
-        let that = this
-        let $ctx = {form: that.getValues(), vars: {}}
-        for (let varName in (that.vars || [])) {
-          $ctx.vars[varName] = typeof that.vars[varName] === 'object' ? that.vars[varName].value : that.vars[varName]
-        }
-        if (str.indexOf(GEELATO_SCRIPT_PREFIX) === 0) {
-          return utils.eval(str.substring(3), $ctx)
-        } else {
-          return str
-        }
-      },
+      // rungs(str) {
+      //   console.log('geelato-ui-ant > gl-form > rungs() > str:', str)
+      //   let that = this
+      //   let $ctx = {form: that.getValues(), vars: {}}
+      //   for (let varName in (that.vars || [])) {
+      //     $ctx.vars[varName] = typeof that.vars[varName] === 'object' ? that.vars[varName].value : that.vars[varName]
+      //   }
+      //   if (str.indexOf(GEELATO_SCRIPT_PREFIX) === 0) {
+      //     return utils.eval(str.substring(3), $ctx)
+      //   } else {
+      //     return str
+      //   }
+      // },
       getProperty(name) {
         if (!name || !this.properties[name]) {
           return {control: 'null', title: ' '}
@@ -369,6 +379,7 @@
             }
           }
         }
+        console.log('geelato-ui-ant > gl-form > getValues() > form,newForm:', this.form, newForm)
         return newForm
       },
       setValues() {
@@ -510,12 +521,8 @@
       // $_getRefControlByGid(gid) {
       //   return this.refControls[gid]
       // },
-      ctxLoader() {
-        // let $ctx = {form: this.getValues(), vars: {}}
-        // for (let varName in (that.vars || [])) {
-        //   $ctx.vars[varName] = typeof that.vars[varName] === 'object' ? that.vars[varName].value : that.vars[varName]
-        // }
-        return {form: this.form}
+      $_ctxLoader() {
+        return {form: this.form, vars: this.glVars}
       }
 
     }

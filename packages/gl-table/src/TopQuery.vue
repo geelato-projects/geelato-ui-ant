@@ -38,7 +38,7 @@
 <script>
 
   import EntityDataReaderHandler from '../../EntityDataReaderHandler'
-  import utils from '../../utils'
+  import utils from '../../utils/utils'
   import selectItem from '../../base/selectItems.js'
 
   export default {
@@ -93,7 +93,7 @@
           $gl: this.$gl,
           ds: this.ds,
           dataMountTargetProperties: this.properties,
-          ctxLoader: this.ctxLoader
+          $_ctxLoader: this.$_ctxLoader
         }),
         refsMounted: 0,
         refsMounted2: false
@@ -255,7 +255,7 @@
         console.log('geelato-ui-ant > gl-table-top-query > gql查询条件为: ', result)
         return {value: result}
       },
-      ctxLoader() {
+      $_ctxLoader() {
         // let $ctx = {form: this.getValues(), vars: {}}
         // for (let varName in (that.vars || [])) {
         //   $ctx.vars[varName] = typeof that.vars[varName] === 'object' ? that.vars[varName].value : that.vars[varName]

@@ -38,7 +38,7 @@
 <script>
   /* eslint-disable no-unused-vars */
 
-  import mixin from '../../mixin'
+  import mixin from '../../mixin/componentMixin'
 
   export default {
     name: "GlModal",

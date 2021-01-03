@@ -1,6 +1,6 @@
 // import utils from './utils'
-import EntityDataReaderInfo from './EntityDataReaderInfo'
-import ActionResult from './ActionResult.js'
+import EntityDataReaderInfo from '../EntityDataReaderInfo'
+import ActionResult from '../ActionResult.js'
 // import utils from './utils.js'
 
 export default {
@@ -51,7 +51,8 @@ export default {
       // 用于绑定事件的控件
       glRefControls: {},
       // 用于定义组件变量
-      glVars: {}
+      glVars: {},
+      glType: 'component'
     }
   },
   destroyed() {
@@ -233,5 +234,16 @@ export default {
     $_sleep(time) {
       return new Promise((resolve) => setTimeout(resolve, time));
     },
+    /**
+     *  执行脚本
+     *  主要用于做字段值的动态计算，如将1、0转成是、否，字段内容合并形成新字段等
+     */
+    $_runJs(jsExpression) {
+      this.$gl.utils.findCru
+      return this.$gl.utils.runJs(jsExpression, this.$_ctxLoader())
+    },
+    $_ctxLoader() {
+      return {vars: this.glVars}
+    }
   }
 }

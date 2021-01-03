@@ -4,13 +4,14 @@
       <gl-cell v-bind="cell" v-for="(cell,cellIndex) in row.cols" :key="cellIndex">
         <template v-if="cell.rows">
           <gl-form-item :rows="cell.rows" :properties="properties" :form="form" :glRefControls="glRefControls"
+                        :glVars="glVars"
                         @propertyUpdate="onPropertyUpdate"
                         @loadRefData="onLoadRefData"></gl-form-item>
         </template>
         <template v-else>
           <gl-label v-if="cell.label" :label="cell.label" :property="getProperty(cell.field)"></gl-label>
           <gl-control :ref="getProperty(cell.field).gid" v-if="!cell.label" :form="form"
-                      :property="getProperty(cell.field)"
+                      :property="getProperty(cell.field)" :vars="glVars"
                       @propertyUpdate="onPropertyUpdate" @loadRefData="onLoadRefData"></gl-control>
         </template>
       </gl-cell>
@@ -48,6 +49,9 @@
       glRefControls: {
         type: Object,
         required: true
+      },
+      glVars: {
+        type: Object
       }
     },
     watch: {

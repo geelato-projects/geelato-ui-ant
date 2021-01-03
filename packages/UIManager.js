@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import utils from './utils'
+import utils from './utils/utils'
 
 let globalVue
 

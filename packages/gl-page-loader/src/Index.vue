@@ -17,7 +17,7 @@
   </div>
 </template>
 <script>
-  import mixin from '../../mixin'
+  import mixin from '../../mixin/componentMixin'
 
   export default {
     name: 'GlPageLoader',

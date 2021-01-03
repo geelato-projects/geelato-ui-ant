@@ -53,7 +53,7 @@
 </template>
 
 <script>
-  import mixin from '../../mixin'
+  import mixin from '../../mixin/componentMixin'
   import EntityDataReaderHandler from "../../EntityDataReaderHandler";
 
   export default {
@@ -331,7 +331,7 @@
         // console.log('geelato-ui-ant > gl-tree > Index.vue > onSelect() > control:', controlComponent)
         // controlComponent.$emit('click', this, {action: action, currentRightClickNode: this.currentRightClickNode})
       },
-      ctxLoader() {
+      $_ctxLoader() {
         return this
       }
     },

@@ -16,4 +16,4 @@ yarn add vee-validate
 
 ### 配置 data.js
 
-<<< @/docs/.vuepress/components/Form/Magic/RegData.js
+<<< @/docs/.vuepress/components/Form/Magic/RegData4.js
