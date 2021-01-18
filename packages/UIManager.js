@@ -58,6 +58,8 @@ function openVue(opener, modalConfig, vueComponent) {
   // console.log('geelato-ui-ant > PageManger > GlModal>', GlModal)
   let modalView = new GlModal({
     propsData: {
+      gid: utils.uuid(16),
+      opts: {},
       modalId: id,
       opener: opener,
       // body: vueComponent,

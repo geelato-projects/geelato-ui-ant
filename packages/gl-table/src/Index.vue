@@ -14,7 +14,7 @@
     </div>
 
     <div class="table-operator" v-show="opts.toolbar.show!==false">
-      <template v-for="(action) in opts.toolbar.actions" v-if="action.gid=action.gid||$gl.utils.uuid(8)">
+      <template v-for="(action) in opts.toolbar.actions" v-if="action.gid=action.gid||$gl.utils.uuid(16)">
         <!--@click="onToolbarAction(action,{rowSelection:options.rowSelection,index:index})"-->
         <a-button :ref="action.gid" :type="action.type||'primary'" :icon="action.icon"
                   :key="action.gid" v-if="action.show===undefined||$_runJs(action.show)" style="margin-right:0.5em"
@@ -26,7 +26,7 @@
     </div>
     <!--由于下拉菜单在收起状态时，ref选不中，这里增加一个隐藏状态的按钮用于在设计时可选择配置-->
     <div class="table-columns-operator" v-show="false">
-      <template v-for="action in opts.table.rowAction.actions" v-if="action.gid=action.gid||$gl.utils.uuid(8)">
+      <template v-for="action in opts.table.rowAction.actions" v-if="action.gid=action.gid||$gl.utils.uuid(16)">
         <a-button type="link" :key="action.gid" :ref="action.gid">{{action.title||action.text}}</a-button>
       </template>
     </div>
@@ -85,16 +85,6 @@
       TopQuery
     },
     mixins: [mixin],
-    props: {
-      opener: {
-        type: Object,
-        required: false
-      },
-      modal: {
-        type: Object,
-        required: false
-      }
-    },
     data() {
       return {
         mdl: {},
@@ -136,7 +126,7 @@
           // column.customRenderString = (column.customRenderString === undefined ? '' : column.customRenderString)
           if (column && column.customRenderString) {
             try {
-              column.customRender = this.$gl.utils.eval(column.customRenderString)
+              column.customRender = this.$gl.utils.checkJsExpressionSecurity(column.customRenderString) ? eval(column.customRenderString) : new Function()
             } catch (e) {
               console.error('geelato-ui-ant > gl-table > The format of column.customRenderString is incorrect:', column.customRenderString + '.', e)
             }
@@ -154,21 +144,7 @@
       console.log('geelato-ui-ant > gl-table > onQueryRefsMounted()')
       this.$_generateRefControl('gl-table')
       this.refresh()
-      // while (Object.keys(this.$refs).length === 0 && this.properties && this.properties.length > 0) {
-      //   (async function () {
-      //     Object.assign(that.tableControlRefs, that.$_generateRefControl('top-query'))
-      //     console.log('Do some thing, ' + new Date());
-      //     await that.$_sleep(1000);
-      //     console.log('Do other things, ' + new Date());
-      //   })()
-      // }
-      // that.$_sleep(3000).then(function () {
-      //
-      // });
     },
-    // destroyed() {
-    //   this.$_clearRefControl()
-    // },
     methods: {
       // query组件的查询回调，获取查询条件信息，并调用loadData查询数据，并以数据驱动刷新页面
       onQuery(data) {
@@ -285,12 +261,6 @@
       handleOk() {
 
       },
-      // onToolbarAction(action, rowSelection) {
-      //   let controlComponent = this.$_getRefControlByGid(action.gid)
-      //   console.log('geelato-ui-ant > gl-table > Index.vue > onToolbarAction() > action:', action)
-      //   console.log('geelato-ui-ant > gl-table > Index.vue > onToolbarAction() > rowSelection:', rowSelection)
-      //   console.log('geelato-ui-ant > gl-table > Index.vue > onToolbarAction() > control:', controlComponent)
-      // },
       onRowClick(action, record) {
         this.currentRow = record
         this.currentAction = action
@@ -298,32 +268,12 @@
         console.log('geelato-ui-ant > gl-table > Index.vue > onRowClick() > action:', action)
         console.log('geelato-ui-ant > gl-table > Index.vue > onRowClick() > record:', record)
         console.log('geelato-ui-ant > gl-table > Index.vue > onRowClick() > control:', controlComponent)
-        // this.$_doAction(action, record)
         controlComponent.$emit('click', this, record)
       },
-      // onToolbarAction(action) {
-      //   console.log('geelato-ui-ant > gl-table > Index.vue > onToolbarAction() > action:', action)
-      //   this.$gl.ui.openModal(this, action.modal)
-      // },
       onSelectChange(selectedRowKeys, selectedRows) {
         this.selectedRowKeys = selectedRowKeys
         this.selectedRows = selectedRows
       },
-      // $_generateRefControl() {
-      //   for (let i in this.$refs) {
-      //     this.refControls[i] = this.$refs[i][0]
-      //   }
-      //   console.log('geelato-ui-ant > gl-table > $_generateRefControl() > $refs,refControls: ', this.$refs, this.refControls)
-      // },
-      // $_clearRefControl() {
-      //   for (let i in this.$refs) {
-      //     delete this.refControls[i]
-      //   }
-      //   console.log('geelato-ui-ant > gl-table > $_clearRefControl() > $refs,refControls: ', this.$refs, this.refControls)
-      // },
-      // $_getRefControlByGid(gid) {
-      //   return this.refControls[gid]
-      // },
       $_ctxLoader() {
         return {
           table: {

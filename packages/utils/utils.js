@@ -196,6 +196,12 @@ utils.compileString = function (expression, $ctx) {
 }
 
 /**
+ * 检查安全性
+ */
+utils.checkJsExpressionSecurity = function (jsExpression) {
+  return true
+}
+/**
  *
  * @param jsExpression 格式：js:xxx
  * @param ctx 上下文信息

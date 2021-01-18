@@ -7,7 +7,7 @@
       <a-col :md="colSpan" :sm="24" v-for="(property,index) in visibleProperties" :key="index"
              :title="property.title+dict[property.cop]">
         <a-form-item v-show="(!advanced&&index<colPerRow-1)||advanced" :label="property.title">
-          <gl-control v-if="refsMounted=true" :ref="property.gid" :property="property" :form="entity"
+          <gl-control v-if="refsMounted=true" :ref="property.gid" :gid="property.gid" :opts="property" :form="entity"
                       @propertyUpdate="onPropertyUpdate"></gl-control>
         </a-form-item>
       </a-col>
@@ -29,7 +29,7 @@
     <div style="display: none">
       <span v-for="(property,index) in inVisibleProperties" :key="index"
             :title="property.title+dict[property.cop]">
-          <gl-control :ref="property.gid" :property="property" :form="entity"
+          <gl-control :ref="property.gid" :gid="property.gid" :opts="property" :form="entity"
                       @propertyUpdate="onPropertyUpdate"></gl-control>
       </span>
     </div>

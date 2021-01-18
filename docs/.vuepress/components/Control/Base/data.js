@@ -16,7 +16,7 @@ export default {
     {gid: utils.uuid(16), field: utils.uuid(4), control: 'Password', title: '确认密码'},
     {gid: utils.uuid(16), field: utils.uuid(4), control: 'Switch', title: '开关'},
     {gid: utils.uuid(16), field: utils.uuid(4), control: 'Checkbox', title: '复选框（单个）'},
-    {gid: utils.uuid(16), field: utils.uuid(4), control: 'button', title: '按钮', icon: 'right', iconFirst: false},
+    {gid: utils.uuid(16), field: utils.uuid(4), control: 'Button', title: '按钮', icon: 'right', iconFirst: false},
     {gid: utils.uuid(16), field: utils.uuid(4), control: 'Link', title: '链接', icon: 'link', iconFirst: true},
     {
       gid: utils.uuid(16),

@@ -1,7 +1,5 @@
-// import utils from './utils'
 import EntityDataReaderInfo from '../EntityDataReaderInfo'
 import ActionResult from '../ActionResult.js'
-// import utils from './utils.js'
 
 export default {
   props: {
@@ -12,16 +10,15 @@ export default {
     opts: {
       type: Object
     },
-    // 表单的查询信息，如{id:'1345362334482731423'}，{treeNodeId:'1345362334482731423'}
-    // query: {
-    //   type: Object,
-    //   required: false,
-    //   default() {
-    //     return {}
-    //   }
-    // },
     // 参数，如{id:'1345362334482731423'}，{treeNodeId:'1345362334482731423'}
     params: {
+      type: Object,
+      default() {
+        return {}
+      }
+    },
+    // 变量
+    vars: {
       type: Object,
       default() {
         return {}
@@ -161,14 +158,16 @@ export default {
           this.glRefControls[i].$_generateRefControl('子组件初始化refs')
         }
       }
-      console.log(`geelato-ui-ant > mixin > $_generateRefControl() > [${componentName}] $refs,glRefControls: `, this.$refs, this.glRefControls)
+      console.log(`geelato-ui-ant > mixin > $_generateRefControl() > [${componentName}] $refs: `, this.$refs)
+      console.log(`geelato-ui-ant > mixin > $_generateRefControl() > [${componentName}] glRefControls: `, this.glRefControls)
       return this.glRefControls
     },
     $_clearRefControl() {
       for (let i in this.$refs) {
         delete this.glRefControls[i]
       }
-      console.log('geelato-ui-ant > mixin > $_clearRefControl() > $refs,glRefControls: ', this.$refs, this.glRefControls)
+      console.log('geelato-ui-ant > mixin > $_clearRefControl() > after clear, $refs: ', this.$refs)
+      console.log('geelato-ui-ant > mixin > $_clearRefControl() > after clear, glRefControls: ', this.glRefControls)
     },
     $_getRefControlByGid(gid) {
       if (!this.glRefControls[gid]) {
@@ -243,7 +242,9 @@ export default {
       return this.$gl.utils.runJs(jsExpression, this.$_ctxLoader())
     },
     $_ctxLoader() {
-      return {vars: this.glVars}
+      let vars = {}
+      Object.assign(vars, this.glVars, this.vars)
+      return {vars: vars, params: this.params}
     }
   }
 }

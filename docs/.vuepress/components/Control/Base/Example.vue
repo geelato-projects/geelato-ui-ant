@@ -8,7 +8,7 @@
     <tr v-for="property in config.properties">
       <td>{{property.control}} ({{property.title}})</td>
       <td>
-        <gl-control :form="form" :property="property" @propertyUpdate="onPropertyUpdate"
+        <gl-control :form="form" :gid="property.gid" :opts="property" @propertyUpdate="onPropertyUpdate"
                     @loadRefData="onLoadRefData"></gl-control>
       </td>
       <td>{{form[property.gid]}}</td>

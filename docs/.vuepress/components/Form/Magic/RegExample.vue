@@ -16,7 +16,7 @@
         {{GQLData}}
       </span>
     </a-alert>
-    <gl-form ref="magicForm" v-bind="config.bind" @propertyUpdate="onPropertyUpdate" @doAction="onAction"></gl-form>
+    <gl-form gid="hywjsunjsyy81hjaiyahh" ref="magicForm" v-bind="config.bind" @propertyUpdate="onPropertyUpdate" @doAction="onAction"></gl-form>
     <!--<component :is="xform" :opts="config" @doAction="onAction">-->
     <!--</component>-->
   </div>

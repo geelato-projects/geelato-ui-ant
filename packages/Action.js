@@ -2,7 +2,7 @@ import utils from './utils/utils.js'
 
 export default class Action {
   constructor({gid, text, fn, params, ctx, then, dataMapping, type, show, icon}) {
-    this.gid = gid || utils.uuid(8)
+    this.gid = gid || utils.uuid(16)
     this.text = text
     this.type = type
     this.fn = fn

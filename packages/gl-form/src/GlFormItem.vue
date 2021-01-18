@@ -8,10 +8,11 @@
                         @propertyUpdate="onPropertyUpdate"
                         @loadRefData="onLoadRefData"></gl-form-item>
         </template>
-        <template v-else>
+        <template v-else-if="getProperty(cell.field).gid">
           <gl-label v-if="cell.label" :label="cell.label" :property="getProperty(cell.field)"></gl-label>
-          <gl-control :ref="getProperty(cell.field).gid" v-if="!cell.label" :form="form"
-                      :property="getProperty(cell.field)" :vars="glVars"
+          <gl-control :ref="getProperty(cell.field).gid" v-if="!cell.label"
+                      :form="form"
+                      :gid="getProperty(cell.field).gid" :opts="getProperty(cell.field)" :vars="glVars"
                       @propertyUpdate="onPropertyUpdate" @loadRefData="onLoadRefData"></gl-control>
         </template>
       </gl-cell>
@@ -85,7 +86,7 @@
       },
       getProperty(name) {
         if (!name || !this.properties[name]) {
-          return {control: 'null', title: ' ', gid: this.$gl.utils.uuid(8)}
+          return {control: 'null', title: ' ', gid: this.$gl.utils.uuid(16)}
         }
         return this.properties[name]
       },

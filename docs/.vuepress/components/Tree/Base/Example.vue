@@ -1,6 +1,6 @@
 <template>
   <div>
-    <gl-tree ref="tree" v-bind="config.bind"></gl-tree>
+    <gl-tree ref="tree" gid="7yeg3tw91iwueusj" v-bind="config.bind"></gl-tree>
   </div>
 </template>
 <script>

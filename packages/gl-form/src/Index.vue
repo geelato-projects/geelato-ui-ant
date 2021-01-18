@@ -12,7 +12,7 @@
                   :loadedData="loadedData"
                   @propertyUpdate="onPropertyUpdate"></gl-form-item>
     <div class="gl-table-toolbar" v-show="toolbar.show" style="text-align: center">
-      <template v-for="(action,index) in toolbar.actions" v-if="action.gid=action.gid||$gl.utils.uuid(8)">
+      <template v-for="(action,index) in toolbar.actions" v-if="action.gid=action.gid||$gl.utils.uuid(16)">
         <a-button :ref="action.gid" :type="action.type||'primary'" :icon="action.icon"
                   :key="index" v-if="action.show===undefined||action.show===''||$_runJs(action.show)"
                   @click="$_doAction(action)"
@@ -121,7 +121,7 @@
           // 设置一些默认值，添加默认配置等
           let property = this.properties[propertyName]
           // gid 在form对象中的唯一标识
-          property.gid = propertyName
+          property.gid = property.gid || propertyName
           // init props
           property.props = property.props || {}
           // 未设置实体时，默认为defaultEntity
