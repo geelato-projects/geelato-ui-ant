@@ -70,7 +70,7 @@
       this.initDefaultValue()
     },
     mounted() {
-      console.log('geelato-ant-ui > gl-control > mounted()')
+      console.log('geelato-ui-ant > gl-control > mounted()')
     },
     updated() {
     },
@@ -79,7 +79,7 @@
         return this.model
       },
       setValue(value) {
-        console.log('geelato-ant-ui > gl-control > setValue() > model:', value)
+        console.log('geelato-ui-ant > gl-control > setValue() > model:', value)
         this.model = value
         this.opts.value = value
       },
@@ -103,7 +103,7 @@
         } else if (value === null || value === undefined) {
           v = ''
         } else {
-          console.warn('geelato-ant-ui > gl-control > loadRefData() > unset value:', value)
+          console.warn('geelato-ui-ant > gl-control > loadRefData() > unset value:', value)
         }
         this.setValue(v)
         // this.$set(this.form, this.opts.gid, v);
@@ -151,15 +151,17 @@
           let dataIndex = this.opts.props && this.opts.props.defaultActiveIndex || 0
           value = this.opts.data && this.opts.data.length > 0 && this.opts.data[dataIndex].value
         }
-        // console.log('geelato-ant-ui > gl-control > initDefaultValue()', this.opts, this.opts.title, value)
+        // console.log('geelato-ui-ant > gl-control > initDefaultValue()', this.opts, this.opts.title, value)
         that.setValue(value)
       },
       resetArrayDefaultValue() {
         let that = this
         let value = undefined
         if (!this.isValueTypeOfArray(this.opts.control)) {
-          let dataIndex = this.opts.props && this.opts.props.defaultActiveIndex || 0
-          value = this.opts.data && this.opts.data.length > 0 && this.opts.data[dataIndex].value
+          if (this.opts.data && this.opts.data.length > 0) {
+            let dataIndex = this.opts.props && this.opts.props.defaultActiveIndex || 0
+            value = this.opts.data[dataIndex].value
+          }
         }
         that.setValue(value)
       },
