@@ -38,19 +38,28 @@
   let REGEXP_CTX = /\$ctx/g
   let REGEXP_DEPEND_PROPERTY = /\$ctx\.[a-zA-Z]+/g
   let CONST_GQL_PARENT = '$parent'
+  // 表单主键字段名，默认为id
+  let pkField = 'id'
 
   export default {
     name: "GlForm",
-    mixins: [mixin],
-    components: {GlFormItem},
+    mixins:
+      [mixin],
+    components:
+      {
+        GlFormItem
+      }
+    ,
     data() {
       return {
         init: false,
         // 最终获取的表单数据取，单向，从控件中获取，key为propertyName的名或从query中传入的key（默认为propertyName）
         form: {},
         defaultEntity: this.opts.defaultEntity,
-        // 指定查询的字段，默认为按id查询，即为['id']
-        queryFields: this.opts.queryFields || ['id'],
+        // 当前表单主键字段名的值 ，对应properties中，field为pkFeild物理主键的key
+        pkValue: '',
+        // 指定查询的字段，默认为按id查询，即为[pkField]
+        queryFields: this.opts.queryFields || [pkField],
         layout: this.opts.layout,
         properties: this.opts.properties,
         // key为field，value为propertyName，包括了field与propertyName一致、不一致的情况
@@ -58,7 +67,7 @@
         ds: this.opts.ds,
         glVars: this.opts.vars,
         loadedData: {
-          id: utils.uuid(16),
+          [pkField]: utils.uuid(16),
           payload: undefined
         },
         // 列表等数据源处理
@@ -72,16 +81,19 @@
         // 在表单中直接引用控件
         // refControls: {}
       }
-    },
+    }
+    ,
     created() {
 
-    },
+    }
+    ,
     mounted() {
       console.log('geelato-ui-ant > gl-form > mounted() > opts:', this.opts)
       console.log('geelato-ui-ant > gl-form > mounted() > params:', this.params)
       this.reset({opts: this.opts})
 
-    },
+    }
+    ,
     methods: {
       reset({opts = this.opts, params = this.params} = {}) {
         if (opts) {
@@ -101,21 +113,33 @@
             })]
           }
           this.defaultEntity = options.defaultEntity
-          this.queryFields = options.queryFields || ['id']
+          // init pkValue
+          for (let key in this.properties) {
+            let property = this.properties[key]
+            if (property.field === pkField) {
+              this.pkValue = key
+              break
+            }
+          }
+          this.queryFields = options.queryFields || [pkField]
           this.ds = options.ds
           this.glVars = options.vars
           this.init = false
         }
         this.initConvertData(params)
         this.loadInitData(params)
+
+
         this.forceRefresh()
-      },
+      }
+      ,
       /**
        * 1、将简化的配置信息转换成完整的配置信息，如只设置了email类型，则将默认增加email验证规则
        * 2、转换并设置一些默认值
        * 3、分析数据源依赖
        *  */
       initConvertData(params) {
+        console.log('geelato-ui-ant > gl-form > initConvertData(),将简化的配置信息转换成完整的配置信息，如只设置了email类型，则将默认增加email验证规则. ')
         let that = this
         for (let propertyName in this.properties) {
           // 设置一些默认值，添加默认配置等
@@ -127,6 +151,7 @@
           // 未设置实体时，默认为defaultEntity
           property.entity = property.entity || this.defaultEntity
           property.field = property.field || propertyName
+          // TODO 如果在同一field对应多个propertyName的情况
           that.fieldPropertyNameMap[property.field] = propertyName
           // property.name = property.field
           // !!!需采用vm.$set的方式来设置值，确保值变化可被检测 @see https://cn.vuejs.org/v2/guide/reactivity.html#检测变化的注意事项
@@ -187,21 +212,24 @@
         // }
         // XXX---
         this.init = true
-        console.log('geelato-ui-ant > gl-form > initConvertData() > that.form: ', JSON.stringify(that.form))
-        console.log('geelato-ui-ant > gl-form > initConvertData() > that.properties: ', this.properties)
-      },
+        console.log('geelato-ui-ant > gl-form > initConvertData() > after convert,form: ', that.form)
+        console.log('geelato-ui-ant > gl-form > initConvertData() > after convert,properties: ', this.properties)
+      }
+      ,
       // 加载远程的初始化数据，如字典信息
       loadInitData(params) {
+        console.log('geelato-ui-ant > gl-form > initConvertData(),加载远程的初始化数据，如字典信息. ')
         // 加载主实体数据
         let that = this
         // console.log('geelato-ui-ant > gl-form > Index.vue >loadInitData() > params:', params)
         // console.log('geelato-ui-ant > gl-form > Index.vue >loadInitData() > queryFields:', that.queryFields)
-        // 一般地，若未指定queryFields，则condition 为{id: that.form.id}
+        // 一般地，若未指定queryFields，则condition 为{[pkField]: that.form[pkField]}
         let condition = {}
         let isValidCondition = false
         for (let i in this.queryFields) {
           let field = this.queryFields[i]
-          condition[field] = that.form[field]
+          let propertyName = that.fieldPropertyNameMap[field]
+          condition[field] = that.form[propertyName]
           if (condition[field]) {
             isValidCondition = true
           } else {
@@ -244,7 +272,8 @@
         //     this.loadData(propertyName, property, property.ds)
         //   }
         // }
-      },
+      }
+      ,
 
       /**
        * 更新状态，强行触发重置表单
@@ -254,7 +283,8 @@
         this.$nextTick(() => {
           this.refresh = true
         })
-      },
+      }
+      ,
       /**
        * gs(geelato script)执行表达式，若非gs表达式则直接返回
        * @param gs gs:$ctx.form.province
@@ -277,7 +307,8 @@
           return {control: 'null', title: ' '}
         }
         return this.properties[name]
-      },
+      }
+      ,
       validate() {
         let that = this
         // 清空错误信息
@@ -307,7 +338,7 @@
               // 扩展的规则参数（property.rules[ruleName]）值处理
               for (let ruleName in property.rules) {
                 console.log('gl-form > validate() > convert rule value:', ruleName, property.rules[ruleName], property)
-                rules[ruleName] = validateExtend.parseArg(ruleName, property.rules[ruleName], property, that.form.id)
+                rules[ruleName] = validateExtend.parseArg(ruleName, property.rules[ruleName], property, pkField, that.form[this.pkValue])
               }
               // 规则值变量待换
               rules = that.$gl.utils.deepConvertValue(rules, that.form)
@@ -339,7 +370,8 @@
           })
         })
         return validateInfoPromise
-      },
+      }
+      ,
       save() {
         let that = this
         return new Promise((resolve, reject) => {
@@ -348,24 +380,25 @@
             console.log('geelato-ui-ant > gl-form > save() > gql:', gql)
             that.$gl.api.saveByGql('', that.getGql()).then(function (res) {
               console.log('geelato-ui-ant > gl-form > save() > res:', res)
-              that.$set(that.form, 'id', res.result)
+              that.$set(that.form, that.pkValue, res.result)
               let result = that.getValues()
               // that.$emit('doAction', new ActionResult({fn: 'save', code: '0', message: '保存成功1', data: result}))
               resolve(result)
             })
           }).catch(function (e) {
             // 验证不通过
-            console.log('geelato-ui-ant > gl-form > save() > validate fail.')
-            console.error('geelato-ui-ant > gl-form > save() > e: ', e)
+            console.log('geelato-ui-ant > gl-form > save() > validate fail，e:', e)
             // that.$emit('doAction', new ActionResult({fn: 'save', code: '-1', message: '验证不通过', data: e}))
             reject(e)
           })
         })
-      },
+      }
+      ,
       getValue(propertyName) {
         let values = this.getValues()
         return values ? values[propertyName] : ''
-      },
+      }
+      ,
       getValues(withEmpty = false) {
         let newForm = {}
         if (withEmpty) {
@@ -381,9 +414,11 @@
         }
         console.log('geelato-ui-ant > gl-form > getValues() > form,newForm:', this.form, newForm)
         return newForm
-      },
+      }
+      ,
       setValues() {
-      },
+      }
+      ,
       getGql() {
         // 找出顶层的实体信息
         let that = this
@@ -505,19 +540,23 @@
         }
 
         return gql
-      },
+      }
+      ,
       doAction(action) {
         this[action.fn](action.params)
-      },
+      }
+      ,
       initFormValue() {
 
-      },
+      }
+      ,
       onPropertyUpdate({property, val, oval}) {
         this.$set(this.form, property.gid, val)
         this.$emit('propertyUpdate', {property, val, oval})
         // 该属性值已改变，试着加载级联数据
         this.entityDataReaderHandler.onLoadRefData({property})
-      },
+      }
+      ,
       // $_getRefControlByGid(gid) {
       //   return this.refControls[gid]
       // },

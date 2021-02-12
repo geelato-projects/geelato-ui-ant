@@ -40,8 +40,9 @@
 
     },
     methods: {
-      onPropertyUpdate() {
-
+      // {property: this.opts, val: val, oval: oval}
+      onPropertyUpdate({property, val, oval}) {
+        this.$set(this.form, property.gid, val)
       },
       onLoadRefData() {
       }

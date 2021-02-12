@@ -37,7 +37,7 @@
       'opts.data': {
         handler(val, oval) {
           // 多次watch
-          console.log('geelato-ui-ant > gl-control > watch > property.data: ', this.$el, val, oval)
+          console.log('geelato-ui-ant > gl-control > watch > opts.data: ', this.$el, val, oval)
           this.resetArrayDefaultValue()
         },
         // immediate: true,
@@ -45,7 +45,7 @@
       },
       'opts.value': {
         handler(val, oval) {
-          console.log('geelato-ui-ant > gl-control > watch > property.value, val:', val, ',oval:', oval)
+          console.log('geelato-ui-ant > gl-control > watch > opts.field:', this.opts.field, ' val:', val, ',oval:', oval)
           this.setValue(val)
         },
         // immediate: true,
@@ -70,7 +70,7 @@
       this.initDefaultValue()
     },
     mounted() {
-      console.log('geelato-ui-ant > gl-control > mounted()')
+      console.log('geelato-ui-ant > gl-control > mounted() > opts.field:', this.opts.field, this.opts)
     },
     updated() {
     },
@@ -198,35 +198,39 @@
       let propertyData = this.opts.data || []
       let fns = {}
       console.log('geelato-ui-ant > gl-control > render() > props:', props, this.opts)
+      // 新版 vue-cli4 中，已经默认集成了 JSX 语法对 v-model 的支持，可以直接使用 <input v-model={this.value}>
+      // 如果项目比较老，也可以安装插件 babel-plugin-jsx-v-model 来进行支持
       switch (control) {
         case 'Input':
-          controlDom = <a-input type="text"  {...{props}} onChange={this.loadRefData}/>
+          controlDom = <a-input type="text" v-model={this.model} {...{props}} onChange={this.loadRefData}/>
           break;
         case 'Button':
-          controlDom = <a-button {...{props}} onChange={this.loadRefData}>{this.opts.title}</a-button>
+          controlDom =
+            <a-button {...{props}} v-model={this.model} onChange={this.loadRefData}>{this.opts.title}</a-button>
           break
         case 'InputNumber':
-          controlDom = <a-input-number type="text" {...{props}} onChange={this.loadRefData}/>
+          controlDom = <a-input-number type="text" v-model={this.model} {...{props}} onChange={this.loadRefData}/>
           break;
         case 'Switch':
-          controlDom = <a-switch {...{props}} onChange={this.loadRefData}/>
+          controlDom = <a-switch {...{props}} v-model={this.model} onChange={this.loadRefData}/>
           break;
         case 'DatePicker':
-          controlDom = <a-date-picker {...{props}} onChange={this.loadRefData}/>
+          controlDom = <a-date-picker {...{props}} v-model={this.model} onChange={this.loadRefData}/>
           break;
         case 'TimePicker':
-          controlDom = <a-time-picker {...{props}} onChange={this.loadRefData} use12Hours format="h:mm:ss A"/>
+          controlDom =
+            <a-time-picker {...{props}} v-model={this.model} onChange={this.loadRefData} use12Hours format="h:mm:ss A"/>
           break;
         case 'Textarea':
-          controlDom = <a-textarea {...{props}} onChange={this.loadRefData} row="5"/>
+          controlDom = <a-textarea {...{props}} v-model={this.model} onChange={this.loadRefData} row="5"/>
           break;
         case 'Checkbox':
-          controlDom = <a-checkbox {...{props}} onChange={this.loadRefData}><span
+          controlDom = <a-checkbox {...{props}} v-model={this.model} onChange={this.loadRefData}><span
             style={this.opts.style}>{this.opts.title}</span></a-checkbox>
           break;
         case 'CheckboxGroup':
           controlDom =
-            <a-checkbox-group>
+            <a-checkbox-group v-model={this.model}>
               {
                 propertyData.map(item => {
                   return <a-checkbox value={item.value} disabled={item.disabled}>
@@ -237,7 +241,7 @@
             </a-checkbox-group>
           break;
         case 'RadioButton':
-          controlDom = <a-radio-group {...{props}}>
+          controlDom = <a-radio-group v-model={this.model} {...{props}}>
             {
               propertyData.map((selectOption, selectOptionKey) => {
                 return <a-radio-button key={selectOptionKey} value={selectOption.value}
@@ -247,7 +251,7 @@
           </a-radio-group>
           break;
         case 'Radio':
-          controlDom = <a-radio-group {...{props}}>
+          controlDom = <a-radio-group v-model={this.model}  {...{props}}>
             {
               propertyData.map((selectOption, selectOptionKey) => {
                 return <a-radio key={selectOptionKey} value={selectOption.value}
@@ -275,12 +279,12 @@
             </a-select>
           break
         case 'Email':
-          controlDom = <a-input type="email" {...{props}} onChange={this.loadRefData}>
+          controlDom = <a-input type="email" v-model={this.model}  {...{props}} onChange={this.loadRefData}>
             <a-icon slot="prefix" type="mail"/>
           </a-input>
           break
         case 'Password':
-          controlDom = <a-input type="password" {...{props}} onChange={this.loadRefData}>
+          controlDom = <a-input v-model={this.model} type="password" {...{props}} onChange={this.loadRefData}>
             <a-icon slot='prefix' type='lock'/>
           </a-input>
           break
@@ -301,7 +305,7 @@
           controlDom = <a-rate v-model={this.model}/>
           break;
         default:
-          controlDom = <a-switch {...{props}} onChange={this.loadRefData}/>
+          controlDom = <a-switch v-model={this.model} {...{props}} onChange={this.loadRefData}/>
       }
 
       return (

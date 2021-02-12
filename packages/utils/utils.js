@@ -222,8 +222,8 @@ utils.runJs = function (jsExpression, ctx, ctxName = 'ctx') {
  * @returns {*}
  */
 utils.eval = function (expression, ctx, ctxName = '$ctx') {
-  // console.log('geelato-ui-ant > utils > expression: ', expression)
-  // console.log('geelato-ui-ant > utils > $ctx: ', $ctx)
+  console.log('geelato-ui-ant > utils > eval() > expression: ', expression)
+  console.log('geelato-ui-ant > utils > eval() > ctx: ', ctx)
   if (expression.indexOf(ctxName) === -1) {
     return expression
   }
@@ -263,7 +263,7 @@ utils.deepConvertValue = function (obj, $_ctxLoader) {
         newObj[key] = replace(toReplaceObj[key])
       }
     } else if (typeof toReplaceObj === 'string') {
-      console.log('String >', toReplaceObj)
+      console.log('utils.deepConvertValue() > toReplaceString:', toReplaceObj)
       newObj = utils.eval(toReplaceObj, ctx)
     } else {
       newObj = toReplaceObj

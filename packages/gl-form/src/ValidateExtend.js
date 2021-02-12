@@ -11,11 +11,11 @@ export default {
     // 扩展验证功能
     extend('unique', {
       async validate(value, args) {
-        console.log('geelato-ant-ui > ValidateExtend > install() > validate unique > value：', value, 'args:', args)
+        console.log('geelato-ui-ant > ValidateExtend > install() > validate unique > value：', value, 'args:', args)
         let found = false
         await Vue.prototype.$gl.api.queryByEntityDataReader(args.entityReader).then(function (result) {
           found = result.totalCount
-          console.log('geelato-ant-ui > ValidateExtend > install() > validate unique > validate result：', result)
+          console.log('geelato-ui-ant > ValidateExtend > install() > validate unique > validate result：', result)
         })
         return found ? false : true
       },
@@ -29,20 +29,21 @@ export default {
    * @param ruleName 规则名称:string
    * @param ruleArg  规则参数:any
    * @param formProperty 规则所在表单字段信息
+   * @param entityId 规则所在表单主键字段
    * @return {*}
    */
-  parseArg(ruleName, ruleArg, formProperty, entityId) {
-    return argsHandler[ruleName] ? argsHandler[ruleName](ruleArg, formProperty, entityId) : ruleArg
+  parseArg(ruleName, ruleArg, formProperty, pkField, pkValue) {
+    return argsHandler[ruleName] ? argsHandler[ruleName](ruleArg, formProperty, pkField, pkValue) : ruleArg
   }
 }
 
 let argsHandler = {
-  'unique': function (ruleArg, formProperty, entityId) {
+  'unique': function (ruleArg, formProperty, pkField, pkValue) {
     let _params = []
-    if (entityId) {
-      _params.push({name: 'id', cop: 'neq', value: '$ctx.id'})
+    if (pkValue) {
+      _params.push({name: pkField, cop: 'neq', value: pkValue})
     }
-    _params.push({name: formProperty.field, cop: 'eq', value: '$ctx.' + formProperty.field})
+    _params.push({name: formProperty.field, cop: 'eq', value: '$ctx.' + formProperty.gid})
     if (ruleArg === true) {
       return {
         entityReader: {

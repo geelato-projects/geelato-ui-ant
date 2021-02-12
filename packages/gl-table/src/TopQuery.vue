@@ -8,7 +8,7 @@
              :title="property.title+dict[property.cop]">
         <a-form-item v-show="(!advanced&&index<colPerRow-1)||advanced" :label="property.title">
           <gl-control v-if="refsMounted=true" :ref="property.gid" :gid="property.gid" :opts="property" :form="entity"
-                      @propertyUpdate="onPropertyUpdate"></gl-control>
+                      @propertyUpdate="onPropertyUpdate" @keyup.enter="submit"></gl-control>
         </a-form-item>
       </a-col>
       <a-col :md="colSpan * (colPerRow - properties.length % colPerRow -1)" v-if="advanced">

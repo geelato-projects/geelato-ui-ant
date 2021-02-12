@@ -54,6 +54,7 @@ export default {
   },
   destroyed() {
     this.$_clearRefControl()
+    console.log('geelato-ui-ant > mixin > destroyed()', this.$options._componentTag)
   },
   methods: {
     $_doAction(action, data, callback) {
