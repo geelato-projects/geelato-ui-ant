@@ -1,6 +1,6 @@
 <template>
   <div>
-
+    <a-button type="primary" @click="$i18n.locale=($i18n.locale==='zh'?'en':'zh')">切换为{{$i18n.locale==='zh'?'English':'中文'}}</a-button>
     <a-button type="primary" @click="reset">重置表单</a-button>
     <a-button type="primary" @click="validate">校验表单</a-button>
     <a-button type="primary" @click="getValues">{{showFormValue?'隐藏表单值':'获取表单值'}}</a-button>
@@ -16,7 +16,8 @@
         {{GQLData}}
       </span>
     </a-alert>
-    <gl-form gid="hywjsunjsyy81hjaiyahh" ref="magicForm" v-bind="config.bind" @propertyUpdate="onPropertyUpdate" @doAction="onAction"></gl-form>
+    <gl-form gid="hywjsunjsyy81hjaiyahh" ref="magicForm" v-bind="config.bind" @propertyUpdate="onPropertyUpdate"
+             @doAction="onAction"></gl-form>
     <!--<component :is="xform" :opts="config" @doAction="onAction">-->
     <!--</component>-->
   </div>

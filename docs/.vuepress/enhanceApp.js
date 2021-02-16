@@ -1,6 +1,7 @@
 /**
  * 扩展 VuePress 应用
  */
+import i18n from '../../packages/locales/index'
 // import Storage from 'vue-ls';
 import AntDesign from 'ant-design-vue'
 // 对于导入antd.less，注意需config.js中less的javascriptEnabled: true才可正常执行
@@ -21,6 +22,7 @@ export default ({
                   router, // 当前应用的路由实例
                   siteData, // 站点元数据
                 }) => {
+  options.i18n = i18n
 
   let auiOptions = {
     // 修改服务地址，默认为http://localhost:8080/api

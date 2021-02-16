@@ -1,5 +1,6 @@
 import EntityDataReaderInfo from '../EntityDataReaderInfo'
 import ActionResult from '../ActionResult.js'
+import i18n from "../locales";
 
 export default {
   props: {
@@ -52,11 +53,38 @@ export default {
       glType: 'component'
     }
   },
+  created() {
+    this.$_createI18nMessages()
+  },
   destroyed() {
+    this.$_destroyedI18nMessages()
     this.$_clearRefControl()
-    console.log('geelato-ui-ant > mixin > destroyed()', this.$options._componentTag)
+    console.log('geelato-ui-ant > mixin > componentMixin > destroyed()', this.$options._componentTag)
   },
   methods: {
+    $_createI18nMessages() {
+      if (this.opts.i18n) {
+        for (let locale in this.opts.i18n) {
+          i18n.mergeLocaleMessage(locale, this.opts.i18n[locale])
+        }
+      }
+      console.log('geelato-ui-ant > mixin > componentMixin > $_createI18nMessages() > component:', this.$options._componentTag, '  i18n:', this.opts.i18n)
+    },
+    /**
+     *  去掉全局注册的i18n消息
+     *  销毁组件实例时调用
+     */
+    $_destroyedI18nMessages() {
+      if (this.opts.i18n) {
+        for (let locale in this.opts.i18n) {
+          let msgObj = i18n.getLocaleMessage(locale)
+          for (let msgKey in this.opts.i18n[locale]) {
+            delete msgObj[msgKey]
+          }
+        }
+      }
+      console.log('geelato-ui-ant > mixin > componentMixin > $_destroyedI18nMessages() > component:', this.$options._componentTag, '  i18n:', this.opts.i18n)
+    },
     $_doAction(action, data, callback) {
       let that = this
       if (!action) {

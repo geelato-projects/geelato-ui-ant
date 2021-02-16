@@ -12,12 +12,14 @@ export default {
         name: {
           control: 'Input',
           title: '姓名',
+          titleI18n:'i18n-zsedcftg',
           rules: {
             required: true,
             unique: true
           },
           readOnly: true,
           value: '',
+          // variable
           valueExpression: 'js:ctx.form.firstName'
         },
         firstName: {
@@ -37,6 +39,7 @@ export default {
         loginName: {
           control: 'Input',
           title: '登录名',
+          titleI18n:'登录名',
           rules: {
             required: true,
             unique: {
@@ -59,6 +62,7 @@ export default {
           control: 'Password',
           title: '密码',
           tips: '至少6位',
+          tipsI18n: 'i18n-udyehiowij',
           rules: {
             required: true,
             min: 6
@@ -81,7 +85,8 @@ export default {
             email: true
           },
           props: {
-            placeholder: 'xxx@xxx.xxx'
+            placeholder: 'xxx@xxx.xxx',
+            placeholderI18n: 'xxx@xxx.xxx'
           }
         },
         age: {
@@ -101,6 +106,7 @@ export default {
         sex: {
           control: 'Select',
           title: '性别',
+          titleI18n:'性别',
           // 若数据是动态生产成，可配置ds，基于ds加载的数据最终会设置到data中
           data: [
             {text: '保密', value: 2},
@@ -129,7 +135,8 @@ export default {
             max: 14
           },
           props: {
-            placeholder: '电话号码'
+            placeholder: '电话号码',
+            placeholderI18n: '电话号码'
           }
         },
         province: {
@@ -252,6 +259,27 @@ export default {
         myVarA: {
           description: '这是一个变量，变量名字为myVarA，值为30',
           value: '30'
+        }
+      },
+      i18n: {
+        zh: {
+          '姓': '姓',
+          '名': '名',
+          'i18n-zsedcftg': '姓名',
+          '电话': '电话',
+          '电话号码': '电话号码',
+          '性别': '性别',
+          '年龄': '年龄'
+        },
+        en: {
+          '姓': 'last name',
+          '名': 'first name',
+          'i18n-zsedcftg': 'full name',
+          '电话': 'telephone',
+          '电话号码': 'telephone number',
+          '性别': 'sex',
+          '年龄': 'age',
+          'i18n-udyehiowij': 'At least 6'
         }
       },
       watch: {

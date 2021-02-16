@@ -17,7 +17,7 @@
                   :key="index" v-if="action.show===undefined||action.show===''||$_runJs(action.show)"
                   @click="$_doAction(action)"
         >
-          {{action.text||action.title}}
+          {{$i18n.tproxy((action.textI18n||action.titleI18n),(action.text||action.title))}}
         </a-button>&nbsp;
       </template>
     </div>
@@ -91,7 +91,6 @@
       console.log('geelato-ui-ant > gl-form > mounted() > opts:', this.opts)
       console.log('geelato-ui-ant > gl-form > mounted() > params:', this.params)
       this.reset({opts: this.opts})
-
     }
     ,
     methods: {

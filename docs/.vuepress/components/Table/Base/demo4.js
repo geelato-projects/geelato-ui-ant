@@ -115,7 +115,15 @@ export default {
         pageSize: 20,
         order: 'createAt|+'
       },
-      stat: ''
+      stat: '',
+      i18n: {
+        zh: {
+          '名称': '名称'
+        },
+        en: {
+          '名称': 'name'
+        }
+      }
     },
     "query": {}
   }, params: {"id": "1"}

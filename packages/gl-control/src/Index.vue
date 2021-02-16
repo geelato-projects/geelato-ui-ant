@@ -43,9 +43,16 @@
         // immediate: true,
         // deep: true
       },
+      'opts.props': {
+        handler(val, oval) {
+          console.log('geelato-ui-ant > gl-control > watch > opts.props: ', this.$el, val, oval)
+          this.resetArrayDefaultValue()
+        },
+        deep: true
+      },
       'opts.value': {
         handler(val, oval) {
-          console.log('geelato-ui-ant > gl-control > watch > opts.field:', this.opts.field, ' val:', val, ',oval:', oval)
+          console.log('geelato-ui-ant > gl-control > watch > opts.value:', this.opts.field, ' val:', val, ',oval:', oval)
           this.setValue(val)
         },
         // immediate: true,
@@ -148,7 +155,7 @@
         }
         // 若未设置，再以索引取默认值
         if ((value === undefined || value === '') && !this.isValueTypeOfArray(this.opts.control)) {
-          let dataIndex = this.opts.props && this.opts.props.defaultActiveIndex || 0
+          let dataIndex = this.opts.props && (this.opts.props.defaultActiveIndex || 0)
           value = this.opts.data && this.opts.data.length > 0 && this.opts.data[dataIndex].value
         }
         // console.log('geelato-ui-ant > gl-control > initDefaultValue()', this.opts, this.opts.title, value)
@@ -159,7 +166,7 @@
         let value = undefined
         if (!this.isValueTypeOfArray(this.opts.control)) {
           if (this.opts.data && this.opts.data.length > 0) {
-            let dataIndex = this.opts.props && this.opts.props.defaultActiveIndex || 0
+            let dataIndex = this.opts.props && (this.opts.props.defaultActiveIndex || 0)
             value = this.opts.data[dataIndex].value
           }
         }
@@ -191,8 +198,8 @@
       let props = {
         name: this.opts.field,
         ref: this.opts.gid,
-        title: this.opts.title,
-        placeholder: this.opts.placeholder,
+        title: this.$i18n.tproxy(this.opts.titleI18n, this.opts.title),
+        placeholder: this.opts.props ? this.$i18n.tproxy(this.opts.props.placeholderI18n, this.opts.props.placeholder) : undefined,
         readOnly: this.isReadonly
       }
       let propertyData = this.opts.data || []
@@ -305,7 +312,7 @@
           controlDom = <a-rate v-model={this.model}/>
           break;
         default:
-          controlDom = <a-switch v-model={this.model} {...{props}} onChange={this.loadRefData}/>
+          controlDom = <span></span>
       }
 
       return (
