@@ -25,6 +25,7 @@ export default {
         firstName: {
           control: 'Input',
           title: '名',
+          titleI18n: '名',
           rules: {
             required: true
           }
@@ -32,6 +33,7 @@ export default {
         lastName: {
           control: 'Input',
           title: '姓',
+          titleI18n: '姓',
           rules: {
             required: true
           }
@@ -262,7 +264,7 @@ export default {
         }
       },
       i18n: {
-        zh: {
+        'zh-CN': {
           '姓': '姓',
           '名': '名',
           'i18n-zsedcftg': '姓名',
@@ -271,7 +273,7 @@ export default {
           '性别': '性别',
           '年龄': '年龄'
         },
-        en: {
+        'en-US': {
           '姓': 'last name',
           '名': 'first name',
           'i18n-zsedcftg': 'full name',

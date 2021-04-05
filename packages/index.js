@@ -53,6 +53,7 @@ const install = function (Vue, options) {
     Vue.prototype.$gl = {}
   }
 
+  Vue.prototype.$gl.i18n = Vue.prototype.$gl.i18n || options && options.i18n
   Vue.prototype.$gl.api = Vue.prototype.$gl.api || options && options.api ? new Api(options.api) : new Api()
   Vue.prototype.$gl.ui = Vue.prototype.$gl.ui || new UIManager(Vue)
   Vue.prototype.$gl.bus = Vue.prototype.$gl.bus || new Vue()

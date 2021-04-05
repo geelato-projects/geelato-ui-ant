@@ -17,7 +17,7 @@
                   :key="index" v-if="action.show===undefined||action.show===''||$_runJs(action.show)"
                   @click="$_doAction(action)"
         >
-          {{$i18n.tproxy((action.textI18n||action.titleI18n),(action.text||action.title))}}
+          {{$gl.i18n.tproxy((action.textI18n||action.titleI18n),(action.text||action.title))}}
         </a-button>&nbsp;
       </template>
     </div>

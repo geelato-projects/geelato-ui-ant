@@ -185,6 +185,13 @@
       },
       $_ctxLoader() {
         return {form: this.form, vars: this.vars, params: this.params}
+      },
+      changeBooleanToNumber() {
+        if (this.model === true) {
+          this.model = 1
+        } else if (this.model === false) {
+          this.model = 0
+        }
       }
     },
     render() {
@@ -198,8 +205,8 @@
       let props = {
         name: this.opts.field,
         ref: this.opts.gid,
-        title: this.$i18n.tproxy(this.opts.titleI18n, this.opts.title),
-        placeholder: this.opts.props ? this.$i18n.tproxy(this.opts.props.placeholderI18n, this.opts.props.placeholder) : undefined,
+        title: this.$gl.i18n.tproxy(this.opts.titleI18n, this.opts.title),
+        placeholder: this.opts.props ? this.$gl.i18n.tproxy(this.opts.props.placeholderI18n, this.opts.props.placeholder) : undefined,
         readOnly: this.isReadonly
       }
       let propertyData = this.opts.data || []
@@ -271,6 +278,7 @@
         }
           break;
         case 'Select':
+          this.changeBooleanToNumber()
           controlDom =
             <a-select v-model={this.model} style="min-width: 6em" {...{props}} onChange={this.loadRefData}>
               {

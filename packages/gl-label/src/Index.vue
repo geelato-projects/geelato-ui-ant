@@ -1,9 +1,9 @@
 <template>
   <div style="display: inline-block">
-    <span v-if="property.tips" :title="$i18n.tproxy(property.tipsI18n,property.tips)">
-      <a-icon type="info-circle" @click="copyTips($i18n.tproxy(property.tipsI18n,property.tips))"/>
+    <span v-if="property.tips" :title="$gl.i18n.tproxy(property.tipsI18n,property.tips)">
+      <a-icon type="info-circle" @click="copyTips($gl.i18n.tproxy(property.tipsI18n,property.tips))"/>
     </span>
-    <span v-if="isRequired(property)" class="gl-required">*&nbsp;</span>{{$i18n.tproxy(titleI18n,title)}}
+    <span v-if="isRequired(property)" class="gl-required">*&nbsp;</span>{{$gl.i18n.tproxy(titleI18n,title)}}
   </div>
 </template>
 
@@ -25,7 +25,7 @@
       }
     },
     mounted() {
-      console.log('this.$i18n', this.$i18n)
+      console.log('gl-label > mounted > this.$gl.i18n:', this.$gl.i18n)
     },
     computed: {
       title() {

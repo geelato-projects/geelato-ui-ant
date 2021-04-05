@@ -31,5 +31,6 @@ yarn-error.log*
 # 其它
 deploy.sh
 yarn.lock
+buildcopy.cmd
 
 

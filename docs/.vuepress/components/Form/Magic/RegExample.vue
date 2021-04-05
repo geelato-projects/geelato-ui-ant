@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-button type="primary" @click="$i18n.locale=($i18n.locale==='zh'?'en':'zh')">切换为{{$i18n.locale==='zh'?'English':'中文'}}</a-button>
+    <a-button type="primary" @click="setI18nLanguage($i18n.locale==='zh-CN'?'en-US':'zh-CN')">切换为{{$i18n.locale==='zh-CN'?'English':'中文'}}</a-button>
     <a-button type="primary" @click="reset">重置表单</a-button>
     <a-button type="primary" @click="validate">校验表单</a-button>
     <a-button type="primary" @click="getValues">{{showFormValue?'隐藏表单值':'获取表单值'}}</a-button>
@@ -25,7 +25,7 @@
 
 <script>
   import RegData from './RegData4.js'
-
+  import {setI18nLanguage} from '../../../locales/index'
   export default {
     name: "RegExample",
     component: {},
@@ -40,6 +40,9 @@
       }
     },
     methods: {
+      setI18nLanguage(lang){
+        setI18nLanguage(lang)
+      },
       reset() {
         this.$refs.magicForm.reset(RegData.bind)
       },

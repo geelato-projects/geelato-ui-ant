@@ -1,7 +1,7 @@
 /**
  * 扩展 VuePress 应用
  */
-import i18n from '../../packages/locales/index'
+import i18n from './locales/index'
 // import Storage from 'vue-ls';
 import AntDesign from 'ant-design-vue'
 // 对于导入antd.less，注意需config.js中less的javascriptEnabled: true才可正常执行
@@ -29,7 +29,8 @@ export default ({
     api: new ApiSettings({
       baseURL: 'http://localhost:8080/api',
       // baseURL: 'https://api.geelato.org:8080/api',
-    })
+    }),
+    i18n: i18n
   }
 
   // Install and Activate the zh_CN locale.
@@ -40,6 +41,7 @@ export default ({
 
   Vue.use(geelatoAui, auiOptions)
   Vue.use(AntDesign)
+
 
   // Vue.use(Storage, {
   //   namespace: 'geelato__', // key键前缀

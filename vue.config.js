@@ -53,9 +53,10 @@ module.exports = {
       // 'vue': 'Vue',
       'vue-router': 'VueRouter',
       'axios': 'axios',
+      'store': 'store',
       'ant-design-vue': 'Antd',
       'vee-validate': 'vee-validate',
-      'vue-i18n': 'VueI18n',
+      'vue-i18n': 'vue-i18n',
       'moment': 'moment'
     }
   },
